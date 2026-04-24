@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>سجل المحولات الكهربائية</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script>
   // ── Supabase Config ──────────────────────────────────
   const SUPA_URL = 'https://hgnufhugpqqbkbxflyot.supabase.co';
@@ -2189,78 +2190,269 @@ ${fResults.length?`<div class="section">
     setTimeout(() => URL.revokeObjectURL(url), 10000);
   }
 
-  // ─── Excel Export via CSV ──────────────────────────────
+  // ─── Excel Export via SheetJS (xlsx-js-style) ──────────
   function exportExcel() {
     if (records.length === 0) { showToast(t('toastNoData'), 'error'); return; }
 
     const MAX_FEEDERS = 8;
-    const rows = [];
 
-    const h1 = ['Area','H.T Feeder No.','Tx. No.','Tap No.','Capacity','Time',
-                'V R/N','V Y/N','V B/N','V R/B','V Y/R','V B/Y'];
-    for (let fn=1; fn<=MAX_FEEDERS; fn++) h1.push(`F${fn} R`,`F${fn} Y`,`F${fn} B`,`F${fn} N`);
-    h1.push('Total R','Total Y','Total B','Total N','MAX','MIN','Load %','Action (Upgrade)','Action (Balance)','Reading Date');
-    rows.push(h1);
+    /* ── helper: column letter from 0-based index ── */
+    function colLetter(c) {
+      let s = '';
+      c++;
+      while (c > 0) { c--; s = String.fromCharCode(65 + (c % 26)) + s; c = Math.floor(c / 26); }
+      return s;
+    }
+    /* ── helper: encode cell address ── */
+    function addr(r, c) { return colLetter(c) + (r + 1); }
 
-    records.slice().reverse().forEach(rec => {
+    /* ── style presets ── */
+    const thin = { style: 'thin', color: { rgb: '000000' } };
+    const border = { top: thin, bottom: thin, left: thin, right: thin };
+    const centerAlign = { horizontal: 'center', vertical: 'center', wrapText: true };
+
+    function hdrStyle(bg) {
+      return { fill: { fgColor: { rgb: bg } }, font: { bold: true, sz: 10 }, alignment: centerAlign, border };
+    }
+    function dataStyle() {
+      return { font: { sz: 10 }, alignment: { horizontal: 'center', vertical: 'center' }, border };
+    }
+
+    /* ── colour map ── */
+    const CLR_BASE    = 'D9E1F2';
+    const CLR_VOLT    = 'EBF3FF';
+    const CLR_FR      = 'FF6600';
+    const CLR_FY      = 'FFC000';
+    const CLR_FB      = '66FFFF';
+    const CLR_FN      = 'F2F2F2';
+    const CLR_TOTAL   = 'E2EFDA';
+    const CLR_LOADPCT = 'FFFF00';
+    const CLR_ACTION  = 'FFF2CC';
+
+    /* feeder sub-colours per phase index 0=R,1=Y,2=B,3=N */
+    const feederClrs = [CLR_FR, CLR_FY, CLR_FB, CLR_FN];
+
+    /* ── Build header rows (3 rows) ── */
+    // Row 0 (Excel row 1)
+    const row0 = [];
+    const row1 = [];
+    const row2 = [];
+
+    const totalCols = 6 + 6 + MAX_FEEDERS * 4 + 4 + 5; // A..BA = 53
+
+    /* helper to colour a header column */
+    function hdr(val, bg) { return { v: val || '', t: 's', s: hdrStyle(bg) }; }
+
+    /* A-F: base columns */
+    const baseLabels = ['Area', 'H.T Feeder No.', 'Tx. No.', 'Tap No.', 'Capacity', 'Time'];
+    for (let i = 0; i < 6; i++) {
+      row0.push(hdr(baseLabels[i], CLR_BASE));
+      row1.push(hdr('', CLR_BASE));
+      row2.push(hdr('', CLR_BASE));
+    }
+
+    /* G-L: Voltage */
+    row0.push(hdr('Voltage Value', CLR_VOLT));
+    for (let i = 1; i < 6; i++) row0.push(hdr('', CLR_VOLT));
+    row1.push(hdr('Phase Voltage', CLR_VOLT));
+    row1.push(hdr('', CLR_VOLT));
+    row1.push(hdr('', CLR_VOLT));
+    row1.push(hdr('Line Voltage', CLR_VOLT));
+    row1.push(hdr('', CLR_VOLT));
+    row1.push(hdr('', CLR_VOLT));
+    const voltR2 = ['R/N', 'Y/N', 'B/N', 'R/B', 'Y/R', 'B/Y'];
+    for (let i = 0; i < 6; i++) row2.push(hdr(voltR2[i], CLR_VOLT));
+
+    /* M-AR: Feeders */
+    for (let fn = 1; fn <= MAX_FEEDERS; fn++) {
+      /* row0: feeder name merged over 4 cols */
+      row0.push(hdr('Feeder ' + fn, CLR_FR));
+      row0.push(hdr('', CLR_FY));
+      row0.push(hdr('', CLR_FB));
+      row0.push(hdr('', CLR_FN));
+      /* row1 & row2: R Y B N */
+      const phases = ['R', 'Y', 'B', 'N'];
+      for (let p = 0; p < 4; p++) {
+        row1.push(hdr(phases[p], feederClrs[p]));
+        row2.push(hdr(phases[p], feederClrs[p]));
+      }
+    }
+
+    /* AS-AV: Total Load */
+    row0.push(hdr('Total Load', CLR_TOTAL));
+    row0.push(hdr('', CLR_TOTAL));
+    row0.push(hdr('', CLR_TOTAL));
+    row0.push(hdr('', CLR_TOTAL));
+    const totPhases = ['R', 'Y', 'B', 'N'];
+    for (let p = 0; p < 4; p++) {
+      row1.push(hdr(totPhases[p], CLR_TOTAL));
+      row2.push(hdr(totPhases[p], CLR_TOTAL));
+    }
+
+    /* AW: MAX */
+    row0.push(hdr('MAX Value', CLR_VOLT));
+    row1.push(hdr('', CLR_VOLT));
+    row2.push(hdr('', CLR_VOLT));
+
+    /* AX: MIN */
+    row0.push(hdr('MIN Value', CLR_VOLT));
+    row1.push(hdr('', CLR_VOLT));
+    row2.push(hdr('', CLR_VOLT));
+
+    /* AY: Load % */
+    row0.push(hdr('Load %', CLR_LOADPCT));
+    row1.push(hdr('', CLR_LOADPCT));
+    row2.push(hdr('', CLR_LOADPCT));
+
+    /* AZ: Action Upgrade */
+    row0.push(hdr('Action (Upgrade)', CLR_ACTION));
+    row1.push(hdr('', CLR_ACTION));
+    row2.push(hdr('', CLR_ACTION));
+
+    /* BA: Action Balance */
+    row0.push(hdr('Action (Balance)', CLR_ACTION));
+    row1.push(hdr('', CLR_ACTION));
+    row2.push(hdr('', CLR_ACTION));
+
+    const aoa = [row0, row1, row2];
+
+    /* ── Data rows (starting at Excel row 4) ── */
+    records.slice().reverse().forEach((rec, idx) => {
       const uid = rec.uid;
       const ld  = loadings[uid] || {};
       const v   = ld.volt || {};
-      const fds = [...(ld.feeders||[])].sort((a,b)=>(a.num||0)-(b.num||0));
-      while (fds.length < MAX_FEEDERS) fds.push({iL1:'',iL2:'',iL3:'',iN:'',savedAt:null});
+      const fds = [...(ld.feeders || [])].sort((a, b) => (a.num || 0) - (b.num || 0));
+      while (fds.length < MAX_FEEDERS) fds.push({ iL1: '', iL2: '', iL3: '', iN: '' });
 
-      // Latest feeder saved date
-      const latestDate = fds.map(f=>f.savedAt).filter(Boolean).sort().pop();
-      const dateForExcel = latestDate ? new Date(latestDate).toLocaleString('en-GB') : '';
+      const xlRow = idx + 3; // 0-based sheet row (row 3 = Excel row 4)
+      const exRow = xlRow + 1; // 1-based for formulas
 
-      const row = [
-        rec.station, rec.hvFeeder||'', rec.id, '', rec.capacity, '',
-        v.vL1N||'', v.vL2N||'', v.vL3N||'',
-        v.vL1L2||'', v.vL1L3||'', v.vL2L3||'',
-      ];
+      const row = [];
+      const ds = dataStyle();
 
-      fds.slice(0,MAX_FEEDERS).forEach(f => {
-        row.push(f.iL1||'', f.iL2||'', f.iL3||'', f.iN||'');
+      function dCell(val) { return { v: val, t: typeof val === 'number' ? 'n' : 's', s: ds }; }
+      function fCell(formula) { return { f: formula, t: 'n', s: ds }; }
+
+      /* A-F */
+      row.push(dCell(rec.station || ''));
+      row.push(dCell(rec.hvFeeder || ''));
+      row.push(dCell(rec.id || ''));
+      row.push(dCell(''));
+      row.push(dCell(Number(rec.capacity) || ''));
+      row.push(dCell(''));
+
+      /* G-L voltage */
+      row.push(dCell(v.vL1N ? Number(v.vL1N) : ''));
+      row.push(dCell(v.vL2N ? Number(v.vL2N) : ''));
+      row.push(dCell(v.vL3N ? Number(v.vL3N) : ''));
+      row.push(dCell(v.vL1L2 ? Number(v.vL1L2) : ''));
+      row.push(dCell(v.vL1L3 ? Number(v.vL1L3) : ''));
+      row.push(dCell(v.vL2L3 ? Number(v.vL2L3) : ''));
+
+      /* M-AR feeders */
+      fds.slice(0, MAX_FEEDERS).forEach(f => {
+        row.push(dCell(f.iL1 ? Number(f.iL1) : ''));
+        row.push(dCell(f.iL2 ? Number(f.iL2) : ''));
+        row.push(dCell(f.iL3 ? Number(f.iL3) : ''));
+        row.push(dCell(f.iN  ? Number(f.iN)  : ''));
       });
 
-      let tR=0,tY=0,tB=0,tN=0;
-      fds.slice(0,MAX_FEEDERS).forEach(f=>{
-        tR+=parseFloat(f.iL1)||0; tY+=parseFloat(f.iL2)||0;
-        tB+=parseFloat(f.iL3)||0; tN+=parseFloat(f.iN)||0;
-      });
-      const mx = Math.max(tR,tY,tB);
-      const mn = Math.min(...[tR,tY,tB].filter(x=>x>0)) || 0;
-      const cap= Number(rec.capacity);
-      const lp = cap ? Math.round((mx/(cap/0.75))*10)/10 : 0;
+      /* AS-AV: Total formulas */
+      // Total R = SUM of R columns (col M,Q,U,Y,AC,AG,AK,AO)
+      const rCols = [12, 16, 20, 24, 28, 32, 36, 40];
+      const yCols = [13, 17, 21, 25, 29, 33, 37, 41];
+      const bCols = [14, 18, 22, 26, 30, 34, 38, 42];
+      const nCols = [15, 19, 23, 27, 31, 35, 39, 43];
 
-      row.push(
-        tR||'', tY||'', tB||'', tN||'',
-        mx||'', mn||'', lp,
-        lp>70 ? 'Upgrade' : 'OK - No Upgrade',
-        (mx-mn)>10 ? 'Need to Balance' : 'OK - Balanced',
-        dateForExcel
-      );
-      rows.push(row);
+      function sumFormula(cols) {
+        return 'SUM(' + cols.map(c => colLetter(c) + exRow).join(',') + ')';
+      }
+      row.push(fCell(sumFormula(rCols))); // AS
+      row.push(fCell(sumFormula(yCols))); // AT
+      row.push(fCell(sumFormula(bCols))); // AU
+      row.push(fCell(sumFormula(nCols))); // AV
+
+      /* AW: MAX */
+      row.push(fCell('MAX(AS' + exRow + ':AU' + exRow + ')'));
+
+      /* AX: MIN */
+      row.push(fCell('MIN(AS' + exRow + ':AU' + exRow + ')'));
+
+      /* AY: Load % = (AW / (E / 0.75)) * 100 */
+      row.push(fCell('IF(E' + exRow + '=0,0,(AW' + exRow + '/(E' + exRow + '/0.75))*100)'));
+
+      /* AZ: Action Upgrade */
+      row.push({ f: 'IF(AY' + exRow + '>70,"Upgrade","OK no need to Upgrade")', t: 's', s: ds });
+
+      /* BA: Action Balance */
+      row.push({ f: 'IF(AW' + exRow + '-AX' + exRow + '<=10,"Ok no need to balance","need to balance")', t: 's', s: ds });
+
+      aoa.push(row);
     });
 
-    const csv = '\uFEFF' + rows.map(row =>
-      row.map(cell => {
-        const s = String(cell ?? '');
-        return s.includes(',') || s.includes('"') || s.includes('\n')
-          ? '"' + s.replace(/"/g,'""') + '"' : s;
-      }).join(',')
-    ).join('\r\n');
+    /* ── Create worksheet ── */
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
 
-    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    const d    = new Date();
-    const s    = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
-    a.href     = url;
-    a.download = `transformers_${s}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast(lang==='ar'?'📊 تم تصدير — افتحه بـ Excel (CSV)':'📊 Exported CSV — open with Excel','success');
+    /* ── Merges ── */
+    function rng(s) { return XLSX.utils.decode_range(s); }
+    ws['!merges'] = [
+      /* A1:A3 .. F1:F3 */
+      rng('A1:A3'), rng('B1:B3'), rng('C1:C3'), rng('D1:D3'), rng('E1:E3'), rng('F1:F3'),
+      /* Voltage */
+      rng('G1:L1'),
+      rng('G2:I2'),
+      rng('J2:L2'),
+      /* Feeders row 1 */
+      rng('M1:P1'), rng('Q1:T1'), rng('U1:X1'), rng('Y1:AB1'),
+      rng('AC1:AF1'), rng('AG1:AJ1'), rng('AK1:AN1'), rng('AO1:AR1'),
+      /* Total Load */
+      rng('AS1:AV1'),
+      /* Single-col merges row 1-3 */
+      rng('AW1:AW3'), rng('AX1:AX3'), rng('AY1:AY3'), rng('AZ1:AZ3'), rng('BA1:BA3'),
+    ];
+
+    /* ── Column widths ── */
+    const colWidths = [];
+    const widthMap = {
+      0: 14, 1: 9, 2: 8, 3: 5, 4: 9,
+    };
+    for (let c = 0; c < totalCols; c++) {
+      let w = 5;
+      if (c in widthMap) w = widthMap[c];
+      else if (c >= 5 && c <= 11) w = 6;   // F-L
+      else if (c >= 12 && c <= 43) w = 5;  // M-AR
+      else if (c >= 44 && c <= 47) w = 6;  // AS-AV
+      else if (c === 48 || c === 49) w = 7; // AW-AX
+      else if (c === 50) w = 9;            // AY
+      else if (c === 51 || c === 52) w = 24; // AZ-BA
+      colWidths.push({ wch: w });
+    }
+    ws['!cols'] = colWidths;
+
+    /* ── Row heights ── */
+    ws['!rows'] = [
+      { hpt: 19.5 }, { hpt: 19.5 }, { hpt: 19.5 },
+    ];
+    for (let r = 3; r < aoa.length; r++) {
+      ws['!rows'].push({ hpt: 15.75 });
+    }
+
+    /* ── Freeze panes at G4 (row 3, col 6 in 0-based) ── */
+    ws['!freeze'] = { xSplit: 6, ySplit: 3, topLeftCell: 'G4', state: 'frozen' };
+
+    /* Also set via views for broader compatibility */
+    if (!ws['!views']) ws['!views'] = [{}];
+    ws['!views'][0] = { state: 'frozen', xSplit: 6, ySplit: 3 };
+
+    /* ── Write workbook ── */
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Report');
+
+    const d = new Date();
+    const stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+    XLSX.writeFile(wb, `transformers_${stamp}.xlsx`);
+
+    showToast(lang === 'ar' ? '📊 تم تصدير ملف Excel بنفس تنسيق التقرير' : '📊 Excel report exported with template styling', 'success');
   }
 
   // ══════════════════════════════════════════════════
