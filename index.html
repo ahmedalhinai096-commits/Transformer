@@ -2251,7 +2251,7 @@ ${fResults.length?`<div class="section">
     function hdr(val, bg) { return { v: val || '', t: 's', s: hdrStyle(bg) }; }
 
     /* A-F: base columns */
-    const baseLabels = ['Area', 'H.T Feeder No.', 'Tx. No.', 'Tap No.', 'Capacity', 'Time'];
+    const baseLabels = ['Area', 'H.T Feeder No.', 'Tx. No.', 'Tap No.', 'Capacity', 'Time & Date'];
     for (let i = 0; i < 6; i++) {
       row0.push(hdr(baseLabels[i], CLR_BASE));
       row1.push(hdr('', CLR_BASE));
@@ -2340,13 +2340,22 @@ ${fResults.length?`<div class="section">
       function dCell(val) { return { v: val, t: typeof val === 'number' ? 'n' : 's', s: ds }; }
       function fCell(formula) { return { f: formula, t: 'n', s: ds }; }
 
+      const latestDate = fds
+        .map(f => f.savedAt)
+        .filter(Boolean)
+        .sort()
+        .pop();
+      const timeAndDateForExcel = latestDate
+        ? new Date(latestDate).toLocaleString('en-GB')
+        : '';
+
       /* A-F */
       row.push(dCell(rec.station || ''));
       row.push(dCell(rec.hvFeeder || ''));
       row.push(dCell(rec.id || ''));
       row.push(dCell(ld.tapNo || ''));
       row.push(dCell(Number(rec.capacity) || ''));
-      row.push(dCell(''));
+      row.push(dCell(timeAndDateForExcel));
 
       /* G-L voltage */
       row.push(dCell(v.vL1N ? Number(v.vL1N) : ''));
