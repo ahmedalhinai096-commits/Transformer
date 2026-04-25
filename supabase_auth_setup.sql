@@ -175,4 +175,50 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.get_pending_reset_requests(TEXT) TO anon;
+
+-- 11. RPC: Admin rejects a password reset request
+CREATE OR REPLACE FUNCTION public.admin_reject_reset_request(p_admin_pass TEXT, p_request_id INT)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions
+AS $$
+BEGIN
+  -- Verify caller is admin
+  IF NOT EXISTS (
+    SELECT 1 FROM public.team_auth
+    WHERE team_name = '__admin__'
+      AND password_hash = extensions.crypt(p_admin_pass, password_hash)
+  ) THEN
+    RAISE EXCEPTION 'Unauthorized';
+  END IF;
+  UPDATE public.password_reset_requests
+  SET status = 'rejected', reviewed_by = '__admin__', reviewed_at = NOW()
+  WHERE id = p_request_id AND status = 'pending';
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.admin_reject_reset_request(TEXT, INT) TO anon;
 -- ============================================
+-- ============================================-- ============================================-- ============================================-- ============================================
+CREATE OR REPLACE FUNCTION public.admin_reject_reset_request(p_admin_pass TEXT, p_request_id INT)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions
+AS $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM public.team_auth
+    WHERE team_name = '__admin__'
+      AND password_hash = extensions.crypt(p_admin_pass, password_hash)
+  ) THEN
+    RAISE EXCEPTION 'Unauthorized';
+  END IF;
+  UPDATE public.password_reset_requests
+  SET status = 'rejected', reviewed_by = '__admin__', reviewed_at = NOW()
+  WHERE id = p_request_id AND status = 'pending';
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.admin_reject_reset_request(TEXT, INT) TO anon;

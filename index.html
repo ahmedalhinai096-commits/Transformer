@@ -910,6 +910,42 @@
   .forgot-link{text-align:center;margin-top:0.6rem}
   .forgot-link button{background:none;border:none;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:0.78rem;cursor:pointer;text-decoration:underline;transition:color 0.2s}
   .forgot-link button:hover{color:var(--accent)}
+  /* Admin Reset Requests Panel */
+  #adminResetPanel{display:none;margin-bottom:1.5rem}
+  .arp-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .arp-header{display:flex;align-items:center;justify-content:space-between;padding:0.8rem 1rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem}
+  .arp-title{font-size:0.9rem;font-weight:700;color:var(--danger);font-family:'Tajawal',sans-serif;display:flex;align-items:center;gap:0.5rem}
+  .arp-badge{background:var(--danger);color:#fff;font-size:0.7rem;font-weight:700;padding:0.15rem 0.55rem;border-radius:20px;min-width:20px;text-align:center}
+  .arp-empty{padding:1.5rem;text-align:center;color:var(--text-muted);font-size:0.85rem;font-family:'Tajawal',sans-serif}
+  .arp-list{max-height:400px;overflow-y:auto}
+  .arp-item{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1rem;border-bottom:1px solid rgba(30,58,95,0.3);gap:0.8rem;flex-wrap:wrap}
+  .arp-item:last-child{border-bottom:none}
+  .arp-info{flex:1;min-width:150px}
+  .arp-team{font-weight:700;color:var(--accent);font-size:0.9rem}
+  .arp-meta{font-size:0.72rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-top:0.2rem}
+  .arp-actions{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap}
+  .arp-btn{padding:0.35rem 0.8rem;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:'Cairo',sans-serif;font-size:0.78rem;cursor:pointer;transition:all 0.15s;font-weight:600}
+  .arp-btn.reset{border-color:rgba(0,255,157,0.4);color:var(--accent3)}
+  .arp-btn.reset:hover{background:rgba(0,255,157,0.1)}
+  .arp-btn.reject{border-color:rgba(255,71,87,0.4);color:var(--danger)}
+  .arp-btn.reject:hover{background:rgba(255,71,87,0.1)}
+  /* Reset password modal */
+  #resetPwModal{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem}
+  #resetPwModal.active{display:flex}
+  .rpm-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;width:100%;max-width:380px;box-shadow:0 15px 40px rgba(0,0,0,0.5)}
+  .rpm-title{font-size:1rem;font-weight:700;color:var(--accent);text-align:center;margin-bottom:0.3rem}
+  .rpm-team{text-align:center;font-size:0.85rem;color:var(--accent2);font-weight:700;margin-bottom:1rem}
+  .rpm-label{font-size:0.75rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.3rem}
+  .rpm-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:0.95rem;padding:0.6rem 0.8rem;outline:none;margin-bottom:0.7rem;transition:border-color 0.2s}
+  .rpm-input:focus{border-color:var(--accent)}
+  .rpm-err{color:var(--danger);font-size:0.78rem;text-align:center;min-height:1.2rem;font-family:'Tajawal',sans-serif;margin-bottom:0.5rem}
+  .rpm-btns{display:flex;gap:0.6rem}
+  .rpm-btns button{flex:1;padding:0.6rem;border-radius:8px;border:none;font-family:'Cairo',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.15s}
+  .rpm-btns .rpm-save{background:linear-gradient(135deg,var(--accent3),#00b377);color:#0a0f1e}
+  .rpm-btns .rpm-save:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(0,255,157,0.3)}
+  .rpm-btns .rpm-save:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+  .rpm-btns .rpm-cancel{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
+  .rpm-btns .rpm-cancel:hover{border-color:var(--danger);color:var(--danger)}
   #forgotPanel{display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
   #forgotPanel .fp-title{font-size:0.85rem;font-weight:700;color:var(--accent);margin-bottom:0.6rem;text-align:center;font-family:'Tajawal',sans-serif}
   #forgotPanel .fp-desc{font-size:0.75rem;color:var(--text-muted);text-align:center;margin-bottom:0.8rem;font-family:'Tajawal',sans-serif;line-height:1.6}
@@ -968,6 +1004,17 @@
     <span id="adminBadge" class="admin-badge" style="display:none">🔴 وضع الأدمن</span>
     <button class="btn-admin" id="adminBtn" onclick="toggleAdmin()">🔐 تسجيل دخول الأدمن</button>
    </div>
+
+  <!-- Admin Reset Requests Panel -->
+  <div id="adminResetPanel">
+    <div class="arp-card">
+      <div class="arp-header">
+        <div class="arp-title">🔐 طلبات إعادة تعيين كلمات المرور <span class="arp-badge" id="arpBadge">0</span></div>
+        <button class="arp-btn reset" onclick="loadResetRequests()" style="font-size:0.72rem">🔄 تحديث</button>
+      </div>
+      <div id="arpList"></div>
+    </div>
+  </div>
 
   <!-- Top bar -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;flex-wrap:wrap;gap:0.5rem">
@@ -1169,10 +1216,28 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<!-- Reset Password Modal (admin) -->
+<div id="resetPwModal">
+  <div class="rpm-box">
+    <div class="rpm-title">🔑 تعيين كلمة مرور جديدة</div>
+    <div class="rpm-team" id="rpmTeamName"></div>
+    <div class="rpm-label">كلمة المرور الجديدة</div>
+    <input type="password" class="rpm-input" id="rpmNewPw" placeholder="أدخل كلمة المرور الجديدة (من 8 أحرف)" />
+    <div class="rpm-label">تأكيد كلمة المرور</div>
+    <input type="password" class="rpm-input" id="rpmConfirmPw" placeholder="أعد إدخال كلمة المرور" />
+    <div class="rpm-err" id="rpmErr"></div>
+    <div class="rpm-btns">
+      <button class="rpm-cancel" onclick="closeResetPwModal()">إلغاء</button>
+      <button class="rpm-save" id="rpmSaveBtn" onclick="submitResetPassword()">💾 تعيين</button>
+    </div>
+  </div>
+</div>
+
 <script>
   let records = JSON.parse(localStorage.getItem('transformers') || '[]');
   let editId = null;
   const maxCapacity = 2000;
+  let adminPwCache = null; // admin password kept in memory only for RPC calls
 
   function applyLang() {
     const isAr = lang === 'ar';
@@ -1239,11 +1304,14 @@
     btn.disabled = false; btn.style.opacity = '1';
     if (ok) {
       isAdmin = true;
+      adminPwCache = pw;
       closeModal();
       localStorage.setItem('txSession', JSON.stringify({team:currentTeam, isAdmin}));
       document.getElementById('adminBtn').textContent = t('adminLogout');
       document.getElementById('adminBtn').classList.add('logged-in');
       document.getElementById('adminBadge').style.display = 'inline-flex';
+      document.getElementById('adminResetPanel').style.display = 'block';
+      loadResetRequests();
       showToast(t('toastAdmin'), 'success');
       renderTable();
     } else {
@@ -1255,9 +1323,12 @@
 
   function logout() {
     isAdmin = false;
+    adminPwCache = null;
     document.getElementById('adminBtn').textContent = t('adminLogin');
     document.getElementById('adminBtn').classList.remove('logged-in');
     document.getElementById('adminBadge').style.display = 'none';
+    document.getElementById('adminResetPanel').style.display = 'none';
+    localStorage.setItem('txSession', JSON.stringify({team:currentTeam, isAdmin}));
     showToast(t('toastLogout'));
     renderTable();
   }
@@ -2561,7 +2632,7 @@ ${fResults.length?`<div class="section">
     loginBtn.disabled = false; loginBtn.style.opacity = '1'; loginBtn.textContent = 'دخول →';
     if (ok) {
       if (team === '__admin__') {
-        currentTeam = ADMIN_TEAM; isAdmin = true;
+        currentTeam = ADMIN_TEAM; isAdmin = true; adminPwCache = pw;
       } else {
         currentTeam = team; isAdmin = false;
       }
@@ -2612,13 +2683,130 @@ ${fResults.length?`<div class="section">
     btn.disabled = false; btn.style.opacity = '1'; btn.textContent = '📩 إرسال طلب إعادة التعيين';
   }
 
+  // ── Admin Reset Requests Management ──────────────
+  let pendingResets = [];
+  let resetTargetTeam = null;
+
+  function reAuthAdmin() {
+    // Reuse existing admin login modal for re-auth
+    document.getElementById('loginModal').classList.add('active');
+    document.getElementById('pwInput').value = '';
+    document.getElementById('loginError').textContent = '';
+  }
+
+  async function loadResetRequests() {
+    if (!isAdmin) return;
+    if (!adminPwCache) {
+      // Session restored from localStorage — no cached password
+      document.getElementById('arpList').innerHTML = '<div class="arp-empty">🔐 أعد تسجيل دخول الأدمن لعرض الطلبات<br><button class="arp-btn reset" onclick="reAuthAdmin()" style="margin-top:0.5rem">🔑 إعادة المصادقة</button></div>';
+      document.getElementById('arpBadge').style.display = 'none';
+      return;
+    }
+    try {
+      const data = await supa.req('POST', 'rpc/get_pending_reset_requests', { p_admin_pass: adminPwCache });
+      pendingResets = Array.isArray(data) ? data : [];
+      renderResetRequests();
+    } catch (e) {
+      console.warn('Failed to load reset requests:', e);
+      pendingResets = [];
+      renderResetRequests();
+    }
+  }
+
+  function renderResetRequests() {
+    const list = document.getElementById('arpList');
+    const badge = document.getElementById('arpBadge');
+    badge.textContent = pendingResets.length;
+    badge.style.display = pendingResets.length > 0 ? '' : 'none';
+    if (pendingResets.length === 0) {
+      list.innerHTML = '<div class="arp-empty">✅ لا توجد طلبات معلقة</div>';
+      return;
+    }
+    list.innerHTML = '<div class="arp-list">' + pendingResets.map(r => {
+      const dt = new Date(r.created_at).toLocaleString('ar-SA', {dateStyle:'short',timeStyle:'short'});
+      return `<div class="arp-item">
+        <div class="arp-info">
+          <div class="arp-team">${escHtml(r.team_name)}</div>
+          <div class="arp-meta">${r.requester_name ? '👤 ' + escHtml(r.requester_name) : ''}${r.reason ? ' — ' + escHtml(r.reason) : ''}</div>
+          <div class="arp-meta">📅 ${dt}</div>
+        </div>
+        <div class="arp-actions">
+          <button class="arp-btn reset" onclick="openResetPwModal('${escHtml(r.team_name)}')">🔑 تعيين كلمة مرور</button>
+          <button class="arp-btn reject" onclick="rejectResetRequest('${escHtml(r.team_name)}',${r.id})">❌ رفض</button>
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+  }
+
+  function escHtml(s) {
+    const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+  }
+
+  function openResetPwModal(team) {
+    resetTargetTeam = team;
+    document.getElementById('rpmTeamName').textContent = '🏷️ ' + team;
+    document.getElementById('rpmNewPw').value = '';
+    document.getElementById('rpmConfirmPw').value = '';
+    document.getElementById('rpmErr').textContent = '';
+    document.getElementById('rpmSaveBtn').disabled = false;
+    document.getElementById('resetPwModal').classList.add('active');
+  }
+  function closeResetPwModal() {
+    document.getElementById('resetPwModal').classList.remove('active');
+    resetTargetTeam = null;
+  }
+
+  async function submitResetPassword() {
+    const pw1 = document.getElementById('rpmNewPw').value;
+    const pw2 = document.getElementById('rpmConfirmPw').value;
+    const err = document.getElementById('rpmErr');
+    const btn = document.getElementById('rpmSaveBtn');
+    err.textContent = '';
+    if (pw1.length < 8) { err.textContent = '⚠️ كلمة المرور يجب أن تكون 8 أحرف على الأقل'; return; }
+    if (pw1 !== pw2) { err.textContent = '⚠️ كلمتا المرور غير متطابقتين'; return; }
+    if (!adminPwCache) { err.textContent = '⚠️ انتهت صلاحية الجلسة، أعد تسجيل الدخول'; return; }
+    btn.disabled = true;
+    try {
+      await supa.req('POST', 'rpc/admin_reset_team_password', {
+        p_admin_pass: adminPwCache,
+        p_team: resetTargetTeam,
+        p_new_password: pw1
+      });
+      closeResetPwModal();
+      showToast('✅ تم تعيين كلمة المرور الجديدة لفريق ' + resetTargetTeam);
+      loadResetRequests();
+    } catch (e) {
+      err.textContent = '❌ فشل: ' + (e.message || 'خطأ غير معروف');
+      btn.disabled = false;
+    }
+  }
+
+  async function rejectResetRequest(team, reqId) {
+    if (!confirm('هل تريد رفض طلب إعادة تعيين كلمة المرور لفريق ' + team + '؟')) return;
+    if (!adminPwCache) { showToast('⚠️ أعد تسجيل دخول الأدمن'); return; }
+    try {
+      await supa.req('POST', 'rpc/admin_reject_reset_request', { p_admin_pass: adminPwCache, p_request_id: reqId });
+      showToast('تم رفض الطلب');
+      loadResetRequests();
+    } catch (e) {
+      showToast('❌ فشل رفض الطلب');
+    }
+  }
+
   function doLogout() {
     localStorage.removeItem('txSession');
-    currentTeam=null; isAdmin=false; records=[]; loadings={};
+    currentTeam=null; isAdmin=false; adminPwCache=null; records=[]; loadings={};
+    document.getElementById('adminResetPanel').style.display='none';
+    document.getElementById('adminBadge').style.display='none';
+    document.getElementById('adminBtn').classList.remove('logged-in');
     document.getElementById('loginScreen').style.display='flex';
+    document.querySelector('.container').style.display='none';
     document.getElementById('loginPw').value='';
     document.getElementById('loginErr').textContent='';
     document.getElementById('teamGrid').querySelectorAll('.team-btn').forEach(b=>b.classList.remove('selected'));
+    // Reset forgot panel state
+    document.getElementById('forgotPanel').style.display='none';
+    document.getElementById('fpSubmitBtn').style.display='';
   }
 
   // ══════════════════════════════════════════════════
@@ -2741,6 +2929,7 @@ ${fResults.length?`<div class="section">
   // ══════════════════════════════════════════════════
   async function launchApp() {
     document.getElementById('loginScreen').style.display='none';
+    document.querySelector('.container').style.display='';
     // Update team pill
     const pill=document.getElementById('teamPillEl');
     if(isAdmin){pill.textContent='🔴 Admin — All Teams';pill.classList.add('admin-pill');}
@@ -2751,6 +2940,13 @@ ${fResults.length?`<div class="section">
     renderTable();
     // Add team col header visibility
     const thTeam=document.getElementById('thTeam'); if(thTeam) thTeam.style.display=isAdmin?'':'none';
+    // Show/hide admin reset requests panel
+    if(isAdmin){
+      document.getElementById('adminResetPanel').style.display='block';
+      loadResetRequests();
+    } else {
+      document.getElementById('adminResetPanel').style.display='none';
+    }
   }
 
   // ══════════════════════════════════════════════════
