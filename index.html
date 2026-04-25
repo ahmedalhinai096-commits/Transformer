@@ -2296,12 +2296,32 @@ ${fResults.length?`<div class="section">
       <div class="two-col">
         <div>
           <div class="mini-title">⚡ ${isAr?'الفولتيج (V) — مشترك':'Voltage (V) — Shared'}</div>
-          ${[{l:`${PH[0]}-N`,v:v1,c:PC[0]},{l:`${PH[1]}-N`,v:v2,c:PC[1]},{l:`${PH[2]}-N`,v:v3,c:PC[2]}].map(p=>`
-          <div class="phase-row">
-            <div class="phase-dot" style="background:${p.c}"></div>
-            <span style="color:${p.c};min-width:60px;font-size:0.75rem">${p.l}</span>
-            <span style="font-weight:700;color:${p.c}">${p.v||'—'} V</span>
-          </div>`).join('')}
+          <div style="display:flex;gap:1.2rem;flex-wrap:wrap">
+            <div style="flex:1;min-width:110px">
+              <div style="font-size:0.68rem;color:#6b7fa3;font-family:'Tajawal',sans-serif;margin:0.25rem 0 0.2rem 0;letter-spacing:0.03em">${isAr?'فاز — نيوترال':'Phase to Neutral'}</div>
+              ${[{l:`${PH[0]}-N`,v:v1,c:PC[0]},{l:`${PH[1]}-N`,v:v2,c:PC[1]},{l:`${PH[2]}-N`,v:v3,c:PC[2]}].map(p=>`
+              <div class="phase-row">
+                <div class="phase-dot" style="background:${p.c}"></div>
+                <span style="color:${p.c};min-width:60px;font-size:0.75rem">${p.l}</span>
+                <span style="font-weight:700;color:${p.c}">${p.v||'—'} V</span>
+              </div>`).join('')}
+            </div>
+            <div style="flex:1;min-width:110px;border-left:1px solid #1e3a5f;padding-left:1rem">
+              <div style="font-size:0.68rem;color:#6b7fa3;font-family:'Tajawal',sans-serif;margin:0.25rem 0 0.2rem 0;letter-spacing:0.03em">${isAr?'فاز — فاز':'Phase to Phase'}</div>
+              ${[
+                {c1:PC[0],c2:PC[1],n1:PH[0],n2:PH[1],val:v.vL1L2},
+                {c1:PC[0],c2:PC[2],n1:PH[0],n2:PH[2],val:v.vL1L3},
+                {c1:PC[1],c2:PC[2],n1:PH[1],n2:PH[2],val:v.vL2L3}
+              ].map(p=>`
+              <div class="phase-row">
+                <div class="phase-dot" style="background:linear-gradient(135deg,${p.c1} 50%,${p.c2} 50%)"></div>
+                <span style="min-width:90px;font-size:0.75rem">
+                  <span style="color:${p.c1}">${p.n1}</span><span style="color:#6b7fa3">-</span><span style="color:${p.c2}">${p.n2}</span>
+                </span>
+                <span style="font-weight:700;color:#e2e8f0">${p.val||'—'} V</span>
+              </div>`).join('')}
+            </div>
+          </div>
         </div>
         <div>
           <div class="mini-title">⚡ ${isAr?'التيار (A) — KVA — KW':'Current (A) — KVA — KW'} (PF=${pfR})</div>
