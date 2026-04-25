@@ -1,4 +1,4 @@
--- ============================================
+s-- ============================================
 -- TEAM AUTHENTICATION - SUPABASE SETUP
 -- ============================================
 -- Run this SQL in your Supabase SQL Editor (Dashboard → SQL Editor → New Query)
@@ -9,7 +9,7 @@
 -- ============================================
 
 -- 1. ENABLE pgcrypto EXTENSION (for password hashing)
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
 
 -- 2. CREATE team_auth TABLE
 CREATE TABLE IF NOT EXISTS public.team_auth (
@@ -32,12 +32,12 @@ CREATE OR REPLACE FUNCTION public.verify_team_login(p_team TEXT, p_password TEXT
 RETURNS BOOLEAN
 LANGUAGE sql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.team_auth
     WHERE team_name = p_team
-      AND password_hash = crypt(p_password, password_hash)
+      AND password_hash = extensions.crypt(p_password, password_hash)
   );
 $$;
 
@@ -47,26 +47,26 @@ GRANT EXECUTE ON FUNCTION public.verify_team_login(TEXT, TEXT) TO anon;
 -- 6. SEED TEAM CREDENTIALS (bcrypt-hashed)
 --    ⚠️ IMPORTANT: Change these passwords after initial setup!
 --    To update a password later, run:
---      UPDATE public.team_auth SET password_hash = crypt('NEW_PASSWORD', gen_salt('bf')) WHERE team_name = 'TEAM_NAME';
+--      UPDATE public.team_auth SET password_hash = extensions.crypt('NEW_PASSWORD', extensions.gen_salt('bf')) WHERE team_name = 'TEAM_NAME';
 INSERT INTO public.team_auth (team_name, password_hash, is_admin) VALUES
-  ('Ibri',       crypt('ib11',      gen_salt('bf')), false),
-  ('Wadi Alain', crypt('wa22',      gen_salt('bf')), false),
-  ('Araqi',      crypt('ar33',      gen_salt('bf')), false),
-  ('Hijermat',   crypt('hj44',      gen_salt('bf')), false),
-  ('Dank',       crypt('dk55',      gen_salt('bf')), false),
-  ('Yanqul',     crypt('yq66',      gen_salt('bf')), false),
-  ('__admin__',  crypt('admin2025', gen_salt('bf')), true)
+  ('Ibri',       extensions.crypt('ib11',      extensions.gen_salt('bf')), false),
+  ('Wadi Alain', extensions.crypt('wa22',      extensions.gen_salt('bf')), false),
+  ('Araqi',      extensions.crypt('ar33',      extensions.gen_salt('bf')), false),
+  ('Hijermat',   extensions.crypt('hj44',      extensions.gen_salt('bf')), false),
+  ('Dank',       extensions.crypt('dk55',      extensions.gen_salt('bf')), false),
+  ('Yanqul',     extensions.crypt('yq66',      extensions.gen_salt('bf')), false),
+  ('__admin__',  extensions.crypt('admin2025', extensions.gen_salt('bf')), true)
 ON CONFLICT (team_name) DO NOTHING;
 
 -- ============================================
 -- HELPER: CHANGE A TEAM PASSWORD
 -- ============================================
 -- UPDATE public.team_auth
--- SET password_hash = crypt('NEW_PASSWORD_HERE', gen_salt('bf'))
+-- SET password_hash = extensions.crypt('NEW_PASSWORD_HERE', extensions.gen_salt('bf'))
 -- WHERE team_name = 'TEAM_NAME_HERE';
 --
 -- Example - change admin password:
 -- UPDATE public.team_auth
--- SET password_hash = crypt('myNewSecurePassword', gen_salt('bf'))
+-- SET password_hash = extensions.crypt('myNewSecurePassword', extensions.gen_salt('bf'))
 -- WHERE team_name = '__admin__';
 -- ============================================
