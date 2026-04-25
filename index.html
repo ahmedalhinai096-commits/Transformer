@@ -950,6 +950,16 @@
   .arp-btn.reset:hover{background:rgba(0,255,157,0.1)}
   .arp-btn.reject{border-color:rgba(255,71,87,0.4);color:var(--danger)}
   .arp-btn.reject:hover{background:rgba(255,71,87,0.1)}
+  /* Station management */
+  .sm-label{font-size:0.72rem;color:var(--text-muted);font-family:'Tajawal',sans-serif}
+  .sm-input{padding:0.42rem 0.6rem;font-size:0.82rem;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);outline:none;width:100%}
+  .sm-input:focus{border-color:#a78bfa}
+  .sm-table{width:100%;border-collapse:collapse}
+  .sm-table th{font-size:0.72rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;padding:0.4rem 0.8rem;text-align:right;border-bottom:1px solid var(--border);font-weight:600}
+  .sm-table td{padding:0.5rem 0.8rem;border-bottom:1px solid rgba(30,58,95,0.25);font-size:0.82rem;vertical-align:middle}
+  .sm-table tr:last-child td{border-bottom:none}
+  .sm-table tr:hover td{background:rgba(255,255,255,0.02)}
+  .sm-off{color:var(--text-muted);text-decoration:line-through;opacity:0.5}
   /* Reset password modal */
   #resetPwModal{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem}
   #resetPwModal.active{display:flex}
@@ -1035,6 +1045,30 @@
       </div>
       <div id="arpList"></div>
     </div>
+
+    <!-- ── Admin: Station Management ── -->
+    <div class="arp-card" id="stationMgmtPanel" style="margin-top:1rem">
+      <div class="arp-header">
+        <div class="arp-title" style="color:#a78bfa">🏭 إدارة المحطات</div>
+        <button class="arp-btn" style="border-color:rgba(167,139,250,0.4);color:#a78bfa;font-size:0.72rem" onclick="smRefresh()">🔄 تحديث</button>
+      </div>
+      <div style="padding:0.8rem;background:rgba(0,0,0,0.15);border-bottom:1px solid var(--border)">
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;align-items:flex-end">
+          <div style="display:flex;flex-direction:column;gap:0.3rem;flex:1;min-width:140px">
+            <label class="sm-label">الفريق</label>
+            <select id="smTeamSel" onchange="smLoadStations()" class="sm-input">
+              <option value="">-- اختر الفريق --</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.3rem;flex:2;min-width:160px">
+            <label class="sm-label">اسم المحطة الجديدة</label>
+            <input type="text" id="smName" placeholder="أدخل اسم المحطة" class="sm-input" onkeydown="if(event.key==='Enter')smAddStation()" />
+          </div>
+          <button onclick="smAddStation()" class="arp-btn" style="border-color:rgba(0,255,157,0.5);color:var(--accent3);height:36px;padding:0 1rem">+ إضافة</button>
+        </div>
+      </div>
+      <div id="smList"><div class="arp-empty">اختر فريقاً لعرض محطاته</div></div>
+    </div>
   </div>
 
   <!-- Top bar -->
@@ -1086,7 +1120,9 @@
     <div class="form-grid" style="margin-bottom:0.8rem">
       <div class="form-group">
         <label data-i18n="fStationLabel">اسم المحطة</label>
-        <input type="text" id="fStation" data-i18n-ph="fStationPh" placeholder="مثال: محطة الشمال" />
+        <select id="fStation">
+          <option value="">-- اختر المحطة --</option>
+        </select>
       </div>
       <div class="form-group">
         <label data-i18n="fHvFeederLabel">رقم فيدر HV</label>
@@ -1553,7 +1589,7 @@
   function editRecord(uid) {
     const r = records.find(r => r.uid === uid);
     if (!r) return;
-    document.getElementById('fStation').value  = r.station  || '';
+    populateStationDropdown(r.station || '');
     document.getElementById('fHvFeeder').value = r.hvFeeder || '';
     document.getElementById('fType').value     = r.type;
     document.getElementById('fId').value       = r.id;
@@ -3013,6 +3049,13 @@ ${fResults.length?`<div class="section">
     const station=document.getElementById('fStation').value.trim(), hvFeeder=document.getElementById('fHvFeeder').value.trim();
     const capacity=Number(document.getElementById('fCapacity').value), outputs=Number(document.getElementById('fOutputs').value);
     if(!type||!id||!station||!hvFeeder||!capacity||!outputs){showToast(t('toastFill'),'error');return;}
+    // Validate station belongs to current team
+    if (!isAdmin && station) {
+      const check = await supa.get(
+        `stations?team=eq.${encodeURIComponent(currentTeam)}&name=eq.${encodeURIComponent(station)}&is_active=eq.true&select=id`
+      ).catch(()=>[]);
+      if (!check?.length) { showToast('⚠️ المحطة غير صالحة لفريقك', 'error'); return; }
+    }
     let savedUid;
     try {
       if (editId) {
@@ -3092,12 +3135,14 @@ ${fResults.length?`<div class="section">
     applyLang();
     updateStationFilter();
     renderTable();
+    if (!isAdmin) await populateStationDropdown();
     // Add team col header visibility
     const thTeam=document.getElementById('thTeam'); if(thTeam) thTeam.style.display=isAdmin?'':'none';
     // Show/hide admin reset requests panel
     if(isAdmin){
       document.getElementById('adminResetPanel').style.display='block';
       loadResetRequests();
+      smRefresh();
     } else {
       document.getElementById('adminResetPanel').style.display='none';
     }
@@ -3117,6 +3162,107 @@ ${fResults.length?`<div class="section">
     showLoginScreen();
   }
   function showLoginScreen(){ document.getElementById('loginScreen').style.display='flex'; }
+
+  // ══════════════════════════════════════════════════
+  // STATIONS SYSTEM  (team stored as TEXT — no FK)
+  // ══════════════════════════════════════════════════
+
+  // Fill station dropdown from DB for the logged-in team
+  async function populateStationDropdown(preselect) {
+    const sel = document.getElementById('fStation');
+    if (!sel) return;
+    const val = preselect ?? sel.value;
+    try {
+      const data = await supa.get(
+        `stations?team=eq.${encodeURIComponent(currentTeam)}&is_active=eq.true&order=name.asc&select=name`
+      );
+      sel.innerHTML = `<option value="">-- اختر المحطة --</option>` +
+        (data||[]).map(s=>`<option value="${s.name}" ${s.name===val?'selected':''}>${s.name}</option>`).join('');
+    } catch {
+      sel.innerHTML = `<option value="">-- خطأ في تحميل المحطات --</option>`;
+    }
+  }
+
+  // ── Admin: Station Management ──────────────────────
+
+  async function smRefresh() {
+    smFillTeams();
+    const team = document.getElementById('smTeamSel')?.value;
+    if (team) smLoadStations();
+  }
+
+  function smFillTeams() {
+    const sel = document.getElementById('smTeamSel');
+    if (!sel) return;
+    const cur = sel.value;
+    // Use hardcoded TEAMS — always available, no DB dependency
+    sel.innerHTML = `<option value="">-- اختر الفريق --</option>` +
+      TEAMS.map(name => `<option value="${name}" ${name===cur?'selected':''}>${name}</option>`).join('');
+  }
+
+  async function smLoadStations() {
+    const team = document.getElementById('smTeamSel')?.value;
+    const wrap = document.getElementById('smList');
+    if (!wrap) return;
+    if (!team) { wrap.innerHTML = `<div class="arp-empty">اختر فريقاً لعرض محطاته</div>`; return; }
+    wrap.innerHTML = `<div class="arp-empty">⏳ جاري التحميل...</div>`;
+    try {
+      const data = await supa.get(
+        `stations?team=eq.${encodeURIComponent(team)}&order=name.asc&select=id,name,is_active`
+      );
+      if (!data?.length) { wrap.innerHTML = `<div class="arp-empty">لا توجد محطات لهذا الفريق بعد</div>`; return; }
+      wrap.innerHTML = `<table class="sm-table">
+        <thead><tr><th>اسم المحطة</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+        <tbody>${data.map(s=>`<tr>
+          <td class="${s.is_active?'':'sm-off'}">${s.name}</td>
+          <td>${s.is_active
+            ?`<span style="color:#22c55e;font-size:0.75rem;font-weight:700">● نشطة</span>`
+            :`<span style="color:var(--text-muted);font-size:0.75rem">● معطلة</span>`}</td>
+          <td><div style="display:flex;gap:0.4rem">
+            <button class="arp-btn" style="border-color:rgba(167,139,250,0.4);color:#a78bfa;font-size:0.72rem;padding:0.22rem 0.55rem"
+              onclick="smRename(${s.id},'${s.name.replace(/'/g,"\\'")}')">✏️</button>
+            ${s.is_active
+              ?`<button class="arp-btn reject" style="font-size:0.72rem;padding:0.22rem 0.55rem" onclick="smToggle(${s.id},false)">🚫</button>`
+              :`<button class="arp-btn" style="border-color:rgba(0,255,157,0.4);color:var(--accent3);font-size:0.72rem;padding:0.22rem 0.55rem" onclick="smToggle(${s.id},true)">✅</button>`}
+          </div></td>
+        </tr>`).join('')}</tbody></table>`;
+    } catch(e) { wrap.innerHTML = `<div class="arp-empty">❌ ${e.message}</div>`; }
+  }
+
+  async function smAddStation() {
+    const team = document.getElementById('smTeamSel')?.value;
+    const name = document.getElementById('smName')?.value.trim();
+    if (!team) { showToast('اختر الفريق أولاً', 'error'); return; }
+    if (!name) { showToast('أدخل اسم المحطة',  'error'); return; }
+    try {
+      await supa.post('stations', { team, name, is_active: true });
+      document.getElementById('smName').value = '';
+      showToast('✅ تمت الإضافة', 'success');
+      smLoadStations();
+    } catch(e) {
+      showToast(e.message?.includes('unique') ? '⚠️ المحطة موجودة مسبقاً' : '❌ '+e.message, 'error');
+    }
+  }
+
+  async function smRename(id, oldName) {
+    const newName = prompt('الاسم الجديد:', oldName);
+    if (!newName || newName.trim() === oldName) return;
+    try {
+      await supa.patch(`stations?id=eq.${id}`, { name: newName.trim(), updated_at: new Date().toISOString() });
+      showToast('✅ تم التعديل', 'success');
+      smLoadStations();
+    } catch(e) {
+      showToast(e.message?.includes('unique') ? '⚠️ الاسم مستخدم مسبقاً' : '❌ '+e.message, 'error');
+    }
+  }
+
+  async function smToggle(id, active) {
+    try {
+      await supa.patch(`stations?id=eq.${id}`, { is_active: active, updated_at: new Date().toISOString() });
+      showToast(active ? '✅ تم التفعيل' : '🚫 تم التعطيل', active ? 'success' : 'error');
+      smLoadStations();
+    } catch(e) { showToast('❌ '+e.message, 'error'); }
+  }
 
 </script>
 </body>
