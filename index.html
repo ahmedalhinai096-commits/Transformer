@@ -1772,7 +1772,9 @@
   }
 
   function buildFeederTabs(uid) {
-    const feeders = loadings[uid].feeders;
+    const rec = records.find(r => r.uid === uid);
+    const cnt = rec ? Number(rec.outputs) : loadings[uid].feeders.length;
+    const feeders = loadings[uid].feeders.slice(0, cnt);
     document.getElementById('feederTabs').innerHTML = feeders.map((f, i) => {
       const filled = hasData(f);
       return `<button class="feeder-tab ${i===activeFeederIdx?'active':''}" onclick="switchFeeder(${i})">
@@ -1786,7 +1788,9 @@
   }
 
   function buildFeederForms(uid) {
-    const feeders = loadings[uid].feeders;
+    const rec = records.find(r => r.uid === uid);
+    const cnt = rec ? Number(rec.outputs) : loadings[uid].feeders.length;
+    const feeders = loadings[uid].feeders.slice(0, cnt);
     document.getElementById('feederForms').innerHTML = feeders.map((f, i) => {
       // Build timestamp HTML for this feeder
       let tsHtml = '';
