@@ -70,3 +70,109 @@ ON CONFLICT (team_name) DO NOTHING;
 -- SET password_hash = extensions.crypt('myNewSecurePassword', extensions.gen_salt('bf'))
 -- WHERE team_name = '__admin__';
 -- ============================================
+
+-- ============================================
+-- PASSWORD RESET REQUESTS TABLE
+-- ============================================
+
+-- 7. CREATE password_reset_requests TABLE
+CREATE TABLE IF NOT EXISTS public.password_reset_requests (
+  id SERIAL PRIMARY KEY,
+  team_name TEXT NOT NULL,
+  requester_name TEXT,
+  reason TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',
+  reviewed_by TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  reviewed_at TIMESTAMPTZ
+);
+
+ALTER TABLE public.password_reset_requests ENABLE ROW LEVEL SECURITY;
+
+GRANT SELECT, INSERT ON public.password_reset_requests TO anon;
+GRANT USAGE, SELECT ON SEQUENCE password_reset_requests_id_seq TO anon;
+
+-- 8. RPC: Submit a password reset request (called by team users)
+CREATE OR REPLACE FUNCTION public.request_password_reset(p_team TEXT, p_requester TEXT DEFAULT NULL, p_reason TEXT DEFAULT NULL)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  -- Only allow for existing non-admin teams
+  IF NOT EXISTS (SELECT 1 FROM public.team_auth WHERE team_name = p_team AND is_admin = false) THEN
+    RETURN;  -- Silent: don't reveal if team exists
+  END IF;
+  -- Prevent duplicate pending requests (1 per hour per team)
+  IF EXISTS (
+    SELECT 1 FROM public.password_reset_requests
+    WHERE team_name = p_team AND status = 'pending'
+      AND created_at > NOW() - INTERVAL '1 hour'
+  ) THEN
+    RETURN;
+  END IF;
+  INSERT INTO public.password_reset_requests (team_name, requester_name, reason)
+  VALUES (p_team, p_requester, p_reason);
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.request_password_reset(TEXT, TEXT, TEXT) TO anon;
+
+-- 9. RPC: Admin resets a team's password (admin password required for auth)
+CREATE OR REPLACE FUNCTION public.admin_reset_team_password(p_admin_pass TEXT, p_team TEXT, p_new_password TEXT)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions
+AS $$
+BEGIN
+  -- Verify caller is admin
+  IF NOT EXISTS (
+    SELECT 1 FROM public.team_auth
+    WHERE team_name = '__admin__'
+      AND password_hash = extensions.crypt(p_admin_pass, password_hash)
+  ) THEN
+    RETURN false;
+  END IF;
+  -- Update the team's password
+  UPDATE public.team_auth
+  SET password_hash = extensions.crypt(p_new_password, extensions.gen_salt('bf'))
+  WHERE team_name = p_team AND is_admin = false;
+  IF NOT FOUND THEN RETURN false; END IF;
+  -- Mark pending requests as approved
+  UPDATE public.password_reset_requests
+  SET status = 'approved', reviewed_by = '__admin__', reviewed_at = NOW()
+  WHERE team_name = p_team AND status = 'pending';
+  RETURN true;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.admin_reset_team_password(TEXT, TEXT, TEXT) TO anon;
+
+-- 10. RPC: Admin views pending reset requests (admin password required)
+CREATE OR REPLACE FUNCTION public.get_pending_reset_requests(p_admin_pass TEXT)
+RETURNS TABLE(id INT, team_name TEXT, requester_name TEXT, reason TEXT, created_at TIMESTAMPTZ)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions
+AS $$
+BEGIN
+  -- Verify caller is admin
+  IF NOT EXISTS (
+    SELECT 1 FROM public.team_auth
+    WHERE team_auth.team_name = '__admin__'
+      AND password_hash = extensions.crypt(p_admin_pass, password_hash)
+  ) THEN
+    RETURN;
+  END IF;
+  RETURN QUERY
+    SELECT r.id, r.team_name, r.requester_name, r.reason, r.created_at
+    FROM public.password_reset_requests r
+    WHERE r.status = 'pending'
+    ORDER BY r.created_at DESC;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.get_pending_reset_requests(TEXT) TO anon;
+-- ============================================

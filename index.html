@@ -14,6 +14,17 @@
   const ADMIN_TEAM = '__admin__';
   let currentTeam = null;
 
+  // Verify credentials against Supabase team_auth table (server-side bcrypt)
+  async function verifyLogin(teamName, password) {
+    try {
+      const result = await supa.req('POST', 'rpc/verify_team_login', { p_team: teamName, p_password: password });
+      return result === true;
+    } catch (e) {
+      console.error('Auth error:', e);
+      return false;
+    }
+  }
+
   // Supabase client
   const supa = {
     async req(method, path, body, extra={}) {
@@ -896,6 +907,20 @@
   .admin-toggle{text-align:center;margin-top:0.8rem}
   .admin-toggle button{background:none;border:none;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:0.78rem;cursor:pointer;text-decoration:underline}
   .admin-toggle button:hover{color:var(--accent2)}
+  .forgot-link{text-align:center;margin-top:0.6rem}
+  .forgot-link button{background:none;border:none;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:0.78rem;cursor:pointer;text-decoration:underline;transition:color 0.2s}
+  .forgot-link button:hover{color:var(--accent)}
+  #forgotPanel{display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
+  #forgotPanel .fp-title{font-size:0.85rem;font-weight:700;color:var(--accent);margin-bottom:0.6rem;text-align:center;font-family:'Tajawal',sans-serif}
+  #forgotPanel .fp-desc{font-size:0.75rem;color:var(--text-muted);text-align:center;margin-bottom:0.8rem;font-family:'Tajawal',sans-serif;line-height:1.6}
+  #forgotPanel .fp-success{color:var(--accent3);font-size:0.8rem;text-align:center;font-family:'Tajawal',sans-serif;padding:0.6rem;background:rgba(0,255,157,0.08);border:1px solid rgba(0,255,157,0.2);border-radius:8px;display:none}
+  #forgotPanel .fp-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:0.9rem;padding:0.6rem 0.8rem;outline:none;margin-bottom:0.6rem;transition:border-color 0.2s}
+  #forgotPanel .fp-input:focus{border-color:var(--accent)}
+  #forgotPanel .fp-btn{width:100%;padding:0.6rem;border-radius:8px;border:none;background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;font-family:'Cairo',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+  #forgotPanel .fp-btn:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(167,139,250,0.4)}
+  #forgotPanel .fp-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+  #forgotPanel .fp-back{background:none;border:none;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:0.78rem;cursor:pointer;text-decoration:underline;margin-top:0.5rem;display:block;text-align:center}
+  #forgotPanel .fp-back:hover{color:var(--accent)}
   /* sync */
   .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--accent3);display:inline-block;animation:pulse 2s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
@@ -919,7 +944,20 @@
     <input type="password" class="login-pw" id="loginPw" placeholder="كلمة المرور ••••••" onkeydown="if(event.key==='Enter')doTeamLogin()"/>
     <button class="btn-login-go" onclick="doTeamLogin()">دخول →</button>
     <div class="login-err" id="loginErr"></div>
+    <div class="forgot-link"><button onclick="showForgotPanel()">🔑 نسيت كلمة المرور؟</button></div>
     <div class="admin-toggle"><button onclick="showAdminLogin()">🔐 دخول كمدير النظام</button></div>
+
+    <!-- Forgot Password Panel -->
+    <div id="forgotPanel">
+      <div class="fp-title">🔑 طلب إعادة تعيين كلمة المرور</div>
+      <div class="fp-desc">اختر فريقك أعلاه ثم أدخل اسمك. سيتم إرسال طلب إلى مدير النظام لإعادة تعيين كلمة المرور.</div>
+      <input type="text" class="fp-input" id="fpRequesterName" placeholder="اسمك (اختياري)" />
+      <input type="text" class="fp-input" id="fpReason" placeholder="سبب الطلب (اختياري)" />
+      <button class="fp-btn" id="fpSubmitBtn" onclick="submitForgotRequest()">📩 إرسال طلب إعادة التعيين</button>
+      <div class="fp-success" id="fpSuccess">✅ تم إرسال طلبك بنجاح. سيقوم مدير النظام بمراجعته.</div>
+      <div class="login-err" id="fpErr" style="margin-top:0.4rem"></div>
+      <button class="fp-back" onclick="hideForgotPanel()">← الرجوع لتسجيل الدخول</button>
+    </div>
   </div>
 </div>
 
@@ -1180,17 +1218,6 @@
 
   let isAdmin = false;
 
-  // Verify credentials against Supabase team_auth table
-  async function verifyLogin(teamName, password) {
-    try {
-      const result = await supa.req('POST', 'rpc/verify_team_login', { p_team: teamName, p_password: password });
-      return result === true;
-    } catch (e) {
-      console.error('Auth error:', e);
-      return false;
-    }
-  }
-
   function toggleAdmin() {
     if (isAdmin) { logout(); return; }
     document.getElementById('loginModal').classList.add('active');
@@ -1213,7 +1240,6 @@
     if (ok) {
       isAdmin = true;
       closeModal();
-      // Update stored session to reflect admin mode
       localStorage.setItem('txSession', JSON.stringify({team:currentTeam, isAdmin}));
       document.getElementById('adminBtn').textContent = t('adminLogout');
       document.getElementById('adminBtn').classList.add('logged-in');
@@ -2530,9 +2556,9 @@ ${fResults.length?`<div class="section">
     if (!sel) { err.textContent = 'اختر فريقك أولاً'; return; }
     const team = sel.dataset.team;
     const loginBtn = document.querySelector('.btn-login-go');
-    loginBtn.disabled = true; loginBtn.style.opacity = '0.6';
+    loginBtn.disabled = true; loginBtn.style.opacity = '0.6'; loginBtn.textContent = '⏳';
     const ok = await verifyLogin(team, pw);
-    loginBtn.disabled = false; loginBtn.style.opacity = '1';
+    loginBtn.disabled = false; loginBtn.style.opacity = '1'; loginBtn.textContent = 'دخول →';
     if (ok) {
       if (team === '__admin__') {
         currentTeam = ADMIN_TEAM; isAdmin = true;
@@ -2546,6 +2572,44 @@ ${fResults.length?`<div class="section">
       err.textContent = '❌ كلمة المرور غير صحيحة';
       document.getElementById('loginPw').value = '';
     }
+  }
+
+  // ── Forgot Password ──────────────────────────────
+  function showForgotPanel() {
+    document.getElementById('forgotPanel').style.display = 'block';
+    document.getElementById('fpSuccess').style.display = 'none';
+    document.getElementById('fpErr').textContent = '';
+    document.getElementById('fpRequesterName').value = '';
+    document.getElementById('fpReason').value = '';
+  }
+  function hideForgotPanel() {
+    document.getElementById('forgotPanel').style.display = 'none';
+  }
+  async function submitForgotRequest() {
+    const sel = document.getElementById('teamGrid').querySelector('.selected');
+    const err = document.getElementById('fpErr');
+    const btn = document.getElementById('fpSubmitBtn');
+    if (!sel) { err.textContent = '⚠️ اختر فريقك أولاً من الأزرار أعلاه'; return; }
+    const team = sel.dataset.team;
+    if (team === '__admin__') { err.textContent = '⚠️ لا يمكن طلب إعادة تعيين لحساب الأدمن من هنا'; return; }
+    const requester = document.getElementById('fpRequesterName').value.trim();
+    const reason = document.getElementById('fpReason').value.trim();
+    btn.disabled = true; btn.style.opacity = '0.6'; btn.textContent = '⏳ جارٍ الإرسال...';
+    err.textContent = '';
+    try {
+      await supa.req('POST', 'rpc/request_password_reset', {
+        p_team: team,
+        p_requester: requester || null,
+        p_reason: reason || null
+      });
+      document.getElementById('fpSuccess').style.display = 'block';
+      btn.style.display = 'none';
+    } catch (e) {
+      // Generic message — don't reveal if team exists
+      document.getElementById('fpSuccess').style.display = 'block';
+      btn.style.display = 'none';
+    }
+    btn.disabled = false; btn.style.opacity = '1'; btn.textContent = '📩 إرسال طلب إعادة التعيين';
   }
 
   function doLogout() {
