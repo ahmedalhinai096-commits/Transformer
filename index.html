@@ -10,9 +10,8 @@
   // ── Supabase Config ──────────────────────────────────
   const SUPA_URL = 'https://hgnufhugpqqbkbxflyot.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnbnVmaHVncHFxYmtieGZseW90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5NTc4NTgsImV4cCI6MjA5MjUzMzg1OH0.ElSIjFOg82EuNgdfCL3RtQDUhEXHqjjz7BwC4G7IAyA';
-  const TEAMS = { 'Ibri':'ib11','Wadi Alain':'wa22','Araqi':'ar33','Hijermat':'hj44','Dank':'dk55','Yanqul':'yq66' };
+  const TEAMS = ['Ibri','Wadi Alain','Araqi','Hijermat','Dank','Yanqul'];
   const ADMIN_TEAM = '__admin__';
-  const ADMIN_PASS_TEAM = 'admin2025';
   let currentTeam = null;
 
   // Supabase client
@@ -644,6 +643,7 @@
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--border);
     flex-wrap: wrap;
+    margin-top: 24px;
   }
 
   .lm-title { font-size: 1.1rem; font-weight: 800; color: var(--accent3); }
@@ -1178,8 +1178,18 @@
     }
   }
 
-  const ADMIN_PASS = 'admin123';
   let isAdmin = false;
+
+  // Verify credentials against Supabase team_auth table
+  async function verifyLogin(teamName, password) {
+    try {
+      const result = await supa.req('POST', 'rpc/verify_team_login', { p_team: teamName, p_password: password });
+      return result === true;
+    } catch (e) {
+      console.error('Auth error:', e);
+      return false;
+    }
+  }
 
   function toggleAdmin() {
     if (isAdmin) { logout(); return; }
@@ -1193,11 +1203,18 @@
     document.getElementById('loginError').textContent = '';
   }
 
-  function doLogin() {
+  async function doLogin() {
     const pw = document.getElementById('pwInput').value;
-    if (pw === ADMIN_PASS) {
+    if (!pw) return;
+    const btn = document.querySelector('#loginModal .btn-login');
+    btn.disabled = true; btn.style.opacity = '0.6';
+    const ok = await verifyLogin('__admin__', pw);
+    btn.disabled = false; btn.style.opacity = '1';
+    if (ok) {
       isAdmin = true;
       closeModal();
+      // Update stored session to reflect admin mode
+      localStorage.setItem('txSession', JSON.stringify({team:currentTeam, isAdmin}));
       document.getElementById('adminBtn').textContent = t('adminLogout');
       document.getElementById('adminBtn').classList.add('logged-in');
       document.getElementById('adminBadge').style.display = 'inline-flex';
@@ -2485,7 +2502,7 @@ ${fResults.length?`<div class="section">
   // ══════════════════════════════════════════════════
   function buildTeamGrid() {
     const grid = document.getElementById('teamGrid');
-    Object.keys(TEAMS).forEach(team => {
+    TEAMS.forEach(team => {
       const btn = document.createElement('button');
       btn.className = 'team-btn'; btn.dataset.team = team; btn.textContent = team;
       btn.onclick = () => { grid.querySelectorAll('.team-btn').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); };
@@ -2506,23 +2523,29 @@ ${fResults.length?`<div class="section">
     ab.click();
   }
 
-  function doTeamLogin() {
+  async function doTeamLogin() {
     const sel = document.getElementById('teamGrid').querySelector('.selected');
     const pw  = document.getElementById('loginPw').value;
     const err = document.getElementById('loginErr');
     if (!sel) { err.textContent = 'اختر فريقك أولاً'; return; }
     const team = sel.dataset.team;
-    if (team === '__admin__' && pw === ADMIN_PASS_TEAM) {
-      currentTeam = ADMIN_TEAM; isAdmin = true;
-    } else if (TEAMS[team] && TEAMS[team] === pw) {
-      currentTeam = team; isAdmin = false;
+    const loginBtn = document.querySelector('.btn-login-go');
+    loginBtn.disabled = true; loginBtn.style.opacity = '0.6';
+    const ok = await verifyLogin(team, pw);
+    loginBtn.disabled = false; loginBtn.style.opacity = '1';
+    if (ok) {
+      if (team === '__admin__') {
+        currentTeam = ADMIN_TEAM; isAdmin = true;
+      } else {
+        currentTeam = team; isAdmin = false;
+      }
+      err.textContent = '';
+      localStorage.setItem('txSession', JSON.stringify({team:currentTeam, isAdmin}));
+      launchApp();
     } else {
       err.textContent = '❌ كلمة المرور غير صحيحة';
-      document.getElementById('loginPw').value = ''; return;
+      document.getElementById('loginPw').value = '';
     }
-    err.textContent = '';
-    localStorage.setItem('txSession', JSON.stringify({team:currentTeam, isAdmin}));
-    launchApp();
   }
 
   function doLogout() {
