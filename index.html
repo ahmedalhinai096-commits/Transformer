@@ -2285,7 +2285,7 @@ ${fResults.length?`<div class="section">
     const feederDate = f.savedAt ? fmtDt(f.savedAt) : (isAr?'لم يُحفظ':'Not saved');
     return `<div class="feeder-card">
       <div class="feeder-title">
-        <span>⚡ ${f.name || (isAr?'فيدر':'Feeder')+' '+f.num} <span style="color:#a78bfa;font-size:0.82rem">(#${f.num||'—'})</span></span>
+        <span>⚡ Feeder No. #${f.num||'—'}${f.name ? ' ('+f.name+' mmsq)' : ''}</span>
         <div style="display:flex;align-items:center;gap:0.7rem;flex-wrap:wrap">
           <span class="ts-chip">🕐 ${feederDate}</span>
           <span style="font-size:0.78rem;color:#6b7fa3;font-family:'Tajawal',sans-serif">${isAr?'حمل الفيدر':'Feeder Load'}: <span style="color:${fc}">${fp.toFixed(1)}%</span></span>
