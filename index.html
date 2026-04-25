@@ -2181,8 +2181,8 @@ td{padding:0.6rem 0.8rem;text-align:center;vertical-align:middle}
 .ts-chip{display:inline-flex;align-items:center;gap:0.3rem;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);color:#a78bfa;border-radius:20px;padding:0.2rem 0.7rem;font-size:0.72rem;font-family:'Tajawal',sans-serif;white-space:nowrap}
 .footer{text-align:center;margin-top:3rem;padding-top:1rem;border-top:1px solid #1e3a5f;font-size:0.75rem;color:#6b7fa3;font-family:'Tajawal',sans-serif}
 @media print{
-@page{size:A4 landscape;margin:10mm}
-html,body{background:#fff!important;color:#000!important;width:100%;margin:0;padding:0}
+@page{size:A4 landscape;margin:0}
+html,body{background:#fff!important;color:#000!important;width:100%;margin:0;padding:10mm}
 body::before{display:none!important}
 .print-btn{display:none!important}
 .page{max-width:100%!important;width:100%!important;padding:0!important;margin:0!important}
@@ -2349,18 +2349,20 @@ ${fResults.length?`<div class="section">
 <div class="footer">${isAr?`تم إنشاء هذا التقرير في ${dateStr}`:`Report generated on ${dateStr}`}</div>
 <\/div><\/body><\/html>`;
 
-    const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
-    const url  = URL.createObjectURL(blob);
-    const w    = window.open(url, '_blank');
-    if (!w) {
-      // Fallback if popup blocked: download the file
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(html);
+      w.document.close();
+    } else {
+      const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+      const url  = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `report_${rec.id}_${new Date().toISOString().slice(0,10)}.html`;
       a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
       showToast(lang==='ar'?'📄 تم تنزيل التقرير (popup محجوب)':'📄 Report downloaded (popup blocked)','success');
     }
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
   }
 
   // ─── Excel Export via SheetJS (xlsx-js-style) ──────────
