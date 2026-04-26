@@ -2058,39 +2058,55 @@
     const pf        = Math.min(1, Math.max(0.1, parseFloat(loadings[uid]?.pf) || 0.9));
     const capKW     = capKVA * pf;
     const SQRT3     = Math.sqrt(3);
-    const vL1 = parseFloat(v.vL1N)||230, vL2 = parseFloat(v.vL2N)||230, vL3 = parseFloat(v.vL3N)||230;
-    // Auto-calculate max amp from capacity
-    const maxAmp    = Math.round((capKVA * 1000) / (SQRT3 * vL1));
 
-    let totalKVA = 0;
-    const feederResults = feeders.map(f => {
-      const i1 = parseFloat(f.iL1)||0, i2 = parseFloat(f.iL2)||0, i3 = parseFloat(f.iL3)||0;
-      const kva1 = (vL1*i1*SQRT3)/1000, kva2 = (vL2*i2*SQRT3)/1000, kva3 = (vL3*i3*SQRT3)/1000;
-      const totalF = kva1+kva2+kva3;
-      const kw1 = kva1*pf, kw2 = kva2*pf, kw3 = kva3*pf;
-      const totalKW = totalF * pf;
-      totalKVA += totalF;
-      const iVals = [i1,i2,i3].filter(x=>x>0);
-      const iAvg  = iVals.length ? iVals.reduce((a,b)=>a+b,0)/iVals.length : 0;
-      const iMax  = Math.max(i1,i2,i3);
-      const imbalancePct = iAvg ? ((iMax-iAvg)/iAvg*100) : 0;
-      return { f, kva1, kva2, kva3, totalF, kw1, kw2, kw3, totalKW, i1, i2, i3, iAvg, iMax, imbalancePct };
-    });
+    // ── جهد الخط: الأولوية للقيم المُدخلة، ثم 415V افتراضي
+    const vLL = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
 
+    // ── التيار المقنن: I_rated = KVA×1000 / (√3 × V_LL)
+    const ratedCurrent = (capKVA * 1000) / (SQRT3 * vLL);
+    const maxAmp = ratedCurrent;
+
+    // ── إجمالي تيار كل طور (مجموع جميع الفيدرات)
+    const totalR = feeders.reduce((s,f) => s + (parseFloat(f.iL1)||0), 0);
+    const totalY = feeders.reduce((s,f) => s + (parseFloat(f.iL2)||0), 0);
+    const totalB = feeders.reduce((s,f) => s + (parseFloat(f.iL3)||0), 0);
+    const totalN = feeders.reduce((s,f) => s + (parseFloat(f.iN) ||0), 0);
+
+    // ── أعلى وأقل وأوسط تيار كلي
+    const maxCurrent = Math.max(totalR, totalY, totalB);
+    const minCurrent = Math.min(totalR, totalY, totalB);
+    const avgCurrent = (totalR + totalY + totalB) / 3;
+
+    // ── نسبة التحميل: maxCurrent / ratedCurrent
+    const loadPct   = ratedCurrent > 0 ? Math.min(999, (maxCurrent / ratedCurrent) * 100) : 0;
+
+    // ── الاستطاعة الظاهرية والفعلية: KVA = √3 × V_LL × I_max / 1000
+    const totalKVA  = (SQRT3 * vLL * maxCurrent) / 1000;
     const totalKW   = totalKVA * pf;
 
-    const loadPct  = capKVA ? Math.min(999, (totalKVA/capKVA)*100) : 0;
-    const loadCls  = loadPct >= HIGH_LOAD ? 'load-danger' : loadPct >= 60 ? 'load-warn' : 'load-ok';
-    const loadColor= loadPct >= HIGH_LOAD ? 'var(--danger)' : loadPct >= 60 ? '#ffcc00' : 'var(--accent3)';
+    // ── عدم التوازن الكلي
+    const imbalanceTotal = avgCurrent > 0 ? ((maxCurrent - avgCurrent) / avgCurrent) * 100 : 0;
+
+    const loadCls   = loadPct >= HIGH_LOAD ? 'load-danger' : loadPct >= 60 ? 'load-warn' : 'load-ok';
+    const loadColor = loadPct >= HIGH_LOAD ? 'var(--danger)' : loadPct >= 60 ? '#ffcc00' : 'var(--accent3)';
+
+    // ── نتائج الفيدرات (للتنبيهات وأشرطة التيار)
+    const feederResults = feeders.map(f => {
+      const i1 = parseFloat(f.iL1)||0, i2 = parseFloat(f.iL2)||0, i3 = parseFloat(f.iL3)||0;
+      const iAvg = (i1+i2+i3) / 3;
+      const iMax = Math.max(i1,i2,i3);
+      const imbalancePct = iAvg > 0 ? ((iMax-iAvg)/iAvg*100) : 0;
+      return { f, i1, i2, i3, iAvg, iMax, imbalancePct };
+    });
 
     const alerts = [];
     feederResults.forEach(({f,i1,i2,i3,imbalancePct}) => {
       if (imbalancePct > 20) alerts.push({type:'danger', msg:`${f.name}: ${lang==='ar'?'عدم توازن الأحمال':'Load Imbalance'} ${imbalancePct.toFixed(1)}%`});
       else if (imbalancePct > 10) alerts.push({type:'warn', msg:`${f.name}: ${lang==='ar'?'توازن متوسط':'Moderate Imbalance'} ${imbalancePct.toFixed(1)}%`});
-      if (maxAmp > 0) {
+      if (ratedCurrent > 0) {
         [{n:t('red'),v:i1},{n:t('yellow'),v:i2},{n:t('blue'),v:i3}].forEach(p => {
-          if (p.v > maxAmp) alerts.push({type:'danger', msg:`${f.name} — ${p.n}: ${p.v}A ${lang==='ar'?'يتجاوز الماكس':'exceeds max'} ${maxAmp}A`});
-          else if (p.v > maxAmp*0.8) alerts.push({type:'warn', msg:`${f.name} — ${p.n}: ${p.v}A ${lang==='ar'?'قريب من الماكس':'near max'} (${(p.v/maxAmp*100).toFixed(0)}%)`});
+          if (p.v > ratedCurrent) alerts.push({type:'danger', msg:`${f.name} — ${p.n}: ${p.v}A ${lang==='ar'?'يتجاوز الماكس':'exceeds max'} ${ratedCurrent.toFixed(0)}A`});
+          else if (p.v > ratedCurrent*0.8) alerts.push({type:'warn', msg:`${f.name} — ${p.n}: ${p.v}A ${lang==='ar'?'قريب من الماكس':'near max'} (${(p.v/ratedCurrent*100).toFixed(0)}%)`});
         });
       }
     });
@@ -2148,15 +2164,9 @@
         <div class="analysis-card">
           <div class="analysis-card-title">📊 ${lang==='ar'?'إجمالي التيار الكلي (A)':'Total Current Summary (A)'}</div>
           ${(()=>{
-            const BAR_MAX = Math.round((capKVA * 1000) / (Math.sqrt(3) * (vL1||230)));
-            const tR = feederResults.reduce((s,{i1})=>s+(i1||0),0);
-            const tY = feederResults.reduce((s,{i2})=>s+(i2||0),0);
-            const tB = feederResults.reduce((s,{i3})=>s+(i3||0),0);
-            const tN = feederResults.reduce((s,{f})=>s+(parseFloat(f.iN)||0),0);
-            const tMax = Math.max(tR,tY,tB);
-            const tMin = Math.min(...[tR,tY,tB].filter(x=>x>0))||0;
-            const tAvg = [tR,tY,tB].filter(x=>x>0).reduce((a,b)=>a+b,0)/([tR,tY,tB].filter(x=>x>0).length||1);
-            const tImb = tAvg ? ((tMax-tAvg)/tAvg*100) : 0;
+            const BAR_MAX = ratedCurrent || 1;
+            const tR = totalR, tY = totalY, tB = totalB, tN = totalN;
+            const tMax = maxCurrent, tMin = minCurrent, tAvg = avgCurrent, tImb = imbalanceTotal;
             const tImbColor = tImb>20?'var(--danger)':tImb>10?'#ffcc00':'var(--accent3)';
             const phases = [
               {label:lang==='ar'?'إجمالي أحمر':'Total Red',   val:tR, c:'#ff4444'},
@@ -2234,23 +2244,45 @@
     const pfR     = Math.min(1, Math.max(0.1, parseFloat(loadings[uid]?.pf) || 0.9));
     const voltSavedAt = loadings[uid]?.voltSavedAt || null;
     const SQRT3 = Math.sqrt(3);
+    const powerFactor = Math.min(1, Math.max(0.1, parseFloat(loadings[uid]?.pf) || 0.9));
 
-    let totalKVA = 0;
+    // ── جهد الخط: الأولوية للقيم المُدخلة، ثم 415V افتراضي
+    const vLL = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
+
+    // ── التيار المقنن: I_rated = KVA×1000 / (√3 × V_LL)
+    const ratedCurrent = (capKVA * 1000) / (SQRT3 * vLL);
+
+    // ── إجمالي تيار كل طور
+    const _fds = feeders.filter(hasData);
+    const totalR = _fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0),0);
+    const totalY = _fds.reduce((s,f)=>s+(parseFloat(f.iL2)||0),0);
+    const totalB = _fds.reduce((s,f)=>s+(parseFloat(f.iL3)||0),0);
+
+    const maxCurrent = Math.max(totalR, totalY, totalB);
+    const avgCurrent = (totalR + totalY + totalB) / 3;
+
+    // ── نسبة التحميل: I_max / I_rated
+    const loadPct = ratedCurrent > 0 ? Math.min(999, (maxCurrent / ratedCurrent) * 100) : 0;
+
+    // ── الاستطاعة الظاهرية والفعلية: KVA = √3 × V_LL × I_max / 1000
+    const totalKVA  = (SQRT3 * vLL * maxCurrent) / 1000;
+    const totalKWR  = totalKVA * pfR;
+
+    // ── نتائج الفيدرات (تشمل KVA و KW لكل فيدر)
     const fResults = feeders.filter(hasData).map(f=>{
-      const v1=parseFloat(v.vL1N)||230, v2=parseFloat(v.vL2N)||230, v3=parseFloat(v.vL3N)||230;
+      const v1=parseFloat(v.vL1N)||0, v2=parseFloat(v.vL2N)||0, v3=parseFloat(v.vL3N)||0;
       const i1=parseFloat(f.iL1)||0,i2=parseFloat(f.iL2)||0,i3=parseFloat(f.iL3)||0,iN=parseFloat(f.iN)||0;
-      const kva1=(v1*i1*SQRT3)/1000,kva2=(v2*i2*SQRT3)/1000,kva3=(v3*i3*SQRT3)/1000;
-      const totalF=kva1+kva2+kva3;
-      const kw1=kva1*pfR, kw2=kva2*pfR, kw3=kva3*pfR, totalKW=totalF*pfR;
-      totalKVA+=totalF;
-      const iVals=[i1,i2,i3].filter(x=>x>0);
-      const iAvg=iVals.length?iVals.reduce((a,b)=>a+b,0)/iVals.length:0;
       const iMax=Math.max(i1,i2,i3);
-      const imb=iAvg?((iMax-iAvg)/iAvg*100):0;
+      const iAvg=(i1+i2+i3)/3;
+      // KVA لكل طور: √3 × V_LL × I_phase / 1000
+      const kva1=(SQRT3*vLL*i1)/1000, kva2=(SQRT3*vLL*i2)/1000, kva3=(SQRT3*vLL*i3)/1000;
+      // إجمالي KVA الفيدر = √3 × V_LL × I_max / 1000
+      const totalF=(SQRT3*vLL*iMax)/1000;
+      const kw1=kva1*pfR, kw2=kva2*pfR, kw3=kva3*pfR, totalKW=totalF*pfR;
+      const imb=iAvg>0?((iMax-iAvg)/iAvg*100):0;
       return {f,v1,v2,v3,i1,i2,i3,iN,kva1,kva2,kva3,totalF,kw1,kw2,kw3,totalKW,iAvg,iMax,imb};
     });
-    const totalKWR  = totalKVA * pfR;
-    const loadPct=capKVA?Math.min(999,(totalKVA/capKVA)*100):0;
+
     const loadColor=loadPct>=HIGH?'#ff4757':loadPct>=60?'#ffcc00':'#00ff9d';
     const loadStatus=isAr?(loadPct>=HIGH?'تحميل عالي':loadPct>=60?'تحميل متوسط':'تحميل طبيعي'):(loadPct>=HIGH?'High Load':loadPct>=60?'Moderate':'Normal');
     const maxI=Math.max(...fResults.flatMap(({i1,i2,i3})=>[i1,i2,i3]),1);
@@ -2716,14 +2748,20 @@ ${fResults.length?`<div class="section">
       /* AX: MIN */
       row.push(fCell('MIN(AS' + exRow + ':AU' + exRow + ')'));
 
-      /* AY: Load % = (AW / (E / 0.75)) * 100 */
-      row.push(fCell('IF(E' + exRow + '=0,0,(AW' + exRow + '/(E' + exRow + '/0.75))*100)'));
+      /* AY: Load % = (I_max / I_rated) × 100
+         I_rated = KVA×1000 / (√3 × V_LL)
+         V_LL: أولوية J ثم K ثم L ثم 415 افتراضي */
+      const vllF = `IF(J${exRow}>0,J${exRow},IF(K${exRow}>0,K${exRow},IF(L${exRow}>0,L${exRow},415)))`;
+      const ratedF = `(E${exRow}*1000)/(SQRT(3)*${vllF})`;
+      row.push(fCell(`IF(E${exRow}>0,(AW${exRow}/${ratedF})*100,0)`));
 
-      /* AZ: Action Upgrade */
-      row.push({ f: 'IF(AY' + exRow + '>70,"Upgrade","OK no need to Upgrade")', t: 's', s: ds });
+      /* AZ: Action Upgrade — loadPct > 70 */
+      row.push({ f: `IF(AY${exRow}>70,"Upgrade","OK - No Upgrade")`, t: 's', s: ds });
 
-      /* BA: Action Balance */
-      row.push({ f: 'IF(AW' + exRow + '-AX' + exRow + '<=10,"Ok no need to balance","need to balance")', t: 's', s: ds });
+      /* BA: Action Balance — imbalance% = (MAX - AVG) / AVG × 100 > 10 */
+      const avgF  = `AVERAGE(AS${exRow}:AU${exRow})`;
+      const imbF  = `IF(${avgF}>0,((AW${exRow}-${avgF})/${avgF})*100,0)`;
+      row.push({ f: `IF(${imbF}>10,"Need to Balance","OK - Balanced")`, t: 's', s: ds });
 
       aoa.push(row);
     });
