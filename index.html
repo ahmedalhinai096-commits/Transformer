@@ -2631,6 +2631,15 @@ td{padding:0.6rem 0.8rem;text-align:center;vertical-align:middle}
 .fc-curr-kva{font-size:0.68rem;color:#6b7fa3;min-width:52px;font-family:monospace;text-align:right}
 .fc-curr-kw{font-size:0.68rem;color:#a78bfa;min-width:52px;font-family:monospace;text-align:right}
 @media(max-width:600px){.fc-body{grid-template-columns:1fr}.fc-stat-right{margin-left:0}}
+.current-table{width:100%}
+.current-row{display:grid;grid-template-columns:80px 1fr 52px 62px 62px;gap:6px;align-items:center;padding:3px 0}
+.current-row.ct-header{border-bottom:1px solid #1e3a5f;padding-bottom:5px;margin-bottom:4px}
+.current-row span{white-space:nowrap;font-family:monospace;font-size:0.73rem}
+.current-row.ct-header span{font-size:0.6rem;color:#6b7fa3;font-family:'Tajawal',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+.current-value{text-align:right;font-weight:700}
+.current-bar{height:6px;border-radius:999px;background:rgba(255,255,255,0.08);overflow:hidden}
+.current-bar-fill{height:100%;border-radius:999px}
+@media(max-width:700px){.current-row{grid-template-columns:60px 1fr 42px}.current-row .kva,.current-row .kw{display:none}}
 .badge{display:inline-flex;align-items:center;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600}
 .bg{background:rgba(0,255,157,0.15);color:#00ff9d;border:1px solid rgba(0,255,157,0.3)}
 .bp{background:rgba(167,139,250,0.15);color:#a78bfa;border:1px solid rgba(167,139,250,0.3)}
@@ -2694,6 +2703,10 @@ th{word-break:break-word!important;overflow:visible!important}
 .fc-curr-row{margin-bottom:0.15rem!important}
 .fc-curr-amp{font-size:0.7rem!important}
 .fc-curr-kva,.fc-curr-kw{font-size:0.6rem!important}
+.current-row{grid-template-columns:65px 1fr 42px 52px 52px!important;gap:4px!important;padding:2px 0!important}
+.current-row span{font-size:0.6rem!important}
+.current-row.ct-header span{font-size:0.55rem!important}
+.current-bar{background:#ddd!important;height:5px!important}
 }
 <\/style><\/head><body><div class="page">
 <button class="print-btn" onclick="window.print()">🖨️ ${isAr?'طباعة / PDF':'Print / PDF'}</button>
@@ -2802,20 +2815,33 @@ ${fResults.length?`<div class="section">
     </div>
     <div class="fc-col">
       <div class="fc-col-title">🔌 ${t('currentSection')} (PF=${pfR})</div>
-      ${[{n:PH[0],c:PC[0],i:i1,k:kva1,w:kw1},{n:PH[1],c:PC[1],i:i2,k:kva2,w:kw2},{n:PH[2],c:PC[2],i:i3,k:kva3,w:kw3}].map(p=>`
-      <div class="fc-curr-row">
-        <div class="phase-dot" style="background:${p.c}"></div>
-        <span class="fc-curr-phase" style="color:${p.c}">${p.n}</span>
-        <div class="phase-bar-bg"><div class="phase-bar-fill" style="width:${maxI?Math.min(100,p.i/maxI*100):0}%;background:${p.c}"></div></div>
-        <span class="fc-curr-amp" style="color:${p.c}">${p.i||'—'}<span class="fc-unit">A</span></span>
-        <span class="fc-curr-kva">${p.k.toFixed(2)}<span class="fc-unit"> KVA</span></span>
-        <span class="fc-curr-kw">${p.w.toFixed(2)}<span class="fc-unit"> KW</span></span>
-      </div>`).join('')}
-      <div class="fc-curr-row">
-        <div class="phase-dot" style="background:#aaa"></div>
-        <span class="fc-curr-phase" style="color:#aaa">${PH[3]}</span>
-        <div class="phase-bar-bg"><div class="phase-bar-fill" style="width:${maxI?Math.min(100,(iN||0)/maxI*100):0}%;background:#aaa"></div></div>
-        <span class="fc-curr-amp" style="color:#aaa">${iN||'—'}<span class="fc-unit">A</span></span>
+      <div class="current-table">
+        <div class="current-row ct-header">
+          <span>${isAr?'الفاز':'Phase'}</span>
+          <span>${isAr?'الشريط':'Bar'}</span>
+          <span style="text-align:right">A</span>
+          <span style="text-align:right" class="kva">KVA</span>
+          <span style="text-align:right" class="kw">KW</span>
+        </div>
+        ${[{n:PH[0],c:PC[0],i:i1,k:kva1,w:kw1},{n:PH[1],c:PC[1],i:i2,k:kva2,w:kw2},{n:PH[2],c:PC[2],i:i3,k:kva3,w:kw3}].map(p=>`
+        <div class="current-row">
+          <span style="color:${p.c};display:flex;align-items:center;gap:5px;overflow:hidden">
+            <span style="width:7px;height:7px;border-radius:50%;background:${p.c};flex-shrink:0;display:inline-block"></span>${p.n}
+          </span>
+          <div class="current-bar"><div class="current-bar-fill" style="width:${maxI?Math.min(100,p.i/maxI*100):0}%;background:${p.c}"></div></div>
+          <span class="current-value" style="color:${p.c}">${p.i||'—'}</span>
+          <span class="current-value kva" style="color:#6b7fa3">${p.k.toFixed(2)}</span>
+          <span class="current-value kw" style="color:#a78bfa">${p.w.toFixed(2)}</span>
+        </div>`).join('')}
+        <div class="current-row">
+          <span style="color:#aaa;display:flex;align-items:center;gap:5px;overflow:hidden">
+            <span style="width:7px;height:7px;border-radius:50%;background:#aaa;flex-shrink:0;display:inline-block"></span>${PH[3]}
+          </span>
+          <div class="current-bar"><div class="current-bar-fill" style="width:${maxI?Math.min(100,(iN||0)/maxI*100):0}%;background:#aaa"></div></div>
+          <span class="current-value" style="color:#aaa">${iN||'—'}</span>
+          <span class="current-value kva" style="color:#6b7fa3">—</span>
+          <span class="current-value kw" style="color:#6b7fa3">—</span>
+        </div>
       </div>
     </div>
   </div>
