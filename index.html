@@ -1016,6 +1016,41 @@
   .btn-logout{padding:0.3rem 0.8rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:'Cairo',sans-serif;font-size:0.78rem;cursor:pointer;transition:all 0.2s}
   .btn-logout:hover{border-color:var(--danger);color:var(--danger)}
   .badge-team{background:rgba(255,107,53,0.12);color:var(--accent2);border:1px solid rgba(255,107,53,0.3)}
+
+  /* ── Filter Bar ── */
+  .filter-select {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.82rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    outline: none;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    transition: border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .filter-select:focus { border-color: var(--accent); }
+  .filter-select:hover { border-color: rgba(0,212,255,0.4); }
+
+  /* ── Summary Report ── */
+  .summary-report-table { width: 100%; border-collapse: collapse; }
+  .summary-report-table thead th {
+    background: var(--surface2);
+    padding: 0.8rem 1rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: 'Tajawal', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .summary-report-table tbody tr { border-bottom: 1px solid rgba(30,58,95,0.5); transition: background 0.15s; }
+  .summary-report-table tbody tr:hover { background: rgba(0,212,255,0.04); }
+  .summary-report-table tbody td { padding: 0.75rem 1rem; font-size: 0.88rem; text-align: center; vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -1174,14 +1209,30 @@
   <!-- Table -->
   <div class="table-wrapper">
     <div style="display:flex;align-items:center;gap:0.6rem;padding:0.8rem 1.2rem;border-bottom:1px solid var(--border);flex-wrap:wrap">
-      <div class="table-title" style="white-space:nowrap;margin-left:auto" data-i18n="tableTitle">📋 قائمة المحولات</div>
-      <select id="stationFilter" onchange="currentPage=1;renderTable()" style="min-width:130px;padding:0.5rem 0.7rem;font-size:0.82rem;flex-shrink:0">
+      <div class="table-title" style="white-space:nowrap" data-i18n="tableTitle">📋 قائمة المحولات</div>
+      <select id="stationFilter" onchange="currentPage=1;renderTable()" class="filter-select" style="min-width:130px">
         <option value="" data-i18n="filterAll">🏭 كل المحطات</option>
+      </select>
+      <select id="filterType" onchange="currentPage=1;renderTable()" class="filter-select">
+        <option value="">🔧 كل الأنواع</option>
+        <option value="أرضي">أرضي (Ground)</option>
+        <option value="معلق">معلق (Pole)</option>
+      </select>
+      <select id="filterCapacity" onchange="currentPage=1;renderTable()" class="filter-select">
+        <option value="">⚡ كل السعات</option>
+      </select>
+      <select id="searchMode" onchange="currentPage=1;renderTable()" class="filter-select" style="min-width:125px">
+        <option value="all">بحث عام</option>
+        <option value="station">اسم المحطة</option>
+        <option value="txNo">رقم المحول</option>
+        <option value="capacity">السعة</option>
+        <option value="lvFeeders">عدد مخارج LV</option>
       </select>
       <div class="search-box" style="min-width:140px;flex:1;max-width:220px">
         <span class="search-icon">🔍</span>
         <input type="text" id="searchInput" data-i18n-ph="searchPh" placeholder="بحث..." oninput="currentPage=1;renderTable()" />
       </div>
+      <button class="btn btn-secondary" onclick="generateSummaryReport()" style="padding:0.5rem 0.9rem;font-size:0.8rem;white-space:nowrap;flex-shrink:0;border-color:rgba(167,139,250,0.4);color:#a78bfa">📄 تقرير مختصر</button>
       <button class="btn btn-secondary" onclick="exportExcel()" title="ينزل CSV — افتحه بـ Excel" style="padding:0.5rem 0.9rem;font-size:0.8rem;white-space:nowrap;flex-shrink:0;border-color:rgba(0,255,157,0.4);color:var(--accent3)">📊 تصدير Excel</button>
     </div>
     <div style="overflow-x:auto;direction:ltr">
@@ -1217,6 +1268,31 @@
       </div>
       <div id="recordCount" class="record-count" style="font-size:0.78rem;color:var(--text-muted)"></div>
       <div id="paginationControls" class="pg-controls"></div>
+    </div>
+  </div>
+
+  <!-- Summary Report Section -->
+  <div id="summaryReportSection" style="display:none;margin-top:1.5rem">
+    <div class="table-wrapper">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.8rem 1.2rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem">
+        <div class="table-title">📄 تقرير مختصر للمحطات</div>
+        <button class="btn btn-secondary" onclick="closeSummaryReport()" style="padding:0.4rem 0.8rem;font-size:0.8rem;border-color:rgba(255,71,87,0.4);color:var(--danger)">✕ إغلاق</button>
+      </div>
+      <div style="overflow-x:auto;direction:ltr">
+        <table class="summary-report-table" style="direction:ltr">
+          <thead>
+            <tr>
+              <th>Station</th>
+              <th>Transformers</th>
+              <th>Total Capacity KVA</th>
+              <th>Ground</th>
+              <th>Pole</th>
+              <th>Total LV Feeders</th>
+            </tr>
+          </thead>
+          <tbody id="summaryReportBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -1454,17 +1530,49 @@
     const stations = [...new Set(records.map(r => r.station).filter(Boolean))].sort();
     sel.innerHTML = `<option value="">${t('filterAll')}</option>` +
       stations.map(s => `<option value="${s}" ${s===current?'selected':''}>${s}</option>`).join('');
+
+    const capSel = document.getElementById('filterCapacity');
+    if (capSel) {
+      const currentCap = capSel.value;
+      const capacities = [...new Set(records.map(r => String(r.capacity || '').replace(/,/g, '')).filter(Boolean))]
+        .sort((a, b) => Number(a) - Number(b));
+      capSel.innerHTML = `<option value="">⚡ كل السعات</option>` +
+        capacities.map(c => `<option value="${c}" ${c===currentCap?'selected':''}>${c} KVA</option>`).join('');
+    }
+  }
+
+  function matchesSearch(rec, query, mode) {
+    if (!query) return true;
+    const q        = query.trim().toLowerCase();
+    const station  = String(rec.station  || '').toLowerCase();
+    const txNo     = String(rec.id       || '').toLowerCase();
+    const capacity = String(rec.capacity || '').replace(/,/g, '').toLowerCase();
+    const lvFeeders = String(rec.outputs || '').toLowerCase();
+    if (mode === 'station')   return station.includes(q);
+    if (mode === 'txNo')      return txNo === q;
+    if (mode === 'capacity')  return capacity === q;
+    if (mode === 'lvFeeders') return lvFeeders === q;
+    return station.includes(q) || txNo.includes(q) || capacity.includes(q) || lvFeeders.includes(q);
+  }
+
+  function getFilteredTransformers() {
+    const stationFilter  = document.getElementById('stationFilter')?.value  || '';
+    const typeFilter     = document.getElementById('filterType')?.value     || '';
+    const capacityFilter = document.getElementById('filterCapacity')?.value || '';
+    const searchMode     = document.getElementById('searchMode')?.value     || 'all';
+    const searchQuery    = document.getElementById('searchInput')?.value    || '';
+    return records.filter(rec => {
+      const capacity = String(rec.capacity || '').replace(/,/g, '');
+      const okStation  = !stationFilter  || rec.station === stationFilter;
+      const okType     = !typeFilter     || rec.type    === typeFilter;
+      const okCapacity = !capacityFilter || capacity    === capacityFilter;
+      const okSearch   = matchesSearch(rec, searchQuery, searchMode);
+      return okStation && okType && okCapacity && okSearch;
+    });
   }
 
   function renderTable() {
-    const q       = document.getElementById('searchInput').value.toLowerCase();
-    const station = document.getElementById('stationFilter').value;
-    const filtered = records.filter(r =>
-      (!station || r.station === station) &&
-      (r.type.includes(q) || r.id.toLowerCase().includes(q) ||
-      (r.station||'').toLowerCase().includes(q) ||
-      String(r.capacity).includes(q) || String(r.outputs).includes(q))
-    ).slice().reverse();
+    const filtered = getFilteredTransformers().slice().reverse();
 
     const tbody = document.getElementById('tableBody');
     const empty = document.getElementById('emptyState');
@@ -1497,7 +1605,7 @@
             <td style="color:var(--text);font-weight:600;text-align:center">${r.station || '—'}</td>
             <td style="text-align:center"><span class="badge ${typeColor(r.type)}">${translateType(r.type)}</span></td>
             <td style="font-family:monospace;color:var(--accent);text-align:center">${r.id}</td>
-            <td style="font-weight:600;text-align:center">${r.capacity.toLocaleString()}</td>
+            <td style="font-weight:600;text-align:center">${String(r.capacity || '').replace(/,/g, '')}</td>
             <td style="font-weight:600;color:var(--accent3);text-align:center">${r.outputs}</td>
             <td style="text-align:center">
               <div class="actions" style="justify-content:center">
@@ -1558,6 +1666,64 @@
     document.getElementById('statOutputs').textContent  = outputs;
     document.getElementById('statGround').textContent   = (lang==='ar'?'الأرضية':'Ground') + ': ' + groundCount;
     document.getElementById('statPole').textContent     = (lang==='ar'?'المعلقة':'Pole')   + ': ' + poleCount;
+  }
+
+  function generateSummaryReport() {
+    const data = getFilteredTransformers();
+    const grouped = {};
+    data.forEach(rec => {
+      const station = rec.station || 'Unknown';
+      if (!grouped[station]) {
+        grouped[station] = { station, transformers: 0, totalCapacity: 0, ground: 0, pole: 0, totalLvFeeders: 0 };
+      }
+      grouped[station].transformers++;
+      grouped[station].totalCapacity += Number(String(rec.capacity || 0).replace(/,/g, '')) || 0;
+      grouped[station].totalLvFeeders += Number(rec.outputs || 0) || 0;
+      if (rec.type === 'أرضي' || rec.type === 'Ground') grouped[station].ground++;
+      if (rec.type === 'معلق' || rec.type === 'Pole')   grouped[station].pole++;
+    });
+    renderSummaryReport(Object.values(grouped));
+  }
+
+  function renderSummaryReport(rows) {
+    const section = document.getElementById('summaryReportSection');
+    const tbody   = document.getElementById('summaryReportBody');
+    if (!section || !tbody) return;
+    if (rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:2rem;font-family:'Tajawal',sans-serif">لا توجد بيانات</td></tr>`;
+    } else {
+      let totalTx = 0, totalCap = 0, totalGround = 0, totalPole = 0, totalLv = 0;
+      tbody.innerHTML = rows.sort((a, b) => a.station.localeCompare(b.station)).map(r => {
+        totalTx     += r.transformers;
+        totalCap    += r.totalCapacity;
+        totalGround += r.ground;
+        totalPole   += r.pole;
+        totalLv     += r.totalLvFeeders;
+        return `<tr>
+          <td style="font-weight:600;color:var(--text)">${r.station}</td>
+          <td style="color:var(--accent)">${r.transformers}</td>
+          <td style="color:var(--accent2);font-weight:700">${r.totalCapacity.toLocaleString()}</td>
+          <td style="color:var(--accent3)">${r.ground}</td>
+          <td style="color:#a78bfa">${r.pole}</td>
+          <td style="color:var(--accent)">${r.totalLvFeeders}</td>
+        </tr>`;
+      }).join('');
+      tbody.innerHTML += `<tr style="border-top:2px solid var(--border)">
+        <td style="font-weight:700;color:var(--accent)">الإجمالي</td>
+        <td style="font-weight:700;color:var(--accent)">${totalTx}</td>
+        <td style="font-weight:700;color:var(--accent2)">${totalCap.toLocaleString()}</td>
+        <td style="font-weight:700;color:var(--accent3)">${totalGround}</td>
+        <td style="font-weight:700;color:#a78bfa">${totalPole}</td>
+        <td style="font-weight:700;color:var(--accent)">${totalLv}</td>
+      </tr>`;
+    }
+    section.style.display = 'block';
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function closeSummaryReport() {
+    const section = document.getElementById('summaryReportSection');
+    if (section) section.style.display = 'none';
   }
 
   function saveRecord() {
