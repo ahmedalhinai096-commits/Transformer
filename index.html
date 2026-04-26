@@ -2827,7 +2827,7 @@ ${fResults.length?`<div class="section">
         currentTeam = team; isAdmin = false;
       }
       err.textContent = '';
-      localStorage.setItem('txSession', JSON.stringify({team:currentTeam, isAdmin}));
+      saveSession({team:currentTeam, isAdmin});
       launchApp();
     } else {
       err.textContent = '❌ كلمة المرور غير صحيحة';
@@ -2985,6 +2985,7 @@ ${fResults.length?`<div class="section">
 
   function doLogout() {
     localStorage.removeItem('txSession');
+    localStorage.removeItem('lastActivityAt');
     currentTeam=null; isAdmin=false; adminPwCache=null; records=[]; loadings={};
     document.getElementById('adminResetPanel').style.display='none';
     document.getElementById('adminBadge').style.display='none';
@@ -3149,17 +3150,72 @@ ${fResults.length?`<div class="section">
   }
 
   // ══════════════════════════════════════════════════
+  // SESSION MANAGEMENT
+  // ══════════════════════════════════════════════════
+  const SESSION_TIMEOUT = 30 * 60 * 1000;
+
+  function saveSession(data) {
+    localStorage.setItem('txSession', JSON.stringify(data));
+    localStorage.setItem('lastActivityAt', Date.now().toString());
+  }
+
+  function isSessionValid() {
+    const session = localStorage.getItem('txSession');
+    const lastAt = Number(localStorage.getItem('lastActivityAt') || 0);
+    if (!session || !lastAt) return false;
+    return Date.now() - lastAt < SESSION_TIMEOUT;
+  }
+
+  function updateActivity() {
+    if (localStorage.getItem('txSession')) {
+      localStorage.setItem('lastActivityAt', Date.now().toString());
+    }
+  }
+
+  function logoutExpiredSession() {
+    localStorage.removeItem('txSession');
+    localStorage.removeItem('lastActivityAt');
+    currentTeam = null; isAdmin = false; adminPwCache = null; records = []; loadings = {};
+    document.getElementById('adminResetPanel').style.display = 'none';
+    document.getElementById('adminBadge').style.display = 'none';
+    document.getElementById('adminBtn').classList.remove('logged-in');
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.querySelector('.container').style.display = 'none';
+    document.getElementById('loginPw').value = '';
+    document.getElementById('loginErr').textContent = '';
+    document.getElementById('teamGrid').querySelectorAll('.team-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('forgotPanel').style.display = 'none';
+    document.getElementById('fpSubmitBtn').style.display = '';
+    setTimeout(() => showToast('انتهت الجلسة، الرجاء تسجيل الدخول مرة أخرى', 'error'), 100);
+  }
+
+  ['click', 'keydown', 'mousemove', 'touchstart'].forEach(ev => {
+    document.addEventListener(ev, updateActivity);
+  });
+
+  setInterval(() => {
+    if (localStorage.getItem('txSession') && !isSessionValid()) {
+      logoutExpiredSession();
+    }
+  }, 60 * 1000);
+
+  // ══════════════════════════════════════════════════
   // INIT
   // ══════════════════════════════════════════════════
   buildTeamGrid();
-  const savedSession = localStorage.getItem('txSession');
-  if (savedSession) {
+  if (isSessionValid()) {
     try {
-      const s=JSON.parse(savedSession); currentTeam=s.team; isAdmin=s.isAdmin;
+      const s = JSON.parse(localStorage.getItem('txSession'));
+      currentTeam = s.team; isAdmin = s.isAdmin;
+      updateActivity();
       launchApp();
     } catch(e) { showLoginScreen(); }
   } else {
+    const hadSession = !!localStorage.getItem('txSession');
+    localStorage.removeItem('txSession');
+    localStorage.removeItem('lastActivityAt');
     showLoginScreen();
+    if (hadSession) setTimeout(() => showToast('انتهت الجلسة، الرجاء تسجيل الدخول مرة أخرى', 'error'), 300);
   }
   function showLoginScreen(){ document.getElementById('loginScreen').style.display='flex'; }
 
