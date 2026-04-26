@@ -45,8 +45,8 @@
   };
   var lang = localStorage.getItem('lang') || 'ar';
   var i18n = {
-    ar:{ title:'سجل المحولات الكهربائية', filterAll:'🏭 كل المحطات', red:'أحمر', yellow:'أصفر', blue:'أزرق', neutral:'نيوترال', kva:'KVA', feederUnit:'فيدر', lmFeeder:'فيدر', lmFeederNum:'رقم الفيدر (من اليسار لليمين)', lmFeederName:'حجم الكيبل', lmVoltage:'قراءات الفولتيج (V)', lmCurrent:'قراءات التيار (A)', btnSaveFeeder:'💾 حفظ الفيدر', btnClearFeeder:'✕ مسح', summaryTitle:'📊 ملخص جميع القراءات', summaryFeederNum:'رقم الفيدر', summaryFeederName:'حجم الكيبل', summaryDate:'التاريخ والوقت', lastSaved:'آخر حفظ', notSaved:'لم يُحفظ بعد', toastFeederSaved:'✅ تم حفظ قراءات', lmTitle:'⚡ قراءات الأحمال', lmStation:'اسم المحطة', lmId:'رقم المحول', lmType:'نوع المحول', lmCapacity:'السعة', lmOutputs:'عدد مخارج LV', fHvFeederLabel:'رقم فيدر HV', subtitle:'إدارة وتتبع بيانات المحولات', statTotal:'إجمالي المحولات', statCapacity:'إجمالي السعة (KVA)', statOutputs:'إجمالي مخارج LV', statTypes:'عدد المحولات', formTitle:'إضافة / تعديل محول', fHvFeederPh:'مثال: F-01', fStationLabel:'اسم المحطة', fStationPh:'مثال: محطة الشمال', fTypeLabel:'نوع المحول', fTypeDefault:'-- اختر النوع --', typeGround:'أرضي', typePole:'معلق', fIdLabel:'رقم المحول', fIdPh:'مثال: TR-001', fCapacityLabel:'السعة (KVA)', fCapacityPh:'مثال: 500', fOutputsLabel:'عدد مخارج LV', fOutputsPh:'مثال: 4', btnSave:'💾 حفظ', btnClear:'✕ مسح', tableTitle:'📋 قائمة المحولات', searchPh:'بحث...', btnExport:'⬇ تصدير CSV', colStation:'اسم المحطة', colType:'نوع المحول', colId:'رقم المحول', colCapacity:'السعة (KVA)', colOutputs:'عدد مخارج LV', colActions:'الإجراءات', emptyMsg:'لا توجد بيانات. أضف محولاً باستخدام النموذج أعلاه.', records:'سجل', adminMode:'🔴 وضع الأدمن', adminLogin:'🔐 تسجيل دخول الأدمن', adminLogout:'🔓 تسجيل الخروج', toastSaved:'✅ تم إضافة المحول بنجاح', toastUpdated:'✅ تم تحديث البيانات بنجاح', toastDeleted:'🗑️ تم الحذف', toastFill:'⚠️ يرجى ملء جميع الحقول', toastDup:'⚠️ رقم المحول موجود مسبقاً', toastExport:'⬇️ تم تصدير الملف بنجاح', toastNoData:'⚠️ لا توجد بيانات للتصدير', toastAdmin:'✅ مرحباً بك يا أدمن!', toastLogout:'👋 تم تسجيل الخروج', toastWrongPw:'❌ كلمة المرور غير صحيحة', toastEditing:'✏️ جاري التعديل - عدّل البيانات واضغط حفظ', confirmDelete:'هل أنت متأكد من حذف هذا المحول؟', editTitle:'✏️', delTitle:'حذف', loadTitle:'قراءات الأحمال', lockTitle:'يتطلب صلاحية الأدمن', adminModalTitle:'دخول الأدمن', adminModalDesc:'أدخل كلمة المرور للوصول إلى صلاحيات الحذف', pwLabel:'كلمة المرور', btnLogin:'دخول', allStations:'🏭 كل المحطات', allTypes:'🔧 كل الأنواع', allCapacities:'⚡ كل السعات', searchGeneral:'بحث عام', searchStation:'اسم المحطة', searchTxNo:'رقم المحول', searchCapacity:'السعة', searchLvFeeders:'عدد مخارج LV', searchPlaceholder:'بحث...', summaryReport:'📄 تقرير مختصر', exportExcel:'📊 تصدير Excel' },
-    en:{ title:'Transformer Registry', filterAll:'🏭 All Stations', red:'Red', yellow:'Yellow', blue:'Blue', neutral:'Neutral', kva:'KVA', feederUnit:'Feeder', lmFeeder:'Feeder', lmFeederNum:'Feeder No. (left to right)', lmFeederName:'Size of LV Cable', lmVoltage:'Voltage Readings (V)', lmCurrent:'Current Readings (A)', btnSaveFeeder:'💾 Save Feeder', btnClearFeeder:'✕ Clear', summaryTitle:'📊 All Readings Summary', summaryFeederNum:'Feeder No.', summaryFeederName:'Size of cable', summaryDate:'Date & Time', lastSaved:'Last saved', notSaved:'Not saved yet', toastFeederSaved:'✅ Saved readings for', lmTitle:'⚡ Load Readings', lmStation:'Station', lmId:'Transformer No.', lmType:'Type', lmCapacity:'Capacity', lmOutputs:'LV Feeders', fHvFeederLabel:'HV Feeder No.', subtitle:'Manage and track transformer data', statTotal:'Total Transformers', statCapacity:'Total Capacity (KVA)', statOutputs:'Total LV Feeders', statTypes:'No. of Transformers', formTitle:'Add / Edit Transformer', fHvFeederPh:'e.g. F-01', fStationLabel:'Station Name', fStationPh:'e.g. North Station', fTypeLabel:'Transformer Type', fTypeDefault:'-- Select Type --', typeGround:'Ground', typePole:'Pole', fIdLabel:'Transformer No.', fIdPh:'e.g. TR-001', fCapacityLabel:'Capacity (KVA)', fCapacityPh:'e.g. 500', fOutputsLabel:'No. of LV Feeders', fOutputsPh:'e.g. 4', btnSave:'💾 Save', btnClear:'✕ Clear', tableTitle:'📋 Transformer List', searchPh:'Search...', btnExport:'⬇ Export CSV', colStation:'Station Name', colType:'Type', colId:'Transformer No.', colCapacity:'Capacity (KVA)', colOutputs:'No. of LV Feeders', colActions:'Actions', emptyMsg:'No data found. Add a transformer using the form above.', records:'records', adminMode:'🔴 Admin Mode', adminLogin:'🔐 Admin Login', adminLogout:'🔓 Logout', toastSaved:'✅ Transformer added successfully', toastUpdated:'✅ Data updated successfully', toastDeleted:'🗑️ Deleted', toastFill:'⚠️ Please fill all fields', toastDup:'⚠️ Transformer number already exists', toastExport:'⬇️ File exported successfully', toastNoData:'⚠️ No data to export', toastAdmin:'✅ Welcome, Admin!', toastLogout:'👋 Logged out', toastWrongPw:'❌ Incorrect password', toastEditing:'✏️ Editing — update data and press Save', confirmDelete:'Are you sure you want to delete this transformer?', editTitle:'✏️', delTitle:'Delete', loadTitle:'Load Readings', lockTitle:'Requires admin access', adminModalTitle:'Admin Login', adminModalDesc:'Enter password to access delete permissions', pwLabel:'Password', btnLogin:'Login', allStations:'🏭 All Stations', allTypes:'🔧 All Types', allCapacities:'⚡ All Capacities', searchGeneral:'General Search', searchStation:'Station Name', searchTxNo:'Transformer No.', searchCapacity:'Capacity', searchLvFeeders:'No. of LV Feeders', searchPlaceholder:'Search...', summaryReport:'📄 Summary Report', exportExcel:'📊 Export Excel' }
+    ar:{ title:'سجل المحولات الكهربائية', filterAll:'🏭 كل المحطات', red:'أحمر', yellow:'أصفر', blue:'أزرق', neutral:'نيوترال', kva:'KVA', feederUnit:'فيدر', lmFeeder:'فيدر', lmFeederNum:'رقم الفيدر (من اليسار لليمين)', lmFeederName:'حجم الكيبل', lmVoltage:'قراءات الفولتيج (V)', lmCurrent:'قراءات التيار (A)', btnSaveFeeder:'💾 حفظ الفيدر', btnClearFeeder:'✕ مسح', summaryTitle:'📊 ملخص جميع القراءات', summaryFeederNum:'رقم الفيدر', summaryFeederName:'حجم الكيبل', summaryDate:'التاريخ والوقت', lastSaved:'آخر حفظ', notSaved:'لم يُحفظ بعد', toastFeederSaved:'✅ تم حفظ قراءات', lmTitle:'⚡ قراءات الأحمال', lmStation:'اسم المحطة', lmId:'رقم المحول', lmType:'نوع المحول', lmCapacity:'السعة', lmOutputs:'عدد مخارج LV', fHvFeederLabel:'رقم فيدر HV', subtitle:'إدارة وتتبع بيانات المحولات', statTotal:'إجمالي المحولات', statCapacity:'إجمالي السعة (KVA)', statOutputs:'إجمالي مخارج LV', statTypes:'عدد المحولات', formTitle:'إضافة / تعديل محول', fHvFeederPh:'مثال: F-01', fStationLabel:'اسم المحطة', fStationPh:'مثال: محطة الشمال', fTypeLabel:'نوع المحول', fTypeDefault:'-- اختر النوع --', typeGround:'أرضي', typePole:'معلق', fIdLabel:'رقم المحول', fIdPh:'مثال: TR-001', fCapacityLabel:'السعة (KVA)', fCapacityPh:'مثال: 500', fOutputsLabel:'عدد مخارج LV', fOutputsPh:'مثال: 4', btnSave:'💾 حفظ', btnClear:'✕ مسح', tableTitle:'📋 قائمة المحولات', searchPh:'بحث...', btnExport:'⬇ تصدير CSV', colStation:'اسم المحطة', colType:'نوع المحول', colId:'رقم المحول', colCapacity:'السعة (KVA)', colOutputs:'عدد مخارج LV', colActions:'الإجراءات', emptyMsg:'لا توجد بيانات. أضف محولاً باستخدام النموذج أعلاه.', records:'سجل', adminMode:'🔴 وضع الأدمن', adminLogin:'🔐 تسجيل دخول الأدمن', adminLogout:'🔓 تسجيل الخروج', toastSaved:'✅ تم إضافة المحول بنجاح', toastUpdated:'✅ تم تحديث البيانات بنجاح', toastDeleted:'🗑️ تم الحذف', toastFill:'⚠️ يرجى ملء جميع الحقول', toastDup:'⚠️ رقم المحول موجود مسبقاً', toastExport:'⬇️ تم تصدير الملف بنجاح', toastNoData:'⚠️ لا توجد بيانات للتصدير', toastAdmin:'✅ مرحباً بك يا أدمن!', toastLogout:'👋 تم تسجيل الخروج', toastWrongPw:'❌ كلمة المرور غير صحيحة', toastEditing:'✏️ جاري التعديل - عدّل البيانات واضغط حفظ', confirmDelete:'هل أنت متأكد من حذف هذا المحول؟', editTitle:'✏️', delTitle:'حذف', loadTitle:'قراءات الأحمال', lockTitle:'يتطلب صلاحية الأدمن', adminModalTitle:'دخول الأدمن', adminModalDesc:'أدخل كلمة المرور للوصول إلى صلاحيات الحذف', pwLabel:'كلمة المرور', btnLogin:'دخول', allStations:'🏭 كل المحطات', allTypes:'🔧 كل الأنواع', allCapacities:'⚡ كل السعات', searchGeneral:'بحث عام', searchStation:'اسم المحطة', searchTxNo:'رقم المحول', searchCapacity:'السعة', searchLvFeeders:'عدد مخارج LV', searchPlaceholder:'بحث...', summaryReport:'📄 تقرير مختصر', exportExcel:'📊 تصدير Excel', normal:'تحميل طبيعي', severeImbalance:'عدم توازن شديد', moderateImbalance:'توازن متوسط', txOverload:'المحول محمّل زيادة', txWarning:'تحذير: التحميل', overcurrent:'تجاوز التيار', nearMax:'قريب من الحد الأقصى', highestCurrent:'أعلى تيار', feeders:'مخارج', max:'الأعلى' },
+    en:{ title:'Transformer Registry', filterAll:'🏭 All Stations', red:'Red', yellow:'Yellow', blue:'Blue', neutral:'Neutral', kva:'KVA', feederUnit:'Feeder', lmFeeder:'Feeder', lmFeederNum:'Feeder No. (left to right)', lmFeederName:'Size of LV Cable', lmVoltage:'Voltage Readings (V)', lmCurrent:'Current Readings (A)', btnSaveFeeder:'💾 Save Feeder', btnClearFeeder:'✕ Clear', summaryTitle:'📊 All Readings Summary', summaryFeederNum:'Feeder No.', summaryFeederName:'Size of cable', summaryDate:'Date & Time', lastSaved:'Last saved', notSaved:'Not saved yet', toastFeederSaved:'✅ Saved readings for', lmTitle:'⚡ Load Readings', lmStation:'Station', lmId:'Transformer No.', lmType:'Type', lmCapacity:'Capacity', lmOutputs:'LV Feeders', fHvFeederLabel:'HV Feeder No.', subtitle:'Manage and track transformer data', statTotal:'Total Transformers', statCapacity:'Total Capacity (KVA)', statOutputs:'Total LV Feeders', statTypes:'No. of Transformers', formTitle:'Add / Edit Transformer', fHvFeederPh:'e.g. F-01', fStationLabel:'Station Name', fStationPh:'e.g. North Station', fTypeLabel:'Transformer Type', fTypeDefault:'-- Select Type --', typeGround:'Ground', typePole:'Pole', fIdLabel:'Transformer No.', fIdPh:'e.g. TR-001', fCapacityLabel:'Capacity (KVA)', fCapacityPh:'e.g. 500', fOutputsLabel:'No. of LV Feeders', fOutputsPh:'e.g. 4', btnSave:'💾 Save', btnClear:'✕ Clear', tableTitle:'📋 Transformer List', searchPh:'Search...', btnExport:'⬇ Export CSV', colStation:'Station Name', colType:'Type', colId:'Transformer No.', colCapacity:'Capacity (KVA)', colOutputs:'No. of LV Feeders', colActions:'Actions', emptyMsg:'No data found. Add a transformer using the form above.', records:'records', adminMode:'🔴 Admin Mode', adminLogin:'🔐 Admin Login', adminLogout:'🔓 Logout', toastSaved:'✅ Transformer added successfully', toastUpdated:'✅ Data updated successfully', toastDeleted:'🗑️ Deleted', toastFill:'⚠️ Please fill all fields', toastDup:'⚠️ Transformer number already exists', toastExport:'⬇️ File exported successfully', toastNoData:'⚠️ No data to export', toastAdmin:'✅ Welcome, Admin!', toastLogout:'👋 Logged out', toastWrongPw:'❌ Incorrect password', toastEditing:'✏️ Editing — update data and press Save', confirmDelete:'Are you sure you want to delete this transformer?', editTitle:'✏️', delTitle:'Delete', loadTitle:'Load Readings', lockTitle:'Requires admin access', adminModalTitle:'Admin Login', adminModalDesc:'Enter password to access delete permissions', pwLabel:'Password', btnLogin:'Login', allStations:'🏭 All Stations', allTypes:'🔧 All Types', allCapacities:'⚡ All Capacities', searchGeneral:'General Search', searchStation:'Station Name', searchTxNo:'Transformer No.', searchCapacity:'Capacity', searchLvFeeders:'No. of LV Feeders', searchPlaceholder:'Search...', summaryReport:'📄 Summary Report', exportExcel:'📊 Export Excel', normal:'Normal loading', severeImbalance:'Severe imbalance', moderateImbalance:'Moderate imbalance', txOverload:'Transformer overloaded', txWarning:'Warning: Loading', overcurrent:'Overcurrent', nearMax:'Near max current', highestCurrent:'Highest current', feeders:'feeders', max:'Max' }
   };
   function t(k){ return (i18n[lang]&&i18n[lang][k]) || (i18n['ar']&&i18n['ar'][k]) || k; }
   function toggleLang(){
@@ -923,9 +923,10 @@
   .phase-bar-fill { height:100%; border-radius:4px; }
   .phase-val { font-weight:700; min-width:45px; text-align:left; font-family:monospace; }
   .alert-list { display:flex; flex-direction:column; gap:0.4rem; }
-  .alert-item { display:flex; align-items:center; gap:0.5rem; background:rgba(255,71,87,0.1); border:1px solid rgba(255,71,87,0.3); border-radius:7px; padding:0.4rem 0.7rem; font-size:0.8rem; font-family:'Tajawal',sans-serif; color:var(--danger); }
-  .alert-item.warn { background:rgba(255,204,0,0.1); border-color:rgba(255,204,0,0.3); color:#ffcc00; }
-  .alert-item.ok { background:rgba(0,255,157,0.08); border-color:rgba(0,255,157,0.2); color:var(--accent3); }
+  .alert-item { display:flex; align-items:center; gap:8px; padding:10px 14px; border-radius:10px; font-size:0.82rem; font-family:'Tajawal',sans-serif; margin-bottom:2px; }
+  .alert-success { background:rgba(16,185,129,0.1); border:1px solid #10b981; color:#10b981; }
+  .alert-warning { background:rgba(245,158,11,0.1); border:1px solid #f59e0b; color:#f59e0b; }
+  .alert-danger  { background:rgba(239,68,68,0.1);  border:1px solid #ef4444; color:#ef4444; }
   .imbalance-pct { font-size:0.75rem; color:var(--text-muted); margin-top:0.3rem; font-family:'Tajawal',sans-serif; }
 
   /* ── Login Screen ────────────────────────────────── */
@@ -2345,27 +2346,49 @@
       return { f, i1, i2, i3, iAvg, iMax, imbalancePct };
     });
 
-    const alerts = [];
-    feederResults.forEach(({f,i1,i2,i3,imbalancePct}) => {
-      if (imbalancePct > 20) alerts.push({type:'danger', msg:`${f.name}: ${lang==='ar'?'عدم توازن الأحمال':'Load Imbalance'} ${imbalancePct.toFixed(1)}%`});
-      else if (imbalancePct > 10) alerts.push({type:'warn', msg:`${f.name}: ${lang==='ar'?'توازن متوسط':'Moderate Imbalance'} ${imbalancePct.toFixed(1)}%`});
-      if (ratedCurrent > 0) {
-        [{n:t('red'),v:i1},{n:t('yellow'),v:i2},{n:t('blue'),v:i3}].forEach(p => {
-          if (p.v > ratedCurrent) alerts.push({type:'danger', msg:`${f.name} — ${p.n}: ${p.v}A ${lang==='ar'?'يتجاوز الماكس':'exceeds max'} ${ratedCurrent.toFixed(0)}A`});
-          else if (p.v > ratedCurrent*0.8) alerts.push({type:'warn', msg:`${f.name} — ${p.n}: ${p.v}A ${lang==='ar'?'قريب من الماكس':'near max'} (${(p.v/ratedCurrent*100).toFixed(0)}%)`});
-        });
-      }
-    });
-    if (loadPct >= HIGH_LOAD) alerts.push({type:'danger', msg: lang==='ar'?`⚠️ المحول محمّل ${loadPct.toFixed(1)}% — يتجاوز الحد الآمن!`:`⚠️ Transformer at ${loadPct.toFixed(1)}% — Exceeds safe limit!`});
-    else if (loadPct >= 60)   alerts.push({type:'warn',   msg: lang==='ar'?`تحذير: التحميل ${loadPct.toFixed(1)}%`:`Warning: Loading at ${loadPct.toFixed(1)}%`});
-    else                      alerts.push({type:'ok',     msg: lang==='ar'?`✅ التحميل طبيعي ${loadPct.toFixed(1)}%`:`✅ Normal loading ${loadPct.toFixed(1)}%`});
-
+    // ── Highest current phase (used in both alerts and bars)
     let maxPhaseFeeder='', maxPhaseLabel='', maxPhaseVal=0;
     feederResults.forEach(({f,i1,i2,i3})=>{
       [{n:t('red'),v:i1},{n:t('yellow'),v:i2},{n:t('blue'),v:i3}].forEach(p=>{
         if(p.v>maxPhaseVal){maxPhaseVal=p.v;maxPhaseFeeder=f.name;maxPhaseLabel=p.n;}
       });
     });
+
+    // ── Build grouped & sorted alerts
+    const alerts = [];
+
+    const severeFeeders = feederResults.filter(r => r.imbalancePct > 20);
+    if (severeFeeders.length) {
+      const maxImb = Math.max(...severeFeeders.map(r => r.imbalancePct));
+      alerts.push({type:'danger', msg:`${t('severeImbalance')} (${severeFeeders.length} ${t('feeders')}) – ${t('max')}: ${maxImb.toFixed(1)}%`});
+    }
+
+    const moderateFeeders = feederResults.filter(r => r.imbalancePct > 10 && r.imbalancePct <= 20);
+    if (moderateFeeders.length) {
+      const maxImb = Math.max(...moderateFeeders.map(r => r.imbalancePct));
+      alerts.push({type:'warn', msg:`${t('moderateImbalance')} (${moderateFeeders.length} ${t('feeders')}) – ${t('max')}: ${maxImb.toFixed(1)}%`});
+    }
+
+    if (ratedCurrent > 0) {
+      const overPh = [], nearPh = [];
+      feederResults.forEach(({i1,i2,i3}) => {
+        [i1,i2,i3].forEach(v => {
+          if (v > ratedCurrent) overPh.push(v);
+          else if (v > ratedCurrent * 0.8) nearPh.push(v);
+        });
+      });
+      if (overPh.length) alerts.push({type:'danger', msg:`${t('overcurrent')} (${overPh.length}) – ${t('max')}: ${Math.max(...overPh).toFixed(0)}A`});
+      if (nearPh.length) alerts.push({type:'warn',   msg:`${t('nearMax')} (${nearPh.length}) – ${t('max')}: ${Math.max(...nearPh).toFixed(0)}A`});
+    }
+
+    if (loadPct >= HIGH_LOAD) alerts.push({type:'danger', msg:`${t('txOverload')}: ${loadPct.toFixed(1)}%`});
+    else if (loadPct >= 60)   alerts.push({type:'warn',   msg:`${t('txWarning')}: ${loadPct.toFixed(1)}%`});
+    else                      alerts.push({type:'ok',     msg:`${t('normal')}: ${loadPct.toFixed(1)}%`});
+
+    if (maxPhaseVal > 0) alerts.push({type:'warn', msg:`${t('highestCurrent')}: ${maxPhaseFeeder} / ${maxPhaseLabel} – ${maxPhaseVal.toFixed(0)}A`});
+
+    const _ord = {danger:0, warn:1, ok:2};
+    alerts.sort((a,b) => (_ord[a.type]||0) - (_ord[b.type]||0));
 
     const maxI = Math.max(...feederResults.flatMap(({i1,i2,i3})=>[i1,i2,i3]), 1);
 
@@ -2465,7 +2488,7 @@
         <div class="analysis-card">
           <div class="analysis-card-title">🚨 ${lang==='ar'?'التنبيهات':'Alerts'}</div>
           <div class="alert-list">
-            ${alerts.length ? alerts.map(a=>`<div class="alert-item ${a.type==='ok'?'ok':a.type==='warn'?'warn':''}">${a.type==='ok'?'✅':a.type==='warn'?'⚠️':'🔴'} ${a.msg}</div>`).join('') : `<div class="alert-item ok">✅ ${lang==='ar'?'كل شيء طبيعي':'All readings normal'}</div>`}
+            ${alerts.length ? alerts.map(a=>`<div class="alert-item ${a.type==='ok'?'alert-success':a.type==='warn'?'alert-warning':'alert-danger'}">${a.type==='ok'?'✅':a.type==='warn'?'⚠️':'🔴'} ${a.msg}</div>`).join('') : `<div class="alert-item alert-success">✅ ${lang==='ar'?'كل شيء طبيعي':'All readings normal'}</div>`}
           </div>
         </div>
 
@@ -2765,16 +2788,18 @@ ${fResults.length?`<div class="section">
   <div class="section-title">🚨 ${isAr?'ملخص التنبيهات':'Alerts Summary'}</div>
   ${(()=>{
     const al=[];
-    if(loadPct>=HIGH) al.push({t:'danger',m:isAr?`المحول محمّل ${loadPct.toFixed(1)}% — يتجاوز الحد الآمن 80%`:`Transformer at ${loadPct.toFixed(1)}% — Exceeds safe limit 80%`});
-    else if(loadPct>=60) al.push({t:'warn',m:isAr?`تحذير: التحميل ${loadPct.toFixed(1)}%`:`Warning: Loading at ${loadPct.toFixed(1)}%`});
-    else al.push({t:'ok',m:isAr?`التحميل طبيعي ${loadPct.toFixed(1)}%`:`Normal loading ${loadPct.toFixed(1)}%`});
-    fResults.forEach(({f,imb})=>{
-      if(imb>20) al.push({t:'danger',m:`${f.name}: ${isAr?'عدم توازن شديد':'Severe imbalance'} ${imb.toFixed(1)}%`});
-      else if(imb>10) al.push({t:'warn',m:`${f.name}: ${isAr?'توازن متوسط':'Moderate imbalance'} ${imb.toFixed(1)}%`});
-    });
+    const svr=fResults.filter(r=>r.imb>20);
+    if(svr.length){const mx=Math.max(...svr.map(r=>r.imb));al.push({t:'danger',m:`${t('severeImbalance')} (${svr.length} ${t('feeders')}) – ${t('max')}: ${mx.toFixed(1)}%`});}
+    const mod=fResults.filter(r=>r.imb>10&&r.imb<=20);
+    if(mod.length){const mx=Math.max(...mod.map(r=>r.imb));al.push({t:'warn',m:`${t('moderateImbalance')} (${mod.length} ${t('feeders')}) – ${t('max')}: ${mx.toFixed(1)}%`});}
+    if(loadPct>=HIGH) al.push({t:'danger',m:`${t('txOverload')}: ${loadPct.toFixed(1)}%`});
+    else if(loadPct>=60) al.push({t:'warn',m:`${t('txWarning')}: ${loadPct.toFixed(1)}%`});
+    else al.push({t:'ok',m:`${t('normal')}: ${loadPct.toFixed(1)}%`});
     const hp=fResults.flatMap(({f,i1,i2,i3})=>[{feeder:f.name,ph:PH[0],v:i1},{feeder:f.name,ph:PH[1],v:i2},{feeder:f.name,ph:PH[2],v:i3}]).sort((a,b)=>b.v-a.v)[0];
-    if(hp&&hp.v>0) al.push({t:'warn',m:`${isAr?'أعلى تيار':'Highest current'}: ${hp.ph} ${isAr?'في':'in'} ${hp.feeder} — ${hp.v}A`});
-    return al.map(a=>`<div class="alert-item a-${a.t}">${a.t==='ok'?'✅':a.t==='warn'?'⚠️':'🔴'} ${a.m}</div>`).join('');
+    if(hp&&hp.v>0) al.push({t:'warn',m:`${t('highestCurrent')}: ${hp.feeder} / ${hp.ph} – ${hp.v}A`});
+    const ord={danger:0,warn:1,ok:2};
+    al.sort((a,b)=>(ord[a.t]||0)-(ord[b.t]||0));
+    return al.length?al.map(a=>`<div class="alert-item a-${a.t}">${a.t==='ok'?'✅':a.t==='warn'?'⚠️':'🔴'} ${a.m}</div>`).join(''):`<div class="alert-item a-ok">✅ ${isAr?'كل شيء طبيعي':'All readings normal'}</div>`;
   })()}
 </div>
 
