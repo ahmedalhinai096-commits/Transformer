@@ -477,10 +477,29 @@
   .toast.success { border-color: var(--accent3); color: var(--accent3); }
   .toast.error   { border-color: var(--danger); color: var(--danger); }
 
-  .admin-bar {
+  .admin-topbar {
+    width: 100%;
     display: flex;
-    justify-content: flex-left;
-    margin-bottom: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 10px 0 12px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .admin-status,
+  .admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 520px) {
+    .admin-topbar { flex-direction: column; align-items: flex-start; }
+    .admin-actions { width: 100%; }
   }
 
   .btn-admin {
@@ -497,7 +516,6 @@
     align-items: center;
     gap: 0.4rem;
     transition: all 0.2s;
-    margin-right: auto;
   }
 
   .btn-admin:hover { border-color: var(--accent2); color: var(--accent2); }
@@ -1030,11 +1048,20 @@
 
 <div class="container">
 
-  <!-- Admin bar -->
-  <div class="admin-bar">
+  <!-- App Topbar -->
+  <div class="admin-topbar">
+    <div class="admin-status">
+      <span class="team-pill" id="teamPillEl"></span>
+      <span class="sync-dot" id="syncDot"></span>
+      <span id="syncMsg" style="font-size:0.7rem;color:var(--text-muted);font-family:'Tajawal',sans-serif"></span>
+    </div>
+    <div class="admin-actions">
+      <button class="btn-admin" id="langBtn" onclick="toggleLang()" style="padding:0.3rem 0.8rem;border-radius:8px;border:1px solid rgba(167,139,250,0.4);background:transparent;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:0.78rem;cursor:pointer">🌐 EN</button>
+      <button class="btn-admin" id="adminBtn" onclick="toggleAdmin()">🔐 تسجيل دخول الأدمن</button>
+      <button class="btn-logout" onclick="doLogout()">خروج</button>
+    </div>
     <span id="adminBadge" class="admin-badge" style="display:none">🔴 وضع الأدمن</span>
-    <button class="btn-admin" id="adminBtn" onclick="toggleAdmin()">🔐 تسجيل دخول الأدمن</button>
-   </div>
+  </div>
 
   <!-- Admin Reset Requests Panel -->
   <div id="adminResetPanel">
@@ -1068,19 +1095,6 @@
         </div>
       </div>
       <div id="smList"><div class="arp-empty">اختر فريقاً لعرض محطاته</div></div>
-    </div>
-  </div>
-
-  <!-- Top bar -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;flex-wrap:wrap;gap:0.5rem">
-    <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap">
-      <span class="team-pill" id="teamPillEl"></span>
-      <span class="sync-dot" id="syncDot"></span>
-      <span id="syncMsg" style="font-size:0.7rem;color:var(--text-muted);font-family:'Tajawal',sans-serif"></span>
-    </div>
-    <div style="display:flex;gap:0.5rem;align-items:center">
-      <button class="btn-admin" id="langBtn" onclick="toggleLang()" style="padding:0.3rem 0.8rem;border-radius:8px;border:1px solid rgba(167,139,250,0.4);background:transparent;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:0.78rem;cursor:pointer">🌐 EN</button>
-      <button class="btn-logout" onclick="doLogout()">خروج</button>
     </div>
   </div>
 
