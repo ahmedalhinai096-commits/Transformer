@@ -45,8 +45,8 @@
   };
   var lang = localStorage.getItem('lang') || 'ar';
   var i18n = {
-    ar:{ title:'سجل المحولات الكهربائية', filterAll:'🏭 كل المحطات', red:'أحمر', yellow:'أصفر', blue:'أزرق', neutral:'نيوترال', kva:'KVA', feederUnit:'فيدر', lmFeeder:'فيدر', lmFeederNum:'رقم الفيدر (من اليسار لليمين)', lmFeederName:'حجم الكيبل', lmVoltage:'قراءات الفولتيج (V)', lmCurrent:'قراءات التيار (A)', btnSaveFeeder:'💾 حفظ الفيدر', btnClearFeeder:'✕ مسح', summaryTitle:'📊 ملخص جميع القراءات', summaryFeederNum:'رقم الفيدر', summaryFeederName:'حجم الكيبل', summaryDate:'التاريخ والوقت', lastSaved:'آخر حفظ', notSaved:'لم يُحفظ بعد', toastFeederSaved:'✅ تم حفظ قراءات', lmTitle:'⚡ قراءات الأحمال', lmStation:'اسم المحطة', lmId:'رقم المحول', lmType:'نوع المحول', lmCapacity:'السعة', lmOutputs:'عدد مخارج LV', fHvFeederLabel:'رقم فيدر HV', subtitle:'إدارة وتتبع بيانات المحولات', statTotal:'إجمالي المحولات', statCapacity:'إجمالي السعة (KVA)', statOutputs:'إجمالي مخارج LV', statTypes:'عدد المحولات', formTitle:'إضافة / تعديل محول', fHvFeederPh:'مثال: F-01', fStationLabel:'اسم المحطة', fStationPh:'مثال: محطة الشمال', fTypeLabel:'نوع المحول', fTypeDefault:'-- اختر النوع --', typeGround:'أرضي', typePole:'معلق', fIdLabel:'رقم المحول', fIdPh:'مثال: TR-001', fCapacityLabel:'السعة (KVA)', fCapacityPh:'مثال: 500', fOutputsLabel:'عدد مخارج LV', fOutputsPh:'مثال: 4', btnSave:'💾 حفظ', btnClear:'✕ مسح', tableTitle:'📋 قائمة المحولات', searchPh:'بحث...', btnExport:'⬇ تصدير CSV', colStation:'اسم المحطة', colType:'نوع المحول', colId:'رقم المحول', colCapacity:'السعة (KVA)', colOutputs:'عدد مخارج LV', colActions:'الإجراءات', emptyMsg:'لا توجد بيانات. أضف محولاً باستخدام النموذج أعلاه.', records:'سجل', adminMode:'🔴 وضع الأدمن', adminLogin:'🔐 تسجيل دخول الأدمن', adminLogout:'🔓 تسجيل الخروج', toastSaved:'✅ تم إضافة المحول بنجاح', toastUpdated:'✅ تم تحديث البيانات بنجاح', toastDeleted:'🗑️ تم الحذف', toastFill:'⚠️ يرجى ملء جميع الحقول', toastDup:'⚠️ رقم المحول موجود مسبقاً', toastExport:'⬇️ تم تصدير الملف بنجاح', toastNoData:'⚠️ لا توجد بيانات للتصدير', toastAdmin:'✅ مرحباً بك يا أدمن!', toastLogout:'👋 تم تسجيل الخروج', toastWrongPw:'❌ كلمة المرور غير صحيحة', toastEditing:'✏️ جاري التعديل - عدّل البيانات واضغط حفظ', confirmDelete:'هل أنت متأكد من حذف هذا المحول؟', editTitle:'✏️', delTitle:'حذف', loadTitle:'قراءات الأحمال', lockTitle:'يتطلب صلاحية الأدمن', adminModalTitle:'دخول الأدمن', adminModalDesc:'أدخل كلمة المرور للوصول إلى صلاحيات الحذف', pwLabel:'كلمة المرور', btnLogin:'دخول' },
-    en:{ title:'Transformer Registry', filterAll:'🏭 All Stations', red:'Red', yellow:'Yellow', blue:'Blue', neutral:'Neutral', kva:'KVA', feederUnit:'Feeder', lmFeeder:'Feeder', lmFeederNum:'Feeder No. (left to right)', lmFeederName:'Size of LV Cable', lmVoltage:'Voltage Readings (V)', lmCurrent:'Current Readings (A)', btnSaveFeeder:'💾 Save Feeder', btnClearFeeder:'✕ Clear', summaryTitle:'📊 All Readings Summary', summaryFeederNum:'Feeder No.', summaryFeederName:'Size of cable', summaryDate:'Date & Time', lastSaved:'Last saved', notSaved:'Not saved yet', toastFeederSaved:'✅ Saved readings for', lmTitle:'⚡ Load Readings', lmStation:'Station', lmId:'Transformer No.', lmType:'Type', lmCapacity:'Capacity', lmOutputs:'LV Feeders', fHvFeederLabel:'HV Feeder No.', subtitle:'Manage and track transformer data', statTotal:'Total Transformers', statCapacity:'Total Capacity (KVA)', statOutputs:'Total LV Feeders', statTypes:'No. of Transformers', formTitle:'Add / Edit Transformer', fHvFeederPh:'e.g. F-01', fStationLabel:'Station Name', fStationPh:'e.g. North Station', fTypeLabel:'Transformer Type', fTypeDefault:'-- Select Type --', typeGround:'Ground', typePole:'Pole', fIdLabel:'Transformer No.', fIdPh:'e.g. TR-001', fCapacityLabel:'Capacity (KVA)', fCapacityPh:'e.g. 500', fOutputsLabel:'No. of LV Feeders', fOutputsPh:'e.g. 4', btnSave:'💾 Save', btnClear:'✕ Clear', tableTitle:'📋 Transformer List', searchPh:'Search...', btnExport:'⬇ Export CSV', colStation:'Station Name', colType:'Type', colId:'Transformer No.', colCapacity:'Capacity (KVA)', colOutputs:'No. of LV Feeders', colActions:'Actions', emptyMsg:'No data found. Add a transformer using the form above.', records:'records', adminMode:'🔴 Admin Mode', adminLogin:'🔐 Admin Login', adminLogout:'🔓 Logout', toastSaved:'✅ Transformer added successfully', toastUpdated:'✅ Data updated successfully', toastDeleted:'🗑️ Deleted', toastFill:'⚠️ Please fill all fields', toastDup:'⚠️ Transformer number already exists', toastExport:'⬇️ File exported successfully', toastNoData:'⚠️ No data to export', toastAdmin:'✅ Welcome, Admin!', toastLogout:'👋 Logged out', toastWrongPw:'❌ Incorrect password', toastEditing:'✏️ Editing — update data and press Save', confirmDelete:'Are you sure you want to delete this transformer?', editTitle:'✏️', delTitle:'Delete', loadTitle:'Load Readings', lockTitle:'Requires admin access', adminModalTitle:'Admin Login', adminModalDesc:'Enter password to access delete permissions', pwLabel:'Password', btnLogin:'Login' }
+    ar:{ title:'سجل المحولات الكهربائية', filterAll:'🏭 كل المحطات', red:'أحمر', yellow:'أصفر', blue:'أزرق', neutral:'نيوترال', kva:'KVA', feederUnit:'فيدر', lmFeeder:'فيدر', lmFeederNum:'رقم الفيدر (من اليسار لليمين)', lmFeederName:'حجم الكيبل', lmVoltage:'قراءات الفولتيج (V)', lmCurrent:'قراءات التيار (A)', btnSaveFeeder:'💾 حفظ الفيدر', btnClearFeeder:'✕ مسح', summaryTitle:'📊 ملخص جميع القراءات', summaryFeederNum:'رقم الفيدر', summaryFeederName:'حجم الكيبل', summaryDate:'التاريخ والوقت', lastSaved:'آخر حفظ', notSaved:'لم يُحفظ بعد', toastFeederSaved:'✅ تم حفظ قراءات', lmTitle:'⚡ قراءات الأحمال', lmStation:'اسم المحطة', lmId:'رقم المحول', lmType:'نوع المحول', lmCapacity:'السعة', lmOutputs:'عدد مخارج LV', fHvFeederLabel:'رقم فيدر HV', subtitle:'إدارة وتتبع بيانات المحولات', statTotal:'إجمالي المحولات', statCapacity:'إجمالي السعة (KVA)', statOutputs:'إجمالي مخارج LV', statTypes:'عدد المحولات', formTitle:'إضافة / تعديل محول', fHvFeederPh:'مثال: F-01', fStationLabel:'اسم المحطة', fStationPh:'مثال: محطة الشمال', fTypeLabel:'نوع المحول', fTypeDefault:'-- اختر النوع --', typeGround:'أرضي', typePole:'معلق', fIdLabel:'رقم المحول', fIdPh:'مثال: TR-001', fCapacityLabel:'السعة (KVA)', fCapacityPh:'مثال: 500', fOutputsLabel:'عدد مخارج LV', fOutputsPh:'مثال: 4', btnSave:'💾 حفظ', btnClear:'✕ مسح', tableTitle:'📋 قائمة المحولات', searchPh:'بحث...', btnExport:'⬇ تصدير CSV', colStation:'اسم المحطة', colType:'نوع المحول', colId:'رقم المحول', colCapacity:'السعة (KVA)', colOutputs:'عدد مخارج LV', colActions:'الإجراءات', emptyMsg:'لا توجد بيانات. أضف محولاً باستخدام النموذج أعلاه.', records:'سجل', adminMode:'🔴 وضع الأدمن', adminLogin:'🔐 تسجيل دخول الأدمن', adminLogout:'🔓 تسجيل الخروج', toastSaved:'✅ تم إضافة المحول بنجاح', toastUpdated:'✅ تم تحديث البيانات بنجاح', toastDeleted:'🗑️ تم الحذف', toastFill:'⚠️ يرجى ملء جميع الحقول', toastDup:'⚠️ رقم المحول موجود مسبقاً', toastExport:'⬇️ تم تصدير الملف بنجاح', toastNoData:'⚠️ لا توجد بيانات للتصدير', toastAdmin:'✅ مرحباً بك يا أدمن!', toastLogout:'👋 تم تسجيل الخروج', toastWrongPw:'❌ كلمة المرور غير صحيحة', toastEditing:'✏️ جاري التعديل - عدّل البيانات واضغط حفظ', confirmDelete:'هل أنت متأكد من حذف هذا المحول؟', editTitle:'✏️', delTitle:'حذف', loadTitle:'قراءات الأحمال', lockTitle:'يتطلب صلاحية الأدمن', adminModalTitle:'دخول الأدمن', adminModalDesc:'أدخل كلمة المرور للوصول إلى صلاحيات الحذف', pwLabel:'كلمة المرور', btnLogin:'دخول', allStations:'🏭 كل المحطات', allTypes:'🔧 كل الأنواع', allCapacities:'⚡ كل السعات', searchGeneral:'بحث عام', searchStation:'اسم المحطة', searchTxNo:'رقم المحول', searchCapacity:'السعة', searchLvFeeders:'عدد مخارج LV', searchPlaceholder:'بحث...', summaryReport:'📄 تقرير مختصر', exportExcel:'📊 تصدير Excel' },
+    en:{ title:'Transformer Registry', filterAll:'🏭 All Stations', red:'Red', yellow:'Yellow', blue:'Blue', neutral:'Neutral', kva:'KVA', feederUnit:'Feeder', lmFeeder:'Feeder', lmFeederNum:'Feeder No. (left to right)', lmFeederName:'Size of LV Cable', lmVoltage:'Voltage Readings (V)', lmCurrent:'Current Readings (A)', btnSaveFeeder:'💾 Save Feeder', btnClearFeeder:'✕ Clear', summaryTitle:'📊 All Readings Summary', summaryFeederNum:'Feeder No.', summaryFeederName:'Size of cable', summaryDate:'Date & Time', lastSaved:'Last saved', notSaved:'Not saved yet', toastFeederSaved:'✅ Saved readings for', lmTitle:'⚡ Load Readings', lmStation:'Station', lmId:'Transformer No.', lmType:'Type', lmCapacity:'Capacity', lmOutputs:'LV Feeders', fHvFeederLabel:'HV Feeder No.', subtitle:'Manage and track transformer data', statTotal:'Total Transformers', statCapacity:'Total Capacity (KVA)', statOutputs:'Total LV Feeders', statTypes:'No. of Transformers', formTitle:'Add / Edit Transformer', fHvFeederPh:'e.g. F-01', fStationLabel:'Station Name', fStationPh:'e.g. North Station', fTypeLabel:'Transformer Type', fTypeDefault:'-- Select Type --', typeGround:'Ground', typePole:'Pole', fIdLabel:'Transformer No.', fIdPh:'e.g. TR-001', fCapacityLabel:'Capacity (KVA)', fCapacityPh:'e.g. 500', fOutputsLabel:'No. of LV Feeders', fOutputsPh:'e.g. 4', btnSave:'💾 Save', btnClear:'✕ Clear', tableTitle:'📋 Transformer List', searchPh:'Search...', btnExport:'⬇ Export CSV', colStation:'Station Name', colType:'Type', colId:'Transformer No.', colCapacity:'Capacity (KVA)', colOutputs:'No. of LV Feeders', colActions:'Actions', emptyMsg:'No data found. Add a transformer using the form above.', records:'records', adminMode:'🔴 Admin Mode', adminLogin:'🔐 Admin Login', adminLogout:'🔓 Logout', toastSaved:'✅ Transformer added successfully', toastUpdated:'✅ Data updated successfully', toastDeleted:'🗑️ Deleted', toastFill:'⚠️ Please fill all fields', toastDup:'⚠️ Transformer number already exists', toastExport:'⬇️ File exported successfully', toastNoData:'⚠️ No data to export', toastAdmin:'✅ Welcome, Admin!', toastLogout:'👋 Logged out', toastWrongPw:'❌ Incorrect password', toastEditing:'✏️ Editing — update data and press Save', confirmDelete:'Are you sure you want to delete this transformer?', editTitle:'✏️', delTitle:'Delete', loadTitle:'Load Readings', lockTitle:'Requires admin access', adminModalTitle:'Admin Login', adminModalDesc:'Enter password to access delete permissions', pwLabel:'Password', btnLogin:'Login', allStations:'🏭 All Stations', allTypes:'🔧 All Types', allCapacities:'⚡ All Capacities', searchGeneral:'General Search', searchStation:'Station Name', searchTxNo:'Transformer No.', searchCapacity:'Capacity', searchLvFeeders:'No. of LV Feeders', searchPlaceholder:'Search...', summaryReport:'📄 Summary Report', exportExcel:'📊 Export Excel' }
   };
   function t(k){ return (i18n[lang]&&i18n[lang][k]) || (i18n['ar']&&i18n['ar'][k]) || k; }
   function toggleLang(){
@@ -1017,22 +1017,72 @@
   .btn-logout:hover{border-color:var(--danger);color:var(--danger)}
   .badge-team{background:rgba(255,107,53,0.12);color:var(--accent2);border:1px solid rgba(255,107,53,0.3)}
 
-  /* ── Filter Bar ── */
-  .filter-select {
-    padding: 0.5rem 0.7rem;
-    font-size: 0.82rem;
+  /* ── Filters Toolbar ── */
+  .filters-toolbar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(130px, 1fr)) minmax(130px, 1fr) auto auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .filters-toolbar select {
+    height: 40px;
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text);
+    padding: 0 10px;
+    font-size: 0.82rem;
+    font-family: 'Tajawal', sans-serif;
     outline: none;
     cursor: pointer;
-    font-family: 'Tajawal', sans-serif;
+    min-width: 0;
     transition: border-color 0.2s;
-    flex-shrink: 0;
   }
-  .filter-select:focus { border-color: var(--accent); }
-  .filter-select:hover { border-color: rgba(0,212,255,0.4); }
+  .filters-toolbar select:focus,
+  .filters-toolbar select:hover { border-color: rgba(0,212,255,0.5); }
+  .filters-toolbar .search-box {
+    position: relative;
+    min-width: 0;
+  }
+  .filters-toolbar .search-box input {
+    width: 100%;
+    height: 40px;
+    box-sizing: border-box;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.82rem;
+    font-family: 'Cairo', sans-serif;
+    padding: 0 2.2rem 0 0.7rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .filters-toolbar .search-box input:focus { border-color: var(--accent); }
+  .filters-toolbar .search-box .search-icon {
+    position: absolute;
+    right: 0.7rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .filters-toolbar .btn {
+    height: 40px;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    padding: 0 0.9rem;
+  }
+  @media (max-width: 900px) {
+    .filters-toolbar {
+      grid-template-columns: repeat(2, minmax(130px, 1fr));
+    }
+    .filters-toolbar .btn { width: 100%; justify-content: center; }
+  }
+  @media (max-width: 520px) {
+    .filters-toolbar { grid-template-columns: 1fr; }
+  }
 
   /* ── Summary Report ── */
   .summary-report-table { width: 100%; border-collapse: collapse; }
@@ -1208,32 +1258,34 @@
 
   <!-- Table -->
   <div class="table-wrapper">
-    <div style="display:flex;align-items:center;gap:0.6rem;padding:0.8rem 1.2rem;border-bottom:1px solid var(--border);flex-wrap:wrap">
-      <div class="table-title" style="white-space:nowrap" data-i18n="tableTitle">📋 قائمة المحولات</div>
-      <select id="stationFilter" onchange="currentPage=1;renderTable()" class="filter-select" style="min-width:130px">
-        <option value="" data-i18n="filterAll">🏭 كل المحطات</option>
-      </select>
-      <select id="filterType" onchange="currentPage=1;renderTable()" class="filter-select">
-        <option value="">🔧 كل الأنواع</option>
-        <option value="أرضي">أرضي (Ground)</option>
-        <option value="معلق">معلق (Pole)</option>
-      </select>
-      <select id="filterCapacity" onchange="currentPage=1;renderTable()" class="filter-select">
-        <option value="">⚡ كل السعات</option>
-      </select>
-      <select id="searchMode" onchange="currentPage=1;renderTable()" class="filter-select" style="min-width:125px">
-        <option value="all">بحث عام</option>
-        <option value="station">اسم المحطة</option>
-        <option value="txNo">رقم المحول</option>
-        <option value="capacity">السعة</option>
-        <option value="lvFeeders">عدد مخارج LV</option>
-      </select>
-      <div class="search-box" style="min-width:140px;flex:1;max-width:220px">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" data-i18n-ph="searchPh" placeholder="بحث..." oninput="currentPage=1;renderTable()" />
+    <div style="padding:0.8rem 1.2rem;border-bottom:1px solid var(--border)">
+      <div class="table-title" style="margin-bottom:0.7rem" data-i18n="tableTitle">📋 قائمة المحولات</div>
+      <div class="filters-toolbar">
+        <select id="stationFilter" onchange="currentPage=1;renderTable()">
+          <option value="">🏭 كل المحطات</option>
+        </select>
+        <select id="filterType" onchange="currentPage=1;renderTable()">
+          <option value="">🔧 كل الأنواع</option>
+          <option value="أرضي">أرضي</option>
+          <option value="معلق">معلق</option>
+        </select>
+        <select id="filterCapacity" onchange="currentPage=1;renderTable()">
+          <option value="">⚡ كل السعات</option>
+        </select>
+        <select id="searchMode" onchange="currentPage=1;renderTable()">
+          <option value="all">بحث عام</option>
+          <option value="station">اسم المحطة</option>
+          <option value="txNo">رقم المحول</option>
+          <option value="capacity">السعة</option>
+          <option value="lvFeeders">عدد مخارج LV</option>
+        </select>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="بحث..." oninput="currentPage=1;renderTable()" />
+        </div>
+        <button id="summaryReportBtn" class="btn btn-secondary" onclick="generateSummaryReport()" style="border-color:rgba(167,139,250,0.4);color:#a78bfa">📄 تقرير مختصر</button>
+        <button id="exportExcelBtn" class="btn btn-secondary" onclick="exportExcel()" title="ينزل CSV — افتحه بـ Excel" style="border-color:rgba(0,255,157,0.4);color:var(--accent3)">📊 تصدير Excel</button>
       </div>
-      <button class="btn btn-secondary" onclick="generateSummaryReport()" style="padding:0.5rem 0.9rem;font-size:0.8rem;white-space:nowrap;flex-shrink:0;border-color:rgba(167,139,250,0.4);color:#a78bfa">📄 تقرير مختصر</button>
-      <button class="btn btn-secondary" onclick="exportExcel()" title="ينزل CSV — افتحه بـ Excel" style="padding:0.5rem 0.9rem;font-size:0.8rem;white-space:nowrap;flex-shrink:0;border-color:rgba(0,255,157,0.4);color:var(--accent3)">📊 تصدير Excel</button>
     </div>
     <div style="overflow-x:auto;direction:ltr">
       <table style="direction:ltr">
@@ -1402,6 +1454,33 @@
   const maxCapacity = 2000;
   let adminPwCache = null; // admin password kept in memory only for RPC calls
 
+  function updateFilterLabels() {
+    const si = document.getElementById('searchInput');
+    if (si) si.placeholder = t('searchPlaceholder');
+
+    const srBtn = document.getElementById('summaryReportBtn');
+    if (srBtn) srBtn.textContent = t('summaryReport');
+
+    const exBtn = document.getElementById('exportExcelBtn');
+    if (exBtn) exBtn.textContent = t('exportExcel');
+
+    const ftSel = document.getElementById('filterType');
+    if (ftSel && ftSel.options.length >= 3) {
+      ftSel.options[0].textContent = t('allTypes');
+      ftSel.options[1].textContent = t('typeGround');
+      ftSel.options[2].textContent = t('typePole');
+    }
+
+    const smSel = document.getElementById('searchMode');
+    if (smSel && smSel.options.length >= 5) {
+      smSel.options[0].textContent = t('searchGeneral');
+      smSel.options[1].textContent = t('searchStation');
+      smSel.options[2].textContent = t('searchTxNo');
+      smSel.options[3].textContent = t('searchCapacity');
+      smSel.options[4].textContent = t('searchLvFeeders');
+    }
+  }
+
   function applyLang() {
     const isAr = lang === 'ar';
     document.documentElement.lang = lang;
@@ -1432,6 +1511,7 @@
     if (btnSaveVolt) btnSaveVolt.textContent = isAr ? 'حفظ الفولتيج' : 'Save Voltage';
 
     updateStationFilter();
+    updateFilterLabels();
     renderTable();
 
     if (currentLoadUid) {
@@ -1528,7 +1608,7 @@
     const sel = document.getElementById('stationFilter');
     const current = sel.value;
     const stations = [...new Set(records.map(r => r.station).filter(Boolean))].sort();
-    sel.innerHTML = `<option value="">${t('filterAll')}</option>` +
+    sel.innerHTML = `<option value="">${t('allStations')}</option>` +
       stations.map(s => `<option value="${s}" ${s===current?'selected':''}>${s}</option>`).join('');
 
     const capSel = document.getElementById('filterCapacity');
@@ -1536,7 +1616,7 @@
       const currentCap = capSel.value;
       const capacities = [...new Set(records.map(r => String(r.capacity || '').replace(/,/g, '')).filter(Boolean))]
         .sort((a, b) => Number(a) - Number(b));
-      capSel.innerHTML = `<option value="">⚡ كل السعات</option>` +
+      capSel.innerHTML = `<option value="">${t('allCapacities')}</option>` +
         capacities.map(c => `<option value="${c}" ${c===currentCap?'selected':''}>${c} KVA</option>`).join('');
     }
   }
