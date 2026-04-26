@@ -2751,9 +2751,9 @@ ${fResults.length?`<div class="section">
       /* AY: Load % = (I_max / I_rated) × 100
          I_rated = KVA×1000 / (√3 × V_LL)
          V_LL: أولوية J ثم K ثم L ثم 415 افتراضي */
-      const vllF = `IF(J${exRow}>0,J${exRow},IF(K${exRow}>0,K${exRow},IF(L${exRow}>0,L${exRow},415)))`;
-      const ratedF = `(E${exRow}*1000)/(SQRT(3)*${vllF})`;
-      row.push(fCell(`IF(E${exRow}>0,(AW${exRow}/${ratedF})*100,0)`));
+      const vllF  = `IF(J${exRow}>0,J${exRow},IF(K${exRow}>0,K${exRow},IF(L${exRow}>0,L${exRow},415)))`;
+      // Load% = (I_max / I_rated) × 100 = AW × √3 × V_LL / (KVA × 1000) × 100
+      row.push({ f: `IF(E${exRow}>0,(AW${exRow}*SQRT(3)*${vllF}/(E${exRow}*1000))*100,0)`, t: 'n', z: '0.00', s: ds });
 
       /* AZ: Action Upgrade — loadPct > 70 */
       row.push({ f: `IF(AY${exRow}>70,"Upgrade","OK - No Upgrade")`, t: 's', s: ds });
