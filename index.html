@@ -1129,7 +1129,7 @@
   </div>
 
   <!-- Add Form -->
-  <div class="form-section">
+  <div class="form-section" id="formSection">
     <div class="section-title" data-i18n="formTitle">إضافة / تعديل محول</div>
     <div class="form-grid" style="margin-bottom:0.8rem">
       <div class="form-group">
@@ -1416,6 +1416,7 @@
     document.getElementById('adminBtn').classList.remove('logged-in');
     document.getElementById('adminBadge').style.display = 'none';
     document.getElementById('adminResetPanel').style.display = 'none';
+    document.getElementById('formSection').style.display = '';
     localStorage.setItem('txSession', JSON.stringify({team:currentTeam, isAdmin}));
     showToast(t('toastLogout'));
     renderTable();
@@ -3153,7 +3154,8 @@ ${fResults.length?`<div class="section">
     if (!isAdmin) await populateStationDropdown();
     // Add team col header visibility
     const thTeam=document.getElementById('thTeam'); if(thTeam) thTeam.style.display=isAdmin?'':'none';
-    // Show/hide admin reset requests panel
+    // Show/hide form and admin panels based on role
+    document.getElementById('formSection').style.display = isAdmin ? 'none' : '';
     if(isAdmin){
       document.getElementById('adminResetPanel').style.display='block';
       loadResetRequests();
