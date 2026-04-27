@@ -2961,6 +2961,17 @@ ${fResults.length?`<div class="section">
     function dataStyle() {
       return { font: { sz: 10 }, alignment: { horizontal: 'center', vertical: 'center' }, border };
     }
+    function feederBdr(isFirst, isLast) {
+      const lt = { style: 'thin',   color: { rgb: 'CBD5E1' } };
+      const tk = { style: 'medium', color: { rgb: FEEDER_BORDER } };
+      return { top: lt, bottom: lt, left: isFirst ? tk : lt, right: isLast ? tk : lt };
+    }
+    function feederHdrStyle(bg, isFirst, isLast) {
+      return { fill: { fgColor: { rgb: bg } }, font: { bold: true, sz: 10, color: { rgb: '1F2937' } }, alignment: centerAlign, border: feederBdr(isFirst, isLast) };
+    }
+    function feederDsStyle(isFirst, isLast, fi) {
+      return { fill: { fgColor: { rgb: FEEDER_FILLS[fi % 2] } }, font: { sz: 10 }, alignment: { horizontal: 'center', vertical: 'center' }, border: feederBdr(isFirst, isLast) };
+    }
 
     /* ── colour map ── */
     const CLR_BASE    = 'D9E1F2';
@@ -2971,10 +2982,13 @@ ${fResults.length?`<div class="section">
     const CLR_VRY     = 'FFEAEA';
     const CLR_VRB     = 'EAF0FF';
     const CLR_VYB     = 'F2F9FF';
-    const CLR_FR      = 'FF6600';
-    const CLR_FY      = 'FFC000';
-    const CLR_FB      = '66FFFF';
-    const CLR_FN      = 'F2F2F2';
+    const CLR_FR      = 'FCE4E4';
+    const CLR_FY      = 'FFF2CC';
+    const CLR_FB      = 'DDEBFF';
+    const CLR_FN      = 'F3F4F6';
+    const CLR_FTITLE  = 'F4D27A';
+    const FEEDER_FILLS  = ['FFFFFF', 'F8FAFC'];
+    const FEEDER_BORDER = '374151';
     const CLR_TOTAL   = 'E2EFDA';
     const CLR_LOADPCT = 'FFFF00';
     const CLR_ACTION  = 'FFF2CC';
@@ -3016,16 +3030,17 @@ ${fResults.length?`<div class="section">
 
     /* M-AR: Feeders */
     for (let fn = 1; fn <= MAX_FEEDERS; fn++) {
-      /* row0: feeder name merged over 4 cols */
-      row0.push(hdr('Feeder ' + fn, CLR_FR));
-      row0.push(hdr('', CLR_FY));
-      row0.push(hdr('', CLR_FB));
-      row0.push(hdr('', CLR_FN));
+      /* row0: feeder name merged over 4 cols — thick border on first and last */
+      row0.push({ v: 'Feeder ' + fn, t: 's', s: feederHdrStyle(CLR_FTITLE, true,  false) });
+      row0.push({ v: '',             t: 's', s: feederHdrStyle(CLR_FTITLE, false, false) });
+      row0.push({ v: '',             t: 's', s: feederHdrStyle(CLR_FTITLE, false, false) });
+      row0.push({ v: '',             t: 's', s: feederHdrStyle(CLR_FTITLE, false, true)  });
       /* row1 & row2: R Y B N */
       const phases = ['R', 'Y', 'B', 'N'];
       for (let p = 0; p < 4; p++) {
-        row1.push(hdr(phases[p], feederClrs[p]));
-        row2.push(hdr(phases[p], feederClrs[p]));
+        const isF = p === 0, isL = p === 3;
+        row1.push({ v: phases[p], t: 's', s: feederHdrStyle(feederClrs[p], isF, isL) });
+        row2.push({ v: phases[p], t: 's', s: feederHdrStyle(feederClrs[p], isF, isL) });
       }
     }
 
@@ -3113,11 +3128,13 @@ ${fResults.length?`<div class="section">
       row.push(dCell(v.vL2L3 ? Number(v.vL2L3) : ''));
 
       /* M-AR feeders */
-      fds.slice(0, MAX_FEEDERS).forEach(f => {
-        row.push(dCell(f.iL1 ? Number(f.iL1) : ''));
-        row.push(dCell(f.iL2 ? Number(f.iL2) : ''));
-        row.push(dCell(f.iL3 ? Number(f.iL3) : ''));
-        row.push(dCell(f.iN  ? Number(f.iN)  : ''));
+      fds.slice(0, MAX_FEEDERS).forEach((f, fi) => {
+        const fVals = [f.iL1, f.iL2, f.iL3, f.iN];
+        fVals.forEach((val, p) => {
+          const isF = p === 0, isL = p === 3;
+          const fv = val ? Number(val) : '';
+          row.push({ v: fv, t: typeof fv === 'number' ? 'n' : 's', s: feederDsStyle(isF, isL, fi) });
+        });
       });
 
       /* AS-AV: Total formulas */
@@ -3189,7 +3206,7 @@ ${fResults.length?`<div class="section">
       let w = 5;
       if (c in widthMap) w = widthMap[c];
       else if (c >= 5 && c <= 11) w = 6;   // F-L
-      else if (c >= 12 && c <= 43) w = 5;  // M-AR
+      else if (c >= 12 && c <= 43) w = 6;  // M-AR
       else if (c >= 44 && c <= 47) w = 6;  // AS-AV
       else if (c === 48 || c === 49) w = 7; // AW-AX
       else if (c === 50) w = 9;            // AY
