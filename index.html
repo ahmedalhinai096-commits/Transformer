@@ -1242,7 +1242,8 @@
       </div>
       <div class="form-group">
         <label data-i18n="fIdLabel">رقم المحول</label>
-        <input type="text" id="fId" placeholder="" />
+        <input type="text" id="fId" inputmode="numeric" pattern="[0-9]*" placeholder=""
+          oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
       </div>
       <div class="form-group">
         <label data-i18n="fCapacityLabel">السعة (KVA)</label>
@@ -1858,6 +1859,9 @@
 
     if (!type || !id || !station || !hvFeeder || !capacity || !outputs) {
       showToast(t('toastFill'), 'error'); return;
+    }
+    if (!/^[0-9]+$/.test(id)) {
+      showToast('رقم المحول يجب أن يكون أرقامًا فقط', 'error'); return;
     }
 
     let savedUid;
@@ -3475,6 +3479,7 @@ ${fResults.length?`<div class="section">
     const station=document.getElementById('fStation').value.trim(), hvFeeder=document.getElementById('fHvFeeder').value.trim();
     const capacity=Number(document.getElementById('fCapacity').value), outputs=Number(document.getElementById('fOutputs').value);
     if(!type||!id||!station||!hvFeeder||!capacity||!outputs){showToast(t('toastFill'),'error');return;}
+    if(!/^[0-9]+$/.test(id)){showToast('رقم المحول يجب أن يكون أرقامًا فقط','error');return;}
     // Validate station belongs to current team
     if (!isAdmin && station) {
       const check = await supa.get(
