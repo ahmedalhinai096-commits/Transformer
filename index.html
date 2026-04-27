@@ -2996,8 +2996,14 @@ ${fResults.length?`<div class="section">
     /* feeder sub-colours per phase index 0=R,1=Y,2=B,3=N */
     const feederClrs = [CLR_FR, CLR_FY, CLR_FB, CLR_FN];
 
+    /* ── sheet name sanitizer ── */
+    function sanitizeSheetName(name) {
+      return String(name || 'Unknown').replace(/[\\\/\?\*\[\]\:]/g, '').substring(0, 31) || 'Unknown';
+    }
+
+    /* ── build one worksheet from a list of records ── */
+    function buildSheet(sheetRecords) {
     /* ── Build header rows (3 rows) ── */
-    // Row 0 (Excel row 1)
     const row0 = [];
     const row1 = [];
     const row2 = [];
@@ -3083,7 +3089,7 @@ ${fResults.length?`<div class="section">
     const aoa = [row0, row1, row2];
 
     /* ── Data rows (starting at Excel row 4) ── */
-    records.slice().reverse().forEach((rec, idx) => {
+    sheetRecords.slice().reverse().forEach((rec, idx) => {
       const uid = rec.uid;
       const ld  = loadings[uid] || {};
       const v   = ld.volt || {};
@@ -3230,12 +3236,34 @@ ${fResults.length?`<div class="section">
     if (!ws['!views']) ws['!views'] = [{}];
     ws['!views'][0] = { state: 'frozen', xSplit: 6, ySplit: 3 };
 
-    /* ── Write workbook ── */
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Report');
+      return ws;
+    } // end buildSheet
 
-    const d = new Date();
-    const stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+    /* ── Group records by station ── */
+    const grouped = {};
+    records.forEach(rec => {
+      const station = rec.station || 'Unknown';
+      if (!grouped[station]) grouped[station] = [];
+      grouped[station].push(rec);
+    });
+
+    /* ── Build workbook — one sheet per station ── */
+    const wb        = XLSX.utils.book_new();
+    const usedNames = new Set();
+
+    Object.entries(grouped).forEach(([stationName, stationRecords]) => {
+      let sheetName = sanitizeSheetName(stationName);
+      if (usedNames.has(sheetName)) {
+        let i = 2;
+        while (usedNames.has(`${sheetName} ${i}`)) i++;
+        sheetName = `${sheetName} ${i}`;
+      }
+      usedNames.add(sheetName);
+      XLSX.utils.book_append_sheet(wb, buildSheet(stationRecords), sheetName);
+    });
+
+    const d     = new Date();
+    const stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
     XLSX.writeFile(wb, `transformers_${stamp}.xlsx`);
 
     showToast(lang === 'ar' ? '📊 تم تصدير ملف Excel بنفس تنسيق التقرير' : '📊 Excel report exported with template styling', 'success');
