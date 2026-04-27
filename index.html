@@ -108,7 +108,6 @@
     color: var(--text);
     font-family: 'Cairo', sans-serif;
     height: 100vh;
-    /* overflow-x: hidden; */
     overflow: auto;
   }
 
@@ -2196,12 +2195,10 @@
 
   function currentField(fi, key, label, cls) {
     const val = loadings[currentLoadUid]?.feeders[fi]?.[key] ?? '';
-    const warn = false;
     return `<div class="reading-field">
       <label>${colorLabel(label)}</label>
       <input type="number" class="${cls}" value="${val}" step="0.1"
-        oninput="liveUpdate(${fi},'${key}',this.value)" placeholder="0.0"
-        style="${warn?'border-color:var(--danger);':''}"/>
+        oninput="liveUpdate(${fi},'${key}',this.value)" placeholder="0.0"/>
     </div>`;
   }
 
@@ -3327,7 +3324,6 @@ ${fResults.length?`<div class="section">
       pendingResets = Array.isArray(data) ? data : [];
       renderResetRequests();
     } catch (e) {
-      console.warn('Failed to load reset requests:', e);
       pendingResets = [];
       renderResetRequests();
     }
