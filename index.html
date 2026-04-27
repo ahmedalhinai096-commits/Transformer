@@ -2964,7 +2964,13 @@ ${fResults.length?`<div class="section">
 
     /* ── colour map ── */
     const CLR_BASE    = 'D9E1F2';
-    const CLR_VOLT    = 'EBF3FF';
+    const CLR_VOLT    = 'E8EEF7';
+    const CLR_VRN     = 'FFE5E5';
+    const CLR_VYN     = 'FFF4CC';
+    const CLR_VBN     = 'E6F0FF';
+    const CLR_VRY     = 'FFEAEA';
+    const CLR_VRB     = 'EAF0FF';
+    const CLR_VYB     = 'F2F9FF';
     const CLR_FR      = 'FF6600';
     const CLR_FY      = 'FFC000';
     const CLR_FB      = '66FFFF';
@@ -3004,8 +3010,9 @@ ${fResults.length?`<div class="section">
     row1.push(hdr('Line Voltage', CLR_VOLT));
     row1.push(hdr('', CLR_VOLT));
     row1.push(hdr('', CLR_VOLT));
-    const voltR2 = ['R/N', 'Y/N', 'B/N', 'R/B', 'Y/R', 'B/Y'];
-    for (let i = 0; i < 6; i++) row2.push(hdr(voltR2[i], CLR_VOLT));
+    const voltR2   = ['R/N',   'Y/N',   'B/N',   'R/Y',   'R/B',   'Y/B'  ];
+    const voltClrs = [CLR_VRN, CLR_VYN, CLR_VBN, CLR_VRY, CLR_VRB, CLR_VYB];
+    for (let i = 0; i < 6; i++) row2.push(hdr(voltR2[i], voltClrs[i]));
 
     /* M-AR: Feeders */
     for (let fn = 1; fn <= MAX_FEEDERS; fn++) {
