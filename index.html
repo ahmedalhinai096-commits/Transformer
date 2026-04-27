@@ -3490,7 +3490,7 @@ ${fResults.length?`<div class="section">
         await pushTransformer(records[idx],true); savedUid=editId; editId=null;
         showToast(t('toastUpdated'),'success');
       } else {
-        if(records.some(r=>r.id===id)){showToast(t('toastDup'),'error');return;}
+        if(records.some(r=>r.id===id&&r.station===station)){showToast(t('toastDup'),'error');return;}
         savedUid=Date.now().toString(36)+Math.random().toString(36).slice(2,5);
         const rec={uid:savedUid,team:currentTeam,type,id,station,hvFeeder,capacity,outputs};
         records.push(rec); await pushTransformer(rec,false);
