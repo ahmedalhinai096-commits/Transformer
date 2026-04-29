@@ -2259,7 +2259,10 @@
           </div>
           <div style="display:flex;flex-direction:column;gap:0.3rem;flex:1;min-width:160px">
             <label style="font-size:0.73rem;color:var(--text-muted);font-family:'Tajawal',sans-serif">${t('lmFeederName')}</label>
-            <input type="text" value="${f.name||''}" onchange="updateFeederName(${i},this.value)"
+            <input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off"
+              value="${f.name||''}"
+              oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+              onchange="updateFeederName(${i},this.value)"
               style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:0.9rem;padding:0.5rem 0.8rem;outline:none;direction:${lang==='ar'?'rtl':'ltr'}"/>
           </div>
         </div>
