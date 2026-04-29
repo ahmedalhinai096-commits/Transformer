@@ -55,6 +55,35 @@
     if(typeof applyLang==='function') applyLang();
   }
 
+  // ── Theme Management ──────────────────────────────────
+  var THEMES = {
+    normal: { '--bg':'#0a0f1e','--surface':'#111827','--surface2':'#1a2540','--border':'#1e3a5f','--accent':'#00d4ff','--accent2':'#ff6b35','--accent3':'#00ff9d','--text':'#e2e8f0','--text-muted':'#6b7fa3','--danger':'#ff4757' },
+    sun:    { '--bg':'#FFFFFF','--surface':'#F3F4F6','--surface2':'#E5E7EB','--border':'#9CA3AF','--accent':'#2563EB','--accent2':'#D97706','--accent3':'#16A34A','--text':'#111827','--text-muted':'#374151','--danger':'#DC2626' }
+  };
+  function applyTheme(mode) {
+    var theme = THEMES[mode] || THEMES.normal;
+    var root = document.documentElement;
+    Object.keys(theme).forEach(function(k){ root.style.setProperty(k, theme[k]); });
+    if (mode === 'sun') root.classList.add('sun-mode');
+    else root.classList.remove('sun-mode');
+    localStorage.setItem('theme', mode);
+  }
+  function toggleTheme() {
+    var current = localStorage.getItem('theme') || 'normal';
+    applyTheme(current === 'normal' ? 'sun' : 'normal');
+    updateThemeBtn();
+  }
+  function updateThemeBtn() {
+    var btn = document.getElementById('themeToggleBtn');
+    if (!btn) return;
+    var isSun = (localStorage.getItem('theme') || 'normal') === 'sun';
+    btn.innerHTML = isSun ? '🌙' : '☀️';
+    btn.title = isSun ? 'Normal Mode' : 'Sun Mode (Outdoor)';
+    btn.style.borderColor = isSun ? 'rgba(99,102,241,0.5)' : 'rgba(217,119,6,0.5)';
+    btn.style.color = isSun ? '#6366f1' : '#D97706';
+  }
+  (function(){ applyTheme(localStorage.getItem('theme') || 'normal'); })();
+
   // ── Date/Time helpers ──────────────────────────────────
   function formatDateTime(isoStr) {
     if (!isoStr) return '—';
@@ -100,6 +129,70 @@
     --text-muted: #6b7fa3;
     --danger: #ff4757;
   }
+
+  /* ── Smooth theme transition ── */
+  body, .stat-card, .form-section, .table-wrapper, .login-box, .toast,
+  .lm-info-item, .analysis-card, .analysis-wrap, .readings-summary,
+  thead th, tbody td { transition: background-color 0.2s, color 0.2s, border-color 0.2s; }
+
+  /* ── Sun / High-Visibility Mode ── */
+  html.sun-mode body::before { opacity: 0; }
+  html.sun-mode h1 { background: none; -webkit-background-clip: unset; background-clip: unset; -webkit-text-fill-color: #1D4ED8; color: #1D4ED8; }
+  html.sun-mode .login-title { background: none; -webkit-background-clip: unset; background-clip: unset; -webkit-text-fill-color: #1D4ED8; }
+  html.sun-mode .modal h2 { background: none; -webkit-background-clip: unset; background-clip: unset; -webkit-text-fill-color: #D97706; }
+  html.sun-mode .stat-card { border-width: 1.5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  html.sun-mode thead th { color: #111827 !important; font-weight: 700; }
+  html.sun-mode tbody tr { border-bottom-color: #D1D5DB; }
+  html.sun-mode tbody tr:hover { background: rgba(37,99,235,0.06); }
+  html.sun-mode .badge-power { background: rgba(37,99,235,0.12); color: #1D4ED8; border-color: rgba(37,99,235,0.4); }
+  html.sun-mode .badge-dist  { background: rgba(22,163,74,0.12);  color: #15803D; border-color: rgba(22,163,74,0.4); }
+  html.sun-mode .badge-auto  { background: rgba(109,40,217,0.12); color: #6D28D9; border-color: rgba(109,40,217,0.4); }
+  html.sun-mode .btn-primary { color: #fff; background: linear-gradient(135deg, #2563EB, #1D4ED8); }
+  html.sun-mode .btn-primary:hover { box-shadow: 0 4px 20px rgba(37,99,235,0.35); }
+  html.sun-mode .pg-btn.active { color: #fff; }
+  html.sun-mode .feeder-tab.active { color: #fff; }
+  html.sun-mode .team-btn.selected { color: #fff; background: linear-gradient(135deg, #2563EB, #1D4ED8); border-color: #2563EB; }
+  html.sun-mode .btn-login-go { color: #fff; background: linear-gradient(135deg, #2563EB, #1D4ED8); }
+  html.sun-mode .btn-login { color: #fff; background: linear-gradient(135deg, #D97706, #B45309); }
+  html.sun-mode .timestamp-badge { background: rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.25); }
+  html.sun-mode .timestamp-badge.fresh { background: rgba(22,163,74,0.08); border-color: rgba(22,163,74,0.25); }
+  html.sun-mode .modal-overlay { background: rgba(0,0,0,0.5); }
+  html.sun-mode .load-modal-overlay { background: rgba(0,0,0,0.5); }
+  html.sun-mode .alert-success { background: rgba(22,163,74,0.12); }
+  html.sun-mode .alert-warning { background: rgba(217,119,6,0.12); }
+  html.sun-mode .alert-danger  { background: rgba(220,38,38,0.12); }
+  html.sun-mode .readings-summary th { background: #E5E7EB; color: #111827; font-weight: 700; }
+  html.sun-mode .readings-summary td { border-bottom-color: #D1D5DB; }
+  html.sun-mode .load-bar-bg { background: #E5E7EB; }
+  html.sun-mode .phase-bar-bg { background: #E5E7EB; }
+  html.sun-mode .bar-bg { background: #D1D5DB; }
+  html.sun-mode .bar-fill { background: linear-gradient(90deg, #2563EB, #16A34A); }
+  html.sun-mode input:focus, html.sun-mode select:focus { box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+  html.sun-mode header::after { background: linear-gradient(90deg, transparent, #2563EB, #D97706, #2563EB, transparent); }
+  html.sun-mode .header-icon { filter: drop-shadow(0 0 12px #2563EB); }
+  html.sun-mode .v-val { color: #B45309; }
+  html.sun-mode .a-val { color: #15803D; }
+  html.sun-mode .feeder-name { color: #1D4ED8; }
+  html.sun-mode .date-cell { color: #6D28D9; }
+  html.sun-mode #statGround { color: #15803D !important; }
+  html.sun-mode #statPole   { color: #6D28D9 !important; }
+  html.sun-mode .team-pill { background: rgba(37,99,235,0.1); border-color: rgba(37,99,235,0.3); }
+  html.sun-mode .sync-dot { background: #16A34A; }
+  html.sun-mode .reading-field input.voltage { border-color: rgba(217,119,6,0.4); }
+  html.sun-mode .reading-field input.current { border-color: rgba(22,163,74,0.4); }
+  html.sun-mode .lm-title { color: #15803D; }
+  html.sun-mode .lm-info-item strong { color: #2563EB; }
+  html.sun-mode .analysis-title { color: #15803D; }
+  html.sun-mode .section-title { color: #1D4ED8; }
+  html.sun-mode .section-title::before { background: #1D4ED8; }
+  html.sun-mode .load-ok    { background: #16A34A !important; }
+  html.sun-mode .load-warn  { background: #D97706 !important; }
+  html.sun-mode .load-danger{ background: #DC2626 !important; }
+  html.sun-mode .rpm-title { color: #2563EB; }
+  html.sun-mode .reading-section-title { color: #D97706; }
+  html.sun-mode .reading-section-title::before { background: #D97706; }
+  html.sun-mode .summary-report-table thead th { color: #1D4ED8; background: #E5E7EB; }
+  html.sun-mode .summary-report-table tbody tr:hover { background: rgba(37,99,235,0.06); }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1142,6 +1235,7 @@
       <span id="syncMsg" style="font-size:0.7rem;color:var(--text-muted);font-family:'Tajawal',sans-serif"></span>
     </div>
     <div class="admin-actions">
+      <button id="themeToggleBtn" onclick="toggleTheme()" style="padding:0.3rem 0.8rem;border-radius:8px;border:1px solid rgba(217,119,6,0.5);background:transparent;color:#D97706;font-family:'Cairo',sans-serif;font-size:0.78rem;cursor:pointer;font-weight:600;transition:all 0.2s" title="Sun Mode (Outdoor)">☀️</button>
       <button class="btn-admin" id="langBtn" onclick="toggleLang()" style="padding:0.3rem 0.8rem;border-radius:8px;border:1px solid rgba(167,139,250,0.4);background:transparent;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:0.78rem;cursor:pointer">🌐 EN</button>
       <button class="btn-logout" onclick="doLogout()">خروج</button>
     </div>
@@ -3804,6 +3898,8 @@ ${fResults.length?`<div class="section">
       smLoadStations();
     } catch(e) { showToast('❌ '+e.message, 'error'); }
   }
+
+  updateThemeBtn();
 
 </script>
 </body>
