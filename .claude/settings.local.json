@@ -6,7 +6,8 @@
       "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\oxaao\\\\OneDrive\\\\Documents\\\\GitHub\\\\Transformer\" -Force | Select-Object Name, PSIsContainer | Where-Object { $_.Name -notmatch '^\\\\.' })",
       "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\oxaao\\\\OneDrive\\\\Documents\\\\GitHub\\\\Transformer\" -Force | Where-Object { -not $_.PSIsContainer -and $_.Name -notmatch '^\\\\.' } | Select-Object Name)",
       "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\oxaao\\\\OneDrive\\\\Documents\\\\GitHub\\\\Transformer\" -Directory -Force | Where-Object { $_.Name -notmatch '^\\\\.' } | Select-Object Name)",
-      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\oxaao\\\\OneDrive\\\\Documents\\\\GitHub\\\\Transformer\" -Recurse -Depth 2 -Force | Where-Object { -not $_.PSIsContainer } | Select-Object FullName | Sort-Object FullName)"
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\oxaao\\\\OneDrive\\\\Documents\\\\GitHub\\\\Transformer\" -Recurse -Depth 2 -Force | Where-Object { -not $_.PSIsContainer } | Select-Object FullName | Sort-Object FullName)",
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\ndl1378.DISTRIBUTION\\\\OneDrive - Electricity Holding Company \\(S.A.O.C.\\)\\\\المستندات\\\\Transformer\" | Where-Object {-not $_.PSIsContainer} | Select-Object Name)"
     ]
   }
 }
