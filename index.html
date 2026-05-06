@@ -2139,7 +2139,7 @@
     if (!loadings[uid]._allRounds) loadings[uid]._allRounds = {};
     loadings[uid]._allRounds[loadings[uid]._round] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders};
     const roundEl = document.getElementById('roundBadge');
-    if (roundEl) roundEl.textContent = 'Round ' + loadings[uid]._round;
+    if (roundEl) roundEl.textContent = (lang==='ar'?'القراءة ':'Reading ') + loadings[uid]._round;
     buildRoundTabs(uid);
 
     const cnt = Number(r.outputs);
@@ -2186,7 +2186,7 @@
     const active = loadings[uid]._round || 1;
     container.innerHTML = sortedRounds.map(r => {
       const isActive = r === active;
-      return `<button onclick="switchRound('${uid}',${r})" style="padding:0.3rem 1rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;border:1px solid ${isActive?'var(--accent)':'rgba(107,127,163,0.4)'};background:${isActive?'rgba(0,212,255,0.15)':'transparent'};color:${isActive?'var(--accent)':'var(--text-muted)'}">Round ${r}</button>`;
+      return `<button onclick="switchRound('${uid}',${r})" style="padding:0.3rem 1rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;border:1px solid ${isActive?'var(--accent)':'rgba(107,127,163,0.4)'};background:${isActive?'rgba(0,212,255,0.15)':'transparent'};color:${isActive?'var(--accent)':'var(--text-muted)'}">${lang==='ar'?'القراءة ':'Reading '}${r}</button>`;
     }).join('');
   }
 
@@ -2213,8 +2213,8 @@
     syncFormToMemory();
     const currentRound = loadings[uid]._round || 1;
     const msg = lang === 'ar'
-      ? `هل تريد بدء قراءة جديدة (Round ${currentRound + 1})؟\nستُحفظ القراءة الحالية وتبدأ جديدة فارغة.`
-      : `Start new reading round ${currentRound + 1}?\nCurrent reading will be kept and a new empty one will start.`;
+      ? `هل تريد بدء القراءة ${currentRound + 1}؟\nستُحفظ القراءة الحالية وتبدأ جديدة فارغة.`
+      : `Start Reading ${currentRound + 1}?\nCurrent reading will be kept and a new empty one will start.`;
     if (!confirm(msg)) return;
     // Save current round
     if (!loadings[uid]._allRounds) loadings[uid]._allRounds = {};
@@ -2229,7 +2229,7 @@
     loadings[uid].pf = '0.9';
     loadings[uid].tapNo = '';
     openLoadModal(uid);
-    showToast((lang === 'ar' ? '✅ بدأ Round ' : '✅ Round ') + newRound, 'success');
+    showToast((lang === 'ar' ? '✅ بدأت القراءة ' : '✅ Reading ') + newRound, 'success');
   }
   document.getElementById('loadModal').addEventListener('click', function(e) {
     if (e.target === this) closeLoadModal();
