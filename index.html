@@ -1485,7 +1485,13 @@
         <div class="lm-title" id="lmTitle">⚡ قراءات الأحمال</div>
         <div class="lm-meta" id="lmMeta"></div>
       </div>
+      <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap">
+        <span id="roundBadge" style="background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.4);border-radius:8px;padding:0.3rem 0.9rem;font-size:0.85rem;color:var(--accent);font-family:'Cairo',sans-serif;font-weight:700"></span>
+        <button id="newRoundBtn" onclick="startNewRound()" style="background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.4);border-radius:8px;padding:0.3rem 1rem;font-size:0.82rem;color:var(--accent3);cursor:pointer;font-family:'Cairo',sans-serif;font-weight:600">+ قراءة جديدة</button>
+      </div>
     </div>
+
+    <div id="roundTabsRow" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem"></div>
 
     <div class="lm-info-row" id="lmInfoRow"></div>
 
@@ -2125,10 +2131,16 @@
     const r = records.find(r => r.uid === uid);
     if (!r) return;
 
-    if (!loadings[uid]) loadings[uid] = { feeders: [], volt:{}, voltSavedAt: null };
+    if (!loadings[uid]) loadings[uid] = { feeders: [], volt:{}, voltSavedAt: null, _round: 1 };
     if (!loadings[uid].volt) loadings[uid].volt = {};
     if (!loadings[uid].pf) loadings[uid].pf = '0.9';
     if (loadings[uid].voltSavedAt === undefined) loadings[uid].voltSavedAt = null;
+    if (!loadings[uid]._round) loadings[uid]._round = 1;
+    if (!loadings[uid]._allRounds) loadings[uid]._allRounds = {};
+    loadings[uid]._allRounds[loadings[uid]._round] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders};
+    const roundEl = document.getElementById('roundBadge');
+    if (roundEl) roundEl.textContent = 'Round ' + loadings[uid]._round;
+    buildRoundTabs(uid);
 
     const cnt = Number(r.outputs);
     while (loadings[uid].feeders.length < cnt) {
@@ -2163,6 +2175,61 @@
   function closeLoadModal() {
     document.getElementById('loadModal').classList.remove('active');
     currentLoadUid = null;
+  }
+
+  function buildRoundTabs(uid) {
+    const container = document.getElementById('roundTabsRow');
+    if (!container) return;
+    const allRounds = loadings[uid]._allRounds || {};
+    const sortedRounds = Object.keys(allRounds).map(Number).sort((a,b)=>a-b);
+    if (sortedRounds.length <= 1) { container.innerHTML = ''; return; }
+    const active = loadings[uid]._round || 1;
+    container.innerHTML = sortedRounds.map(r => {
+      const isActive = r === active;
+      return `<button onclick="switchRound('${uid}',${r})" style="padding:0.3rem 1rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;border:1px solid ${isActive?'var(--accent)':'rgba(107,127,163,0.4)'};background:${isActive?'rgba(0,212,255,0.15)':'transparent'};color:${isActive?'var(--accent)':'var(--text-muted)'}">Round ${r}</button>`;
+    }).join('');
+  }
+
+  function switchRound(uid, roundNum) {
+    if (!loadings[uid]) return;
+    syncFormToMemory();
+    // Save current round data before switching
+    const cur = loadings[uid]._round || 1;
+    loadings[uid]._allRounds[cur] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders,tapNo:loadings[uid].tapNo};
+    // Load selected round
+    const rd = loadings[uid]._allRounds[roundNum] || {volt:{},pf:'0.9',voltSavedAt:null,feeders:[]};
+    loadings[uid].volt = rd.volt || {};
+    loadings[uid].pf = rd.pf || '0.9';
+    loadings[uid].voltSavedAt = rd.voltSavedAt || null;
+    loadings[uid].feeders = rd.feeders || [];
+    loadings[uid].tapNo = rd.tapNo || '';
+    loadings[uid]._round = roundNum;
+    openLoadModal(uid);
+  }
+
+  function startNewRound() {
+    if (!currentLoadUid) return;
+    const uid = currentLoadUid;
+    syncFormToMemory();
+    const currentRound = loadings[uid]._round || 1;
+    const msg = lang === 'ar'
+      ? `هل تريد بدء قراءة جديدة (Round ${currentRound + 1})؟\nستُحفظ القراءة الحالية وتبدأ جديدة فارغة.`
+      : `Start new reading round ${currentRound + 1}?\nCurrent reading will be kept and a new empty one will start.`;
+    if (!confirm(msg)) return;
+    // Save current round
+    if (!loadings[uid]._allRounds) loadings[uid]._allRounds = {};
+    loadings[uid]._allRounds[currentRound] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders,tapNo:loadings[uid].tapNo};
+    // Start new round
+    const newRound = currentRound + 1;
+    loadings[uid]._round = newRound;
+    loadings[uid]._allRounds[newRound] = {volt:{},pf:'0.9',voltSavedAt:null,feeders:[]};
+    loadings[uid].feeders = [];
+    loadings[uid].volt = {};
+    loadings[uid].voltSavedAt = null;
+    loadings[uid].pf = '0.9';
+    loadings[uid].tapNo = '';
+    openLoadModal(uid);
+    showToast((lang === 'ar' ? '✅ بدأ Round ' : '✅ Round ') + newRound, 'success');
   }
   document.getElementById('loadModal').addEventListener('click', function(e) {
     if (e.target === this) closeLoadModal();
@@ -3627,7 +3694,17 @@ ${fResults.length?`<div class="section">
       const [tData, lData] = await Promise.all([supa.get(tq), supa.get(lq)]);
       records = (tData||[]).map(r=>({uid:r.uid,team:r.team,type:r.type,id:r.tx_id,station:r.station,hvFeeder:r.hv_feeder,capacity:r.capacity,outputs:r.outputs}));
       loadings = {};
-      (lData||[]).forEach(r=>{ loadings[r.uid]={volt:r.volt||{},pf:r.pf||'0.9',voltSavedAt:r.volt_saved_at,feeders:r.feeders||[]}; });
+      const _allRoundsMap = {};
+      (lData||[]).forEach(r=>{
+        const round = r.reading_round || 1;
+        if (!_allRoundsMap[r.uid]) _allRoundsMap[r.uid] = {};
+        _allRoundsMap[r.uid][round] = {volt:r.volt||{},pf:r.pf||'0.9',voltSavedAt:r.volt_saved_at,feeders:r.feeders||[]};
+      });
+      Object.keys(_allRoundsMap).forEach(uid => {
+        const rounds = _allRoundsMap[uid];
+        const latest = Math.max(...Object.keys(rounds).map(Number));
+        loadings[uid] = {...rounds[latest], _round:latest, _allRounds:rounds};
+      });
       setSyncing('ok', lang==='ar'?'متزامن':'Synced');
     } catch(e) {
       setSyncing('error', 'Error');
@@ -3646,7 +3723,7 @@ ${fResults.length?`<div class="section">
   async function pushLoadingData(uid) {
     const ld=loadings[uid]; if(!ld) return;
     const team=records.find(r=>r.uid===uid)?.team||currentTeam;
-    const row={uid,team,volt:ld.volt,pf:ld.pf,volt_saved_at:ld.voltSavedAt||null,feeders:ld.feeders,updated_at:new Date().toISOString()};
+    const row={uid,team,volt:ld.volt,pf:ld.pf,volt_saved_at:ld.voltSavedAt||null,feeders:ld.feeders,reading_round:ld._round||1,updated_at:new Date().toISOString()};
     await supa.upsert('loadings', row);
   }
 
@@ -3701,9 +3778,12 @@ ${fResults.length?`<div class="section">
   saveFeeder = async function(fi) {
     syncFormToMemory();
     loadings[currentLoadUid].feeders[fi].savedAt = new Date().toISOString();
-    await pushLoadingData(currentLoadUid);
     buildFeederTabs(currentLoadUid); buildFeederForms(currentLoadUid); renderSummary(currentLoadUid); renderAnalysis(currentLoadUid);
-    showToast(`${t('toastFeederSaved')} ${loadings[currentLoadUid].feeders[fi].name}`,'success');
+    const feederLabel = loadings[currentLoadUid].feeders[fi].name;
+    try {
+      await pushLoadingData(currentLoadUid);
+      showToast(`${t('toastFeederSaved')} ${feederLabel}`,'success');
+    } catch(e) { showToast('❌ '+e.message,'error'); }
   };
 
   const _origSaveVoltage = saveVoltageReadings;
@@ -3714,10 +3794,12 @@ ${fResults.length?`<div class="section">
     loadings[currentLoadUid].tapNo = document.getElementById('tapNo').value;
     document.getElementById('vPF').value=loadings[currentLoadUid].pf;
     loadings[currentLoadUid].voltSavedAt=new Date().toISOString();
-    await pushLoadingData(currentLoadUid);
     document.getElementById('voltSavedBadge').style.display='inline';
     buildVoltageSection(currentLoadUid); renderSummary(currentLoadUid); renderAnalysis(currentLoadUid);
-    showToast(lang==='ar'?'✅ تم حفظ الفولتيج':'✅ Voltage saved','success');
+    try {
+      await pushLoadingData(currentLoadUid);
+      showToast(lang==='ar'?'✅ تم حفظ الفولتيج':'✅ Voltage saved','success');
+    } catch(e) { showToast('❌ '+e.message,'error'); }
   };
 
   // ══════════════════════════════════════════════════

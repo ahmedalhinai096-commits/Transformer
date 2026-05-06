@@ -19,7 +19,8 @@ CREATE TABLE public.transformers (
 
 -- 2. CREATE LOADINGS TABLE
 CREATE TABLE public.loadings (
-  uid TEXT PRIMARY KEY NOT NULL,
+  uid TEXT NOT NULL,
+  reading_round INTEGER NOT NULL DEFAULT 1,
   team TEXT NOT NULL DEFAULT 'default',
   volt JSONB DEFAULT '{}',
   pf NUMERIC DEFAULT 0.9,
@@ -27,8 +28,16 @@ CREATE TABLE public.loadings (
   feeders JSONB DEFAULT '[]',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (uid, reading_round),
   FOREIGN KEY (uid) REFERENCES transformers(uid) ON DELETE CASCADE
 );
+
+-- ============================================
+-- MIGRATION: Run this on existing DB (one time)
+-- ============================================
+-- ALTER TABLE public.loadings ADD COLUMN reading_round INTEGER NOT NULL DEFAULT 1;
+-- ALTER TABLE public.loadings DROP CONSTRAINT loadings_pkey;
+-- ALTER TABLE public.loadings ADD PRIMARY KEY (uid, reading_round);
 
 -- 3. CREATE INDEXES FOR BETTER PERFORMANCE
 CREATE INDEX idx_transformers_team ON transformers(team);
