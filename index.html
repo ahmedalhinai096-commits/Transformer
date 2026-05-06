@@ -2132,7 +2132,7 @@
     const r = records.find(r => r.uid === uid);
     if (!r) return;
 
-    if (!loadings[uid]) loadings[uid] = { feeders: [], volt:{}, voltSavedAt: null, _round: 1 };
+    if (!loadings[uid]) { const _er=records.find(x=>x.uid===uid); loadings[uid] = { feeders: [], volt:{}, voltSavedAt: null, _round: 1, location: (_er?.lat ? {lat:_er.lat, lng:_er.lng} : null) }; }
     if (!loadings[uid].volt) loadings[uid].volt = {};
     if (!loadings[uid].pf) loadings[uid].pf = '0.9';
     if (loadings[uid].voltSavedAt === undefined) loadings[uid].voltSavedAt = null;
@@ -2151,6 +2151,9 @@
           loadings[uid].location = { lat: parseFloat(pos.coords.latitude.toFixed(6)), lng: parseFloat(pos.coords.longitude.toFixed(6)), accuracy: Math.round(pos.coords.accuracy), capturedAt: new Date().toISOString() };
           loadings[uid]._allRounds[loadings[uid]._round].location = loadings[uid].location;
           updateLocationBadge(uid);
+          supa.patch(`transformers?uid=eq.${uid}`, { lat: loadings[uid].location.lat, lng: loadings[uid].location.lng })
+            .then(() => { const rec = records.find(r=>r.uid===uid); if(rec){ rec.lat=loadings[uid].location.lat; rec.lng=loadings[uid].location.lng; } })
+            .catch(e => showToast('⚠️ لم يُحفظ الموقع: '+e.message, 'error'));
         },
         () => { updateLocationBadge(uid); },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
@@ -3379,7 +3382,7 @@ ${fResults.length?`<div class="section">
         row.push(dCell(formatHvFeeder(rec.hvFeeder)));
 
         /* C: Location */
-        const loc = rd.location;
+        const loc = rd.location || ld.location || (rec.lat ? { lat: rec.lat, lng: rec.lng } : null);
         row.push(dCell(loc && loc.lat ? `${loc.lat}, ${loc.lng}` : ''));
 
         /* D-H */
@@ -3766,7 +3769,7 @@ ${fResults.length?`<div class="section">
       let lq='loadings?select=*';
       if (!isAdmin) { tq+=`&team=eq.${encodeURIComponent(currentTeam)}`; lq+=`&team=eq.${encodeURIComponent(currentTeam)}`; }
       const [tData, lData] = await Promise.all([supa.get(tq), supa.get(lq)]);
-      records = (tData||[]).map(r=>({uid:r.uid,team:r.team,type:r.type,id:r.tx_id,station:r.station,hvFeeder:r.hv_feeder,capacity:r.capacity,outputs:r.outputs}));
+      records = (tData||[]).map(r=>({uid:r.uid,team:r.team,type:r.type,id:r.tx_id,station:r.station,hvFeeder:r.hv_feeder,capacity:r.capacity,outputs:r.outputs,lat:r.lat||null,lng:r.lng||null}));
       loadings = {};
       const _allRoundsMap = {};
       (lData||[]).forEach(r=>{
@@ -3787,6 +3790,9 @@ ${fResults.length?`<div class="section">
         const latest = Math.max(...roundNums);
         const cleanRounds = {...rounds}; delete cleanRounds._txLocation;
         loadings[uid] = {...rounds[latest], _round:latest, _allRounds:cleanRounds, location:txLocation};
+      });
+      records.forEach(rec => {
+        if (rec.lat && loadings[rec.uid]) loadings[rec.uid].location = { lat: rec.lat, lng: rec.lng };
       });
       setSyncing('ok', lang==='ar'?'متزامن':'Synced');
     } catch(e) {
@@ -3832,7 +3838,7 @@ ${fResults.length?`<div class="section">
     try {
       if (editId) {
         const idx=records.findIndex(r=>r.uid===editId);
-        records[idx]={uid:editId,team:records[idx].team,type,id,station,hvFeeder,capacity,outputs};
+        records[idx]={uid:editId,team:records[idx].team,type,id,station,hvFeeder,capacity,outputs,lat:records[idx].lat||null,lng:records[idx].lng||null};
         await pushTransformer(records[idx],true); savedUid=editId; editId=null;
         showToast(t('toastUpdated'),'success');
       } else {
