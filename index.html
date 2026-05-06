@@ -2501,6 +2501,10 @@
 
   function saveFeeder(fi) {
     syncFormToMemory();
+    if (!loadings[currentLoadUid].feeders[fi].name) {
+      showToast(lang==='ar' ? '⚠️ يرجى اختيار حجم الكيبل' : '⚠️ Please select cable size', 'error');
+      return;
+    }
     // ── Record timestamp ──────────────────────────────────
     loadings[currentLoadUid].feeders[fi].savedAt = new Date().toISOString();
     // ─────────────────────────────────────────────────────
