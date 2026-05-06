@@ -1643,6 +1643,14 @@
     const btnSaveVolt = document.getElementById('btnSaveVolt');
     if (btnSaveVolt) btnSaveVolt.textContent = isAr ? 'حفظ الفولتيج' : 'Save Voltage';
 
+    const capSel = document.getElementById('fCapacity');
+    if (capSel && capSel.options[0] && !capSel.options[0].value) capSel.options[0].textContent = t('fCapacityDefault');
+    const staSel = document.getElementById('fStation');
+    if (staSel && staSel.options[0] && !staSel.options[0].value) {
+      staSel.options[0].textContent = lang==='ar' ? '-- اختر المحطة --' : '-- Select Station --';
+      if (typeof loadStations === 'function') loadStations();
+    }
+
     updateStationFilter();
     updateFilterLabels();
     renderTable();
@@ -4052,7 +4060,7 @@ ${fResults.length?`<div class="section">
       const data = await supa.get(
         `stations?team=eq.${encodeURIComponent(currentTeam)}&is_active=eq.true&order=name.asc&select=name`
       );
-      sel.innerHTML = `<option value="">-- اختر المحطة --</option>` +
+      sel.innerHTML = `<option value="">${lang==='ar'?'-- اختر المحطة --':'-- Select Station --'}</option>` +
         (data||[]).map(s=>`<option value="${s.name}" ${s.name===val?'selected':''}>${s.name}</option>`).join('');
     } catch {
       sel.innerHTML = `<option value="">-- خطأ في تحميل المحطات --</option>`;
