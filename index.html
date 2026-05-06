@@ -1824,7 +1824,8 @@
                 <button class="btn-icon edit" title="${t('editTitle')}" onclick="editRecord('${r.uid}')">✏️</button>
                 <button class="btn-icon" title="${t('loadTitle')}" onclick="openLoadModal('${r.uid}')" style="border-color:rgba(0,255,157,0.3);color:var(--accent3)">📊</button>
                 <button class="btn-icon" title="${lang==='ar'?'تقرير':'Report'}" onclick="openReport('${r.uid}')" style="border-color:rgba(167,139,250,0.4);color:#a78bfa">📄</button>
-                ${isAdmin ? `<button class="btn-icon del" title="${t('delTitle')}" onclick="deleteRecord('${r.uid}')" data-uid="${r.uid}">🗑️</button>` : `<span title="${t('lockTitle')}" style="font-size:0.75rem;color:var(--text-muted);padding:0.3rem 0.5rem">🔒</span>`}
+                ${r.lat ? `<a href="https://www.google.com/maps?q=${r.lat},${r.lng}" target="_blank" rel="noopener" class="btn-icon" title="${lang==='ar'?'الموقع':'Location'}" style="border-color:rgba(251,191,36,0.4);color:#fbbf24;text-decoration:none">📍</a>` : `<span class="btn-icon" title="${lang==='ar'?'لا يوجد موقع':'No location'}" style="opacity:0.3;cursor:default">📍</span>`}
+                ${isAdmin ? `<button class="btn-icon del" title="${t('delTitle')}" onclick="deleteRecord('${r.uid}')" data-uid="${r.uid}">🗑️</button>` : ''}
               </div>
             </td>
           </tr>`;
