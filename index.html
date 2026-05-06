@@ -2153,6 +2153,8 @@
     loadings[uid]._allRounds[loadings[uid]._round] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders};
     const roundEl = document.getElementById('roundBadge');
     if (roundEl) roundEl.textContent = (lang==='ar'?'القراءة ':'Reading ') + loadings[uid]._round;
+    const newRoundBtn = document.getElementById('newRoundBtn');
+    if (newRoundBtn) newRoundBtn.textContent = lang==='ar' ? '+ قراءة جديدة' : '+ New Reading';
     buildRoundTabs(uid);
 
     updateLocationBadge(uid);
