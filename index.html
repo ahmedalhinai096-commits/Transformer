@@ -1394,16 +1394,9 @@
         <select id="filterCapacity" onchange="currentPage=1;renderTable()">
           <option value="">⚡ كل السعات</option>
         </select>
-        <select id="searchMode" onchange="currentPage=1;renderTable()">
-          <option value="all">بحث عام</option>
-          <option value="station">اسم المحطة</option>
-          <option value="txNo">رقم المحول</option>
-          <option value="capacity">السعة</option>
-          <option value="lvFeeders">عدد مخارج LV</option>
-        </select>
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" id="searchInput" placeholder="بحث..." oninput="currentPage=1;renderTable()" />
+          <input type="text" id="searchInput" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'');currentPage=1;renderTable()" placeholder="رقم المحول..." />
         </div>
         <button id="summaryReportBtn" class="btn btn-secondary" onclick="generateSummaryReport()" style="border-color:rgba(167,139,250,0.4);color:#a78bfa">📄 تقرير مختصر</button>
         <button id="exportExcelBtn" class="btn btn-secondary" onclick="exportExcel()" title="ينزل CSV — افتحه بـ Excel" style="border-color:rgba(0,255,157,0.4);color:var(--accent3)">📊 تصدير Excel</button>
@@ -1589,7 +1582,7 @@
 
   function updateFilterLabels() {
     const si = document.getElementById('searchInput');
-    if (si) si.placeholder = t('searchPlaceholder');
+    if (si) si.placeholder = lang==='ar' ? 'رقم المحول...' : 'Transformer No...';
 
     const srBtn = document.getElementById('summaryReportBtn');
     if (srBtn) srBtn.textContent = t('summaryReport');
@@ -1604,14 +1597,6 @@
       ftSel.options[2].textContent = t('typePole');
     }
 
-    const smSel = document.getElementById('searchMode');
-    if (smSel && smSel.options.length >= 5) {
-      smSel.options[0].textContent = t('searchGeneral');
-      smSel.options[1].textContent = t('searchStation');
-      smSel.options[2].textContent = t('searchTxNo');
-      smSel.options[3].textContent = t('searchCapacity');
-      smSel.options[4].textContent = t('searchLvFeeders');
-    }
   }
 
   function applyLang() {
@@ -1785,14 +1770,13 @@
     const stationFilter  = document.getElementById('stationFilter')?.value  || '';
     const typeFilter     = document.getElementById('filterType')?.value     || '';
     const capacityFilter = document.getElementById('filterCapacity')?.value || '';
-    const searchMode     = document.getElementById('searchMode')?.value     || 'all';
     const searchQuery    = document.getElementById('searchInput')?.value    || '';
     return records.filter(rec => {
       const capacity = String(rec.capacity || '').replace(/,/g, '');
       const okStation  = !stationFilter  || rec.station === stationFilter;
       const okType     = !typeFilter     || rec.type    === typeFilter;
       const okCapacity = !capacityFilter || capacity    === capacityFilter;
-      const okSearch   = matchesSearch(rec, searchQuery, searchMode);
+      const okSearch   = !searchQuery || String(rec.id || '').includes(searchQuery.trim());
       return okStation && okType && okCapacity && okSearch;
     });
   }
