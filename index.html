@@ -2125,6 +2125,18 @@
   let loadings = JSON.parse(localStorage.getItem('loadings') || '{}');
   let currentLoadUid = null;
   let activeFeederIdx = 0;
+  const CABLE_AMPACITY = {120: 312, 185: 394, 240: 455, 300: 509};
+
+  function cableStatus(f) {
+    const size = parseInt(f.name);
+    const ampacity = CABLE_AMPACITY[size];
+    if (!ampacity) return null;
+    const maxI = Math.max(parseFloat(f.iL1)||0, parseFloat(f.iL2)||0, parseFloat(f.iL3)||0);
+    if (maxI === 0) return { ampacity, maxI: 0, pct: 0, level: 'nodata' };
+    const pct = (maxI / ampacity) * 100;
+    const level = pct > 100 ? 'danger' : pct >= 80 ? 'warning' : 'ok';
+    return { ampacity, maxI, pct, level };
+  }
 
   function openLoadModal(uid) {
     currentLoadUid = uid;
@@ -2352,8 +2364,12 @@
     const feeders = loadings[uid].feeders.slice(0, cnt);
     document.getElementById('feederTabs').innerHTML = feeders.map((f, i) => {
       const filled = hasData(f);
+      const cs = cableStatus(f);
+      const dotColor = cs && cs.level !== 'nodata'
+        ? (cs.level === 'danger' ? '#f87171' : cs.level === 'warning' ? '#fbbf24' : '#4ade80')
+        : '#4ade80';
       return `<button class="feeder-tab ${i===activeFeederIdx?'active':''}" onclick="switchFeeder(${i})">
-        ${filled ? '<span class="tab-dot"></span>' : ''}${t('lmFeeder')} ${f.num||i+1}
+        ${filled ? `<span class="tab-dot" style="background:${dotColor}"></span>` : ''}${t('lmFeeder')} ${f.num||i+1}
       </button>`;
     }).join('');
   }
@@ -2392,14 +2408,26 @@
             <input disabled type="text" inputmode="numeric" pattern="[0-9]*" value="${f.num||i+1}" onchange="updateFeederNum(${i},this.value)"
               style="background:var(--surface2);border:1px solid rgba(167,139,250,0.4);border-radius:8px;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;padding:0.5rem 0.8rem;outline:none;width:90px;text-align:center"/>
           </div>
-          <div style="display:flex;flex-direction:column;gap:0.3rem;flex:1;min-width:160px">
+          <div style="display:flex;flex-direction:column;gap:0.3rem">
             <label style="font-size:0.73rem;color:var(--text-muted);font-family:'Tajawal',sans-serif">${t('lmFeederName')}</label>
-            <input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off"
-              value="${f.name||''}"
-              oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-              onchange="updateFeederName(${i},this.value)"
-              style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:0.9rem;padding:0.5rem 0.8rem;outline:none;direction:${lang==='ar'?'rtl':'ltr'}"/>
+            <select onchange="updateFeederName(${i},this.value)"
+              style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:0.78rem;padding:0.4rem 0.6rem;outline:none;cursor:pointer;width:auto">
+              <option value="">${lang==='ar'?'-- اختر --':'-- Select --'}</option>
+              ${[120,185,240,300].map(s=>`<option value="${s}" ${f.name==s?'selected':''}>${s} mm² (${CABLE_AMPACITY[s]}A)</option>`).join('')}
+            </select>
           </div>
+          ${(()=>{
+            const cs = cableStatus(f);
+            if (!cs || cs.level === 'nodata') return '';
+            const bg     = { ok:'#4ade80', warning:'#fbbf24', danger:'#f87171' };
+            const labels = { ok: lang==='ar'?'جيد':'OK', warning: lang==='ar'?'تحذير':'Warn', danger: lang==='ar'?'تجاوز':'Over' };
+            return `<div style="display:flex;flex-direction:column;gap:0.3rem">
+              <label style="font-size:0.73rem;color:var(--text-muted);font-family:'Tajawal',sans-serif">${lang==='ar'?'الحمل على الكيبل':'Cable Load'}</label>
+              <div style="background:${bg[cs.level]};border:1px solid var(--border);border-radius:8px;color:#000;font-family:'Cairo',sans-serif;font-size:0.78rem;font-weight:700;padding:0.4rem 0.6rem;text-align:center;white-space:nowrap">
+                ${cs.pct.toFixed(0)}% — ${labels[cs.level]}
+              </div>
+            </div>`;
+          })()}
         </div>
 
         <div class="reading-section-title">${t('lmCurrent')}</div>
@@ -2409,7 +2437,6 @@
           ${currentField(i,'iL3', t('blue'),    'current')}
           ${currentField(i,'iN',  t('neutral'), 'current')}
         </div>
-
 
         <div class="lm-actions">
           ${tsHtml}
@@ -2443,6 +2470,7 @@
   function liveUpdate(fi, key, val) {
     if (!currentLoadUid) return;
     loadings[currentLoadUid].feeders[fi][key] = val;
+    buildFeederTabs(currentLoadUid);
   }
 
   function updateFeederName(fi, name) {
