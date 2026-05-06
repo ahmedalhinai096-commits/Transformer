@@ -2138,7 +2138,7 @@
     if (loadings[uid].voltSavedAt === undefined) loadings[uid].voltSavedAt = null;
     if (!loadings[uid]._round) loadings[uid]._round = 1;
     if (!loadings[uid]._allRounds) loadings[uid]._allRounds = {};
-    loadings[uid]._allRounds[loadings[uid]._round] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders,location:loadings[uid].location||null};
+    loadings[uid]._allRounds[loadings[uid]._round] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders};
     const roundEl = document.getElementById('roundBadge');
     if (roundEl) roundEl.textContent = (lang==='ar'?'القراءة ':'Reading ') + loadings[uid]._round;
     buildRoundTabs(uid);
@@ -2235,15 +2235,14 @@
     syncFormToMemory();
     // Save current round data before switching
     const cur = loadings[uid]._round || 1;
-    loadings[uid]._allRounds[cur] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders,tapNo:loadings[uid].tapNo,location:loadings[uid].location||null};
-    // Load selected round
+    loadings[uid]._allRounds[cur] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders,tapNo:loadings[uid].tapNo};
+    // Load selected round (location stays at transformer level, not per-round)
     const rd = loadings[uid]._allRounds[roundNum] || {volt:{},pf:'0.9',voltSavedAt:null,feeders:[]};
     loadings[uid].volt = rd.volt || {};
     loadings[uid].pf = rd.pf || '0.9';
     loadings[uid].voltSavedAt = rd.voltSavedAt || null;
     loadings[uid].feeders = rd.feeders || [];
     loadings[uid].tapNo = rd.tapNo || '';
-    loadings[uid].location = rd.location || null;
     loadings[uid]._round = roundNum;
     openLoadModal(uid);
   }
@@ -2259,17 +2258,16 @@
     if (!confirm(msg)) return;
     // Save current round
     if (!loadings[uid]._allRounds) loadings[uid]._allRounds = {};
-    loadings[uid]._allRounds[currentRound] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders,tapNo:loadings[uid].tapNo,location:loadings[uid].location||null};
-    // Start new round
+    loadings[uid]._allRounds[currentRound] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders,tapNo:loadings[uid].tapNo};
+    // Start new round (location stays — belongs to the transformer, not the round)
     const newRound = currentRound + 1;
     loadings[uid]._round = newRound;
-    loadings[uid]._allRounds[newRound] = {volt:{},pf:'0.9',voltSavedAt:null,feeders:[],location:null};
+    loadings[uid]._allRounds[newRound] = {volt:{},pf:'0.9',voltSavedAt:null,feeders:[]};
     loadings[uid].feeders = [];
     loadings[uid].volt = {};
     loadings[uid].voltSavedAt = null;
     loadings[uid].pf = '0.9';
     loadings[uid].tapNo = '';
-    loadings[uid].location = null;
     openLoadModal(uid);
     showToast((lang === 'ar' ? '✅ بدأت القراءة ' : '✅ Reading ') + newRound, 'success');
   }
@@ -3775,14 +3773,20 @@ ${fResults.length?`<div class="section">
         const round = r.reading_round || 1;
         if (!_allRoundsMap[r.uid]) _allRoundsMap[r.uid] = {};
         const rawVolt = r.volt || {};
-        const location = rawVolt._loc || null;
         const cleanVolt = {...rawVolt}; delete cleanVolt._loc;
-        _allRoundsMap[r.uid][round] = {volt:cleanVolt,pf:r.pf||'0.9',voltSavedAt:r.volt_saved_at,feeders:r.feeders||[],location};
+        if (rawVolt._loc && !_allRoundsMap[r.uid]?._txLocation) {
+          if (!_allRoundsMap[r.uid]) _allRoundsMap[r.uid] = {};
+          _allRoundsMap[r.uid]._txLocation = rawVolt._loc;
+        }
+        _allRoundsMap[r.uid][round] = {volt:cleanVolt,pf:r.pf||'0.9',voltSavedAt:r.volt_saved_at,feeders:r.feeders||[]};
       });
       Object.keys(_allRoundsMap).forEach(uid => {
         const rounds = _allRoundsMap[uid];
-        const latest = Math.max(...Object.keys(rounds).map(Number));
-        loadings[uid] = {...rounds[latest], _round:latest, _allRounds:rounds};
+        const txLocation = rounds._txLocation || null;
+        const roundNums = Object.keys(rounds).filter(k => k !== '_txLocation').map(Number);
+        const latest = Math.max(...roundNums);
+        const cleanRounds = {...rounds}; delete cleanRounds._txLocation;
+        loadings[uid] = {...rounds[latest], _round:latest, _allRounds:cleanRounds, location:txLocation};
       });
       setSyncing('ok', lang==='ar'?'متزامن':'Synced');
     } catch(e) {
