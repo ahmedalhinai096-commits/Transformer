@@ -2410,8 +2410,8 @@
           </div>
           <div style="display:flex;flex-direction:column;gap:0.3rem">
             <label style="font-size:0.73rem;color:var(--text-muted);font-family:'Tajawal',sans-serif">${t('lmFeederName')}</label>
-            <select onchange="updateFeederName(${i},this.value)" dir="${lang==='ar'?'rtl':'ltr'}"
-              style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:0.78rem;padding:0.4rem 0.6rem;outline:none;cursor:pointer;width:auto">
+            <select onchange="updateFeederName(${i},this.value)"
+              style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:0.78rem;padding:0.4rem 0.6rem;outline:none;cursor:pointer;width:auto;${lang==='en'?'direction:ltr;text-align:left;':''}">
               <option value="">${lang==='ar'?'-- اختر --':'-- Select --'}</option>
               ${[120,185,240,300].map(s=>`<option value="${s}" ${f.name==s?'selected':''}>${s} mm² (${CABLE_AMPACITY[s]}A)</option>`).join('')}
             </select>
