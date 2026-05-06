@@ -3898,6 +3898,7 @@ ${fResults.length?`<div class="section">
             ${s.is_active
               ?`<button class="arp-btn reject" style="font-size:0.72rem;padding:0.22rem 0.55rem" onclick="smToggle(${s.id},false)">🚫</button>`
               :`<button class="arp-btn" style="border-color:rgba(0,255,157,0.4);color:var(--accent3);font-size:0.72rem;padding:0.22rem 0.55rem" onclick="smToggle(${s.id},true)">✅</button>`}
+            <button class="arp-btn reject" style="font-size:0.72rem;padding:0.22rem 0.55rem" onclick="smDelete(${s.id},'${s.name.replace(/'/g,"\\'")}')">🗑️</button>
           </div></td>
         </tr>`).join('')}</tbody></table>`;
     } catch(e) { wrap.innerHTML = `<div class="arp-empty">❌ ${e.message}</div>`; }
@@ -3934,6 +3935,15 @@ ${fResults.length?`<div class="section">
     try {
       await supa.patch(`stations?id=eq.${id}`, { is_active: active, updated_at: new Date().toISOString() });
       showToast(active ? '✅ تم التفعيل' : '🚫 تم التعطيل', active ? 'success' : 'error');
+      smLoadStations();
+    } catch(e) { showToast('❌ '+e.message, 'error'); }
+  }
+
+  async function smDelete(id, name) {
+    if (!confirm(`هل أنت متأكد من حذف المحطة "${name}"؟\nلا يمكن التراجع عن هذا الإجراء.`)) return;
+    try {
+      await supa.delete(`stations?id=eq.${id}`);
+      showToast('🗑️ تم حذف المحطة', 'success');
       smLoadStations();
     } catch(e) { showToast('❌ '+e.message, 'error'); }
   }
