@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>معادلات مشروع المحولات</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-size: 13px;
+    color: #111;
+    background: #fff;
+    padding: 30px;
+    direction: rtl;
+  }
+  h1 {
+    text-align: center;
+    font-size: 22px;
+    border-bottom: 3px solid #1a1a1a;
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+  }
+  h2 {
+    font-size: 15px;
+    background: #1a1a1a;
+    color: #fff;
+    padding: 6px 12px;
+    margin: 20px 0 8px 0;
+    border-radius: 4px;
+  }
+  h3 {
+    font-size: 13px;
+    font-weight: bold;
+    margin: 14px 0 4px 0;
+    color: #222;
+    border-right: 4px solid #555;
+    padding-right: 8px;
+  }
+  .formula {
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    margin: 6px 0;
+    direction: ltr;
+    text-align: left;
+  }
+  .note {
+    font-size: 12px;
+    color: #444;
+    margin: 4px 0 6px 0;
+    padding-right: 10px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 12px;
+  }
+  th {
+    background: #333;
+    color: #fff;
+    padding: 6px 10px;
+    text-align: right;
+  }
+  td {
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    text-align: right;
+  }
+  tr:nth-child(even) td { background: #f9f9f9; }
+  .td-formula { font-family: 'Courier New', monospace; direction: ltr; text-align: left; }
+  .threshold-table th { background: #555; }
+  .section-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 24px;
+  }
+  .footer {
+    margin-top: 30px;
+    border-top: 2px solid #ccc;
+    padding-top: 10px;
+    font-size: 11px;
+    color: #777;
+    text-align: center;
+  }
+  @media print {
+    body { padding: 15px; }
+    h2 { break-inside: avoid; }
+    .formula { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>ملخص معادلات مشروع المحولات</h1>
+
+<!-- ======= 1. المعادلات الكهربائية ======= -->
+<h2>1 — المعادلات الكهربائية الأساسية</h2>
+
+<h3>التيار المقنن للمحول</h3>
+<div class="formula">I_rated = (KVA × 1000) / (√3 × V_LL)</div>
+<p class="note">
+  يحسب أقصى تيار يتحمله المحول بناءً على سعته (KVA) وجهده الخطي (V_LL).
+  √3 = 1.732 لأن النظام ثلاثي الأوجه.
+</p>
+
+<h3>القدرة الظاهرية (KVA)</h3>
+<div class="formula">KVA = (√3 × V_LL × I) / 1000</div>
+<p class="note">
+  تحويل التيار المقاس إلى قدرة ظاهرية. تُحسب لكل وجه (R, Y, B) وللمحول كله.
+</p>
+
+<h3>القدرة الحقيقية (KW)</h3>
+<div class="formula">KW = KVA × Power Factor (PF)</div>
+<p class="note">
+  القدرة الفعلية المستهلكة. معامل القدرة (PF) يقيس كفاءة الحمل — قيمة بين 0.01 و 0.99.
+</p>
+
+<h3>نسبة التحميل (Load %)</h3>
+<div class="formula">Load % = (I_max / I_rated) × 100</div>
+<p class="note">
+  كم يحتمل المحول من طاقته القصوى.
+  مثال: 80% تعني المحول يعمل على 80% من طاقته.
+</p>
+
+<table class="threshold-table">
+  <tr><th>النسبة</th><th>الحالة</th><th>القرار في Excel</th></tr>
+  <tr><td>أقل من 60%</td><td>جيد</td><td>OK - No Upgrade</td></tr>
+  <tr><td>60% إلى 79%</td><td>تحذير</td><td>OK - No Upgrade</td></tr>
+  <tr><td>80% فأكثر</td><td>خطر</td><td>Upgrade</td></tr>
+</table>
+
+<h3>نسبة الاختلال بين الأوجه (Imbalance %)</h3>
+<div class="formula">I_avg = (I_R + I_Y + I_B) / 3</div>
+<div class="formula">Imbalance % = ((I_max - I_avg) / I_avg) × 100</div>
+<p class="note">
+  يقيس مدى توازن التحميل على الأوجه الثلاثة.
+  كلما ارتفعت النسبة كان التوزيع أسوأ.
+</p>
+
+<table class="threshold-table">
+  <tr><th>النسبة</th><th>الحالة</th><th>القرار في Excel</th></tr>
+  <tr><td>أقل من 10%</td><td>متوازن</td><td>OK - Balanced</td></tr>
+  <tr><td>10% إلى 20%</td><td>تحذير</td><td>Need to Balance</td></tr>
+  <tr><td>أكثر من 20%</td><td>اختلال حاد</td><td>Need to Balance</td></tr>
+</table>
+
+<!-- ======= 2. حسابات التيار ======= -->
+<h2>2 — حسابات التيار الإجمالي</h2>
+
+<div class="formula">Total_R = I_R(feeder1) + I_R(feeder2) + ... + I_R(feeder8)</div>
+<div class="formula">Total_Y = I_Y(feeder1) + I_Y(feeder2) + ... + I_Y(feeder8)</div>
+<div class="formula">Total_B = I_B(feeder1) + I_B(feeder2) + ... + I_B(feeder8)</div>
+<div class="formula">Total_N = I_N(feeder1) + I_N(feeder2) + ... + I_N(feeder8)</div>
+<br>
+<div class="formula">I_max = MAX(Total_R, Total_Y, Total_B)</div>
+<div class="formula">I_min = MIN(Total_R, Total_Y, Total_B)</div>
+<div class="formula">I_avg = (Total_R + Total_Y + Total_B) / 3</div>
+<p class="note">تجمع أحمال كل الفيدرات معاً لتعطي الصورة الكاملة للمحول.</p>
+
+<!-- ======= 3. حدود PF ======= -->
+<h2>3 — حدود معامل القدرة (Power Factor)</h2>
+
+<div class="formula">PF = CLAMP(PF_input, min=0.01, max=0.99)</div>
+<p class="note">يمنع إدخال قيم خارج النطاق المنطقي. القيمة تُقيّد تلقائياً عند الحفظ وعند الإدخال المباشر.</p>
+<div class="formula">PF_للحساب = CLAMP(PF, min=0.1, max=1.0)</div>
+<p class="note">حد أوسع قليلاً يُستخدم أثناء حسابات التحليل الداخلي.</p>
+
+<!-- ======= 4. معادلات Excel ======= -->
+<h2>4 — معادلات تصدير Excel</h2>
+
+<table>
+  <tr><th>الخلية</th><th>المعادلة</th><th>الوصف</th></tr>
+  <tr>
+    <td>AS (إجمالي R)</td>
+    <td class="td-formula">SUM(M,Q,U,Y,AC,AG,AK,AO)</td>
+    <td>مجموع الوجه R من 8 فيدرات</td>
+  </tr>
+  <tr>
+    <td>AT (إجمالي Y)</td>
+    <td class="td-formula">SUM(N,R,V,Z,AD,AH,AL,AP)</td>
+    <td>مجموع الوجه Y من 8 فيدرات</td>
+  </tr>
+  <tr>
+    <td>AU (إجمالي B)</td>
+    <td class="td-formula">SUM(O,S,W,AA,AE,AI,AM,AQ)</td>
+    <td>مجموع الوجه B من 8 فيدرات</td>
+  </tr>
+  <tr>
+    <td>AV (إجمالي N)</td>
+    <td class="td-formula">SUM(P,T,X,AB,AF,AJ,AN,AR)</td>
+    <td>مجموع المحايد من 8 فيدرات</td>
+  </tr>
+  <tr>
+    <td>AW (أعلى تيار)</td>
+    <td class="td-formula">MAX(AS:AU)</td>
+    <td>أعلى تيار بين الأوجه الثلاثة</td>
+  </tr>
+  <tr>
+    <td>AX (أدنى تيار)</td>
+    <td class="td-formula">MIN(AS:AU)</td>
+    <td>أدنى تيار بين الأوجه الثلاثة</td>
+  </tr>
+  <tr>
+    <td>AY (Load %)</td>
+    <td class="td-formula">IF(KVA>0, (I_max×√3×V)/(KVA×1000)×100, 0)</td>
+    <td>نسبة التحميل</td>
+  </tr>
+  <tr>
+    <td>AZ (قرار الترقية)</td>
+    <td class="td-formula">IF(Load% > 70, "Upgrade", "OK - No Upgrade")</td>
+    <td>توصية ترقية المحول</td>
+  </tr>
+  <tr>
+    <td>BA (قرار التوازن)</td>
+    <td class="td-formula">IF(Imbalance% > 10, "Need to Balance", "OK - Balanced")</td>
+    <td>توصية موازنة الأوجه</td>
+  </tr>
+</table>
+
+<!-- ======= 5. معادلات زمنية ======= -->
+<h2>5 — حسابات الوقت (عرض النشاط)</h2>
+
+<div class="formula">diff_seconds = (Date.now() - timestamp) / 1000</div>
+<div class="formula">diff_minutes = floor(diff_seconds / 60)</div>
+<div class="formula">diff_hours   = floor(diff_seconds / 3600)</div>
+<div class="formula">diff_days    = floor(diff_seconds / 86400)</div>
+<p class="note">تحويل الفارق الزمني إلى نص مقروء مثل "منذ 3 ساعات".</p>
+
+<!-- ======= 6. معادلات الترقيم ======= -->
+<h2>6 — حسابات الترقيم (Pagination)</h2>
+
+<div class="formula">Total_Pages = CEIL(عدد_السجلات / سجلات_في_الصفحة)</div>
+<div class="formula">Start_Index = (الصفحة_الحالية - 1) × سجلات_في_الصفحة</div>
+<div class="formula">End_Index   = MIN(Start_Index + سجلات_في_الصفحة, إجمالي_السجلات)</div>
+<p class="note">تقسيم الجداول الكبيرة إلى صفحات للعرض.</p>
+
+<!-- ======= 7. إحصائيات عامة ======= -->
+<h2>7 — إحصائيات عامة للمحولات</h2>
+
+<div class="formula">إجمالي_السعة   = SUM(سعة كل المحولات)</div>
+<div class="formula">إجمالي_المخارج  = SUM(مخارج LV لكل المحولات)</div>
+<div class="formula">عدد_الأرضي     = COUNT(المحولات التي نوعها = "أرضي")</div>
+<div class="formula">عدد_العمودي    = COUNT(المحولات التي نوعها = "عمودي")</div>
+<p class="note">تظهر في بطاقات الإحصائيات أعلى الصفحة الرئيسية.</p>
+
+<!-- ======= ملخص سريع ======= -->
+<h2>ملخص سريع — أهم المعادلات</h2>
+
+<table>
+  <tr><th>المعادلة</th><th>الهدف</th></tr>
+  <tr>
+    <td class="td-formula">I_rated = (KVA × 1000) / (√3 × V)</td>
+    <td>الحد الأقصى للتيار المسموح</td>
+  </tr>
+  <tr>
+    <td class="td-formula">KVA = (√3 × V × I) / 1000</td>
+    <td>القدرة الظاهرية</td>
+  </tr>
+  <tr>
+    <td class="td-formula">KW = KVA × PF</td>
+    <td>القدرة الحقيقية المستهلكة</td>
+  </tr>
+  <tr>
+    <td class="td-formula">Load% = (I_max / I_rated) × 100</td>
+    <td>نسبة تحميل المحول</td>
+  </tr>
+  <tr>
+    <td class="td-formula">I_avg = (I_R + I_Y + I_B) / 3</td>
+    <td>متوسط تيارات الأوجه</td>
+  </tr>
+  <tr>
+    <td class="td-formula">Imbalance% = ((I_max - I_avg) / I_avg) × 100</td>
+    <td>نسبة الاختلال بين الأوجه</td>
+  </tr>
+</table>
+
+<div class="footer">
+  مشروع نظام إدارة المحولات &mdash; جميع المعادلات مستخرجة من index.html
+</div>
+
+</body>
+</html>
