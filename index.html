@@ -3344,6 +3344,85 @@ ${fResults.length?`<div class="section">
   })()}
 </div>
 
+${(()=>{
+  const f1 = fResults[0];
+  const isAr2 = isAr;
+  if (!f1) return '';
+
+  const amp1 = {120:312,185:394,240:455,300:509}[parseInt(f1.f.name)] || null;
+  const imax1 = f1.iMax;
+  const iavg1 = f1.iAvg;
+  const kva1ex = f1.totalF;
+  const kw1ex  = f1.totalKW;
+  const cl1    = amp1 ? (imax1/amp1*100) : null;
+  const imb1   = f1.imb;
+  const ilbl   = isAr2 ? 'التيار المقنن' : 'Rated Current';
+  const fn1    = f1.f.num || 1;
+
+  function row(formula, desc, example) {
+    return `
+    <tr>
+      <td style="font-family:monospace;font-size:0.82rem;color:var(--accent);white-space:nowrap;padding:0.55rem 0.8rem;border-bottom:1px solid var(--border)">${formula}</td>
+      <td style="font-size:0.8rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;padding:0.55rem 0.8rem;border-bottom:1px solid var(--border)">${desc}</td>
+      <td style="font-family:monospace;font-size:0.78rem;color:#7c3aed;padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);white-space:nowrap">${example}</td>
+    </tr>`;
+  }
+
+  const iRated = ratedCurrent;
+
+  return `
+<div class="section">
+  <div class="section-title">📐 ${isAr2?'طريقة الحساب':'Calculation Methods'}</div>
+  <p style="font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.9rem">
+    ${isAr2?`المعادلات المستخدمة في هذا التقرير — المثال من الفيدر #${fn1}${f1.f.name?' ('+f1.f.name+' mm²)':''}`
+           :`Formulas used in this report — example from Feeder #${fn1}${f1.f.name?' ('+f1.f.name+' mm²)':''}`}
+  </p>
+  <div style="overflow-x:auto">
+  <table style="font-size:0.82rem;min-width:500px">
+    <thead>
+      <tr>
+        <th style="text-align:start;padding:0.5rem 0.8rem">${isAr2?'المعادلة':'Formula'}</th>
+        <th style="text-align:start;padding:0.5rem 0.8rem">${isAr2?'الوصف':'Description'}</th>
+        <th style="text-align:start;padding:0.5rem 0.8rem">${isAr2?'مثال':'Example'}</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${row(
+        'I<sub>rated</sub> = KVA×1000 ÷ (√3 × V<sub>LL</sub>)',
+        isAr2?'التيار المقنن للمحول':'Transformer rated current',
+        `${capKVA}×1000 ÷ (1.732×${vLL}) = <b>${iRated.toFixed(1)} A</b>`
+      )}
+      ${row(
+        'Load% = I<sub>max</sub> ÷ I<sub>rated</sub> × 100',
+        isAr2?'نسبة تحميل المحول':'Transformer load percentage',
+        `${maxCurrent.toFixed(1)} ÷ ${iRated.toFixed(1)} × 100 = <b>${loadPct.toFixed(1)}%</b>`
+      )}
+      ${row(
+        'KVA = √3 × V<sub>LL</sub> × I<sub>max</sub> ÷ 1000',
+        isAr2?'الاستطاعة الظاهرية للفيدر':'Feeder apparent power',
+        `1.732 × ${vLL} × ${imax1.toFixed(1)} ÷ 1000 = <b>${kva1ex.toFixed(2)} KVA</b>`
+      )}
+      ${row(
+        'KW = KVA × PF',
+        isAr2?'الاستطاعة الفعلية':'Active power',
+        `${kva1ex.toFixed(2)} × ${pfR} = <b>${kw1ex.toFixed(2)} KW</b>`
+      )}
+      ${amp1 ? row(
+        'Cable Load% = I<sub>max</sub> ÷ Ampacity × 100',
+        isAr2?`حمل الكيبل (${f1.f.name} mm² = ${amp1}A)`:`Cable load (${f1.f.name} mm² = ${amp1}A)`,
+        `${imax1.toFixed(1)} ÷ ${amp1} × 100 = <b>${cl1.toFixed(1)}%</b>`
+      ) : ''}
+      ${row(
+        'Imb% = (I<sub>max</sub> − I<sub>avg</sub>) ÷ I<sub>avg</sub> × 100',
+        isAr2?'نسبة عدم التوازن بين الأطوار':'Phase imbalance percentage',
+        `(${imax1.toFixed(1)} − ${iavg1.toFixed(1)}) ÷ ${iavg1.toFixed(1)} × 100 = <b>${imb1.toFixed(1)}%</b>`
+      )}
+    </tbody>
+  </table>
+  </div>
+</div>`;
+})()}
+
 <div class="footer">${isAr?`تم إنشاء هذا التقرير في ${dateStr}`:`Report generated on ${dateStr}`}</div>
 <\/div><\/body><\/html>`;
 
