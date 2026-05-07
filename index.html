@@ -3362,9 +3362,9 @@ ${(()=>{
   function row(formula, desc, example) {
     return `
     <tr>
-      <td style="font-family:monospace;font-size:0.82rem;color:var(--accent);white-space:nowrap;padding:0.55rem 0.8rem;border-bottom:1px solid var(--border)">${formula}</td>
-      <td style="font-size:0.8rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;padding:0.55rem 0.8rem;border-bottom:1px solid var(--border)">${desc}</td>
-      <td style="font-family:monospace;font-size:0.78rem;color:#7c3aed;padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);white-space:nowrap">${example}</td>
+      <td style="font-size:0.8rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);text-align:left;direction:ltr">${desc}</td>
+      <td style="font-family:monospace;font-size:0.82rem;color:var(--accent);white-space:nowrap;padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);text-align:left;direction:ltr">${formula}</td>
+      <td style="font-family:monospace;font-size:0.78rem;color:#7c3aed;padding:0.55rem 0.8rem;border-bottom:1px solid var(--border);white-space:nowrap;text-align:left;direction:ltr">${example}</td>
     </tr>`;
   }
 
@@ -3381,9 +3381,9 @@ ${(()=>{
   <table style="font-size:0.82rem;min-width:500px">
     <thead>
       <tr>
-        <th style="text-align:start;padding:0.5rem 0.8rem">${isAr2?'المعادلة':'Formula'}</th>
-        <th style="text-align:start;padding:0.5rem 0.8rem">${isAr2?'الوصف':'Description'}</th>
-        <th style="text-align:start;padding:0.5rem 0.8rem">${isAr2?'مثال':'Example'}</th>
+        <th style="text-align:left;padding:0.5rem 0.8rem">${isAr2?'الوصف':'Description'}</th>
+        <th style="text-align:left;padding:0.5rem 0.8rem">${isAr2?'المعادلة':'Formula'}</th>
+        <th style="text-align:left;padding:0.5rem 0.8rem">${isAr2?'مثال':'Example'}</th>
       </tr>
     </thead>
     <tbody>
