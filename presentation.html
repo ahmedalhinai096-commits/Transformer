@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عرض تقديمي — نظام إدارة المحولات الكهربائية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#CC0000;
+  --primary-dark:#990000;
+  --accent:#2563EB;
+  --text:#111827;
+  --text-muted:#6B7280;
+  --border:#E5E7EB;
+  --surface:#F9FAFB;
+  --white:#FFFFFF;
+}
+body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-height:1.6}
+
+/* ── Hero ── */
+.hero{background:linear-gradient(135deg,#0a0f1e 0%,#1a2540 50%,#0d1929 100%);color:#fff;padding:5rem 2rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,212,255,0.04)1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.04)1px,transparent 1px);background-size:40px 40px}
+.hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+.hero-logo{margin-bottom:1.5rem}
+.hero-logo img{height:90px;width:auto;filter:brightness(0) invert(1)}
+.hero-badge{display:inline-block;background:rgba(37,99,235,0.2);border:1px solid rgba(37,99,235,0.4);color:#93c5fd;font-size:0.8rem;padding:0.3rem 1rem;border-radius:20px;font-family:'Tajawal',sans-serif;margin-bottom:1.2rem}
+.hero h1{font-size:2.8rem;font-weight:900;background:linear-gradient(135deg,#00d4ff,#00ff9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.8rem}
+.hero p{font-size:1.1rem;color:rgba(255,255,255,0.7);font-family:'Tajawal',sans-serif;max-width:600px;margin:0 auto 2rem}
+.hero-stats{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;margin-top:2.5rem}
+.hero-stat{text-align:center}
+.hero-stat-val{font-size:2rem;font-weight:900;color:#00d4ff}
+.hero-stat-lbl{font-size:0.8rem;color:rgba(255,255,255,0.6);font-family:'Tajawal',sans-serif}
+
+/* ── Container ── */
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+
+/* ── Section ── */
+.section{padding:4rem 0}
+.section-header{text-align:center;margin-bottom:3rem}
+.section-label{display:inline-block;background:rgba(37,99,235,0.08);color:var(--accent);font-size:0.78rem;font-weight:700;padding:0.3rem 1rem;border-radius:20px;font-family:'Tajawal',sans-serif;margin-bottom:0.8rem;border:1px solid rgba(37,99,235,0.2)}
+.section-title{font-size:1.9rem;font-weight:900;color:var(--text);margin-bottom:0.5rem}
+.section-sub{font-size:0.95rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;max-width:600px;margin:0 auto}
+
+/* ── Problem / Solution ── */
+.prob-sol{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem}
+.prob-card{background:var(--white);border-radius:16px;padding:2rem;border:1px solid var(--border)}
+.prob-card.danger{border-top:4px solid #DC2626}
+.prob-card.success{border-top:4px solid #16A34A}
+.card-icon{font-size:2rem;margin-bottom:1rem}
+.card-title{font-size:1.1rem;font-weight:700;margin-bottom:1rem}
+.card-title.red{color:#DC2626}
+.card-title.green{color:#16A34A}
+.prob-list{list-style:none;display:flex;flex-direction:column;gap:0.6rem}
+.prob-list li{font-size:0.9rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;display:flex;align-items:flex-start;gap:0.5rem}
+.prob-list li::before{content:'•';color:#DC2626;font-weight:900;flex-shrink:0}
+.sol-list li::before{content:'✓';color:#16A34A;font-weight:900;flex-shrink:0}
+
+/* ── Features ── */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.feature-card{background:var(--white);border-radius:16px;padding:1.8rem;border:1px solid var(--border);transition:transform 0.2s,box-shadow 0.2s}
+.feature-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.1)}
+.feature-icon{font-size:2.2rem;margin-bottom:1rem}
+.feature-title{font-size:1rem;font-weight:700;margin-bottom:0.5rem;color:var(--text)}
+.feature-desc{font-size:0.85rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;line-height:1.7}
+.feature-tag{display:inline-block;background:rgba(37,99,235,0.08);color:var(--accent);font-size:0.7rem;padding:0.15rem 0.6rem;border-radius:10px;margin-top:0.8rem;font-family:'Tajawal',sans-serif}
+
+/* ── Screenshot ── */
+.screenshot-section{background:var(--white)}
+.screens-wrap{display:flex;flex-direction:column;gap:4rem}
+.screen-item{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.screen-item.reverse{direction:ltr}
+.screen-item.reverse .screen-text{direction:rtl}
+.screen-placeholder{background:linear-gradient(135deg,#f1f5f9,#e2e8f0);border-radius:16px;border:2px dashed #CBD5E1;min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;position:relative;overflow:hidden}
+.screen-placeholder img{width:100%;height:100%;object-fit:cover;border-radius:14px;position:absolute;inset:0}
+.screen-placeholder-icon{font-size:2.5rem;color:#94A3B8;position:relative;z-index:1}
+.screen-placeholder-hint{font-size:0.78rem;color:#94A3B8;font-family:'Tajawal',sans-serif;position:relative;z-index:1}
+.screen-num{display:inline-flex;width:32px;height:32px;background:var(--accent);color:#fff;border-radius:50%;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;margin-bottom:0.8rem;flex-shrink:0}
+.screen-title{font-size:1.2rem;font-weight:700;margin-bottom:0.8rem}
+.screen-desc{font-size:0.9rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;line-height:1.8;margin-bottom:1rem}
+.screen-points{list-style:none;display:flex;flex-direction:column;gap:0.5rem}
+.screen-points li{font-size:0.85rem;color:var(--text);font-family:'Tajawal',sans-serif;display:flex;align-items:center;gap:0.5rem}
+.screen-points li::before{content:'→';color:var(--accent);font-weight:700}
+
+/* ── Calculations ── */
+.calc-section{background:#0a0f1e;color:#fff;padding:4rem 0}
+.calc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
+.calc-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:1.5rem}
+.calc-card-title{font-size:0.8rem;color:#94a3b8;font-family:'Tajawal',sans-serif;margin-bottom:0.8rem;text-transform:uppercase;letter-spacing:0.05em}
+.calc-formula{font-family:monospace;font-size:0.95rem;color:#00d4ff;margin-bottom:0.5rem}
+.calc-note{font-size:0.78rem;color:#64748b;font-family:'Tajawal',sans-serif}
+
+/* ── Roles ── */
+.roles-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem}
+.role-card{background:var(--white);border-radius:16px;padding:2rem;border:1px solid var(--border)}
+.role-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.role-icon{font-size:2rem}
+.role-title{font-size:1.1rem;font-weight:700}
+.role-sub{font-size:0.8rem;color:var(--text-muted);font-family:'Tajawal',sans-serif}
+.role-perms{display:flex;flex-direction:column;gap:0.6rem}
+.perm-item{display:flex;align-items:center;gap:0.6rem;font-size:0.88rem;font-family:'Tajawal',sans-serif}
+.perm-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.perm-dot.green{background:#16A34A}
+.perm-dot.blue{background:var(--accent)}
+.perm-dot.red{background:#DC2626}
+
+/* ── Benefits ── */
+.benefits-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2rem}
+.benefit-card{background:var(--white);border-radius:12px;padding:1.5rem;border:1px solid var(--border);text-align:center}
+.benefit-num{font-size:2.5rem;font-weight:900;color:var(--accent);line-height:1}
+.benefit-unit{font-size:0.75rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.5rem}
+.benefit-desc{font-size:0.82rem;color:var(--text);font-family:'Tajawal',sans-serif}
+
+/* ── Footer ── */
+.footer-section{background:#0a0f1e;color:rgba(255,255,255,0.6);text-align:center;padding:3rem 2rem}
+.footer-logo img{height:60px;filter:brightness(0) invert(1);margin-bottom:1.5rem;opacity:0.8}
+.footer-title{font-size:0.9rem;margin-bottom:0.3rem;color:#fff}
+.footer-sub{font-size:0.78rem;font-family:'Tajawal',sans-serif}
+
+/* ── Divider ── */
+.divider{height:4px;background:linear-gradient(90deg,var(--primary),var(--accent),#16A34A);border:none}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .hero h1{font-size:1.8rem}
+  .prob-sol,.features-grid,.roles-grid{grid-template-columns:1fr}
+  .screen-item,.screen-item.reverse{grid-template-columns:1fr;direction:rtl}
+  .calc-grid,.benefits-grid{grid-template-columns:1fr 1fr}
+  .hero-stats{gap:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-logo">
+      <img src="97ecfaff-2ca7-4e26-ada9-e87340085cc3.png" alt="نماء">
+    </div>
+    <div class="hero-badge">نظام رقمي متكامل</div>
+    <h1>إدارة المحولات الكهربائية</h1>
+    <p>منصة رقمية احترافية لتسجيل وتتبع قراءات الأحمال وتحليل أداء المحولات الكهربائية بدقة وكفاءة عالية</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val">100%</div>
+        <div class="hero-stat-lbl">رقمي — بدون أوراق</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">فوري</div>
+        <div class="hero-stat-lbl">تقارير آنية</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">6</div>
+        <div class="hero-stat-lbl">فرق ميدانية</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">24/7</div>
+        <div class="hero-stat-lbl">وصول من أي جهاز</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ══ PROBLEM / SOLUTION ══ -->
+<section class="section" style="background:var(--white)">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">لماذا هذا النظام؟</div>
+      <h2 class="section-title">من التحدي إلى الحل</h2>
+      <p class="section-sub">قبل هذا النظام كانت عمليات رصد المحولات تعتمد على الورق والتقدير، مما يُصعّب التتبع ويزيد احتمال الأخطاء</p>
+    </div>
+    <div class="prob-sol">
+      <div class="prob-card danger">
+        <div class="card-icon">⚠️</div>
+        <div class="card-title red">التحديات السابقة</div>
+        <ul class="prob-list">
+          <li>تسجيل يدوي على أوراق قابلة للضياع</li>
+          <li>صعوبة تتبع تاريخ القراءات ومقارنتها</li>
+          <li>لا يوجد تحليل فوري لحالة التحميل</li>
+          <li>عدم وجود تنبيهات عند تجاوز حدود الكيبل</li>
+          <li>صعوبة مشاركة البيانات بين الفرق</li>
+          <li>غياب التقارير الموثقة للإدارة</li>
+        </ul>
+      </div>
+      <div class="prob-card success">
+        <div class="card-icon">✅</div>
+        <div class="card-title green">ما يوفره النظام</div>
+        <ul class="prob-list sol-list">
+          <li>تسجيل رقمي فوري من الموقع عبر الجوال</li>
+          <li>قاعدة بيانات مركزية محفوظة على السحابة</li>
+          <li>تحليل تلقائي للأحمال والتوازن بين الأطوار</li>
+          <li>تنبيهات ذكية عند تجاوز حمل الكيبل أو المحول</li>
+          <li>وصول مشترك لجميع الفرق الميدانية</li>
+          <li>تقارير احترافية جاهزة للطباعة</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURES ══ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">المميزات الرئيسية</div>
+      <h2 class="section-title">كل ما تحتاجه في مكان واحد</h2>
+      <p class="section-sub">تم تصميم النظام خصيصاً لاحتياجات الفرق الميدانية في توزيع الكهرباء</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">سجل المحولات</div>
+        <div class="feature-desc">قاعدة بيانات شاملة لجميع المحولات تتضمن رقم المحول، نوعه، سعته، المحطة، وعدد مخارج LV</div>
+        <span class="feature-tag">بحث وتصفية متقدمة</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">قراءات الأحمال</div>
+        <div class="feature-desc">تسجيل قراءات التيار والجهد لكل فيدر بشكل منظم مع حفظ التاريخ والوقت لكل قراءة</div>
+        <span class="feature-tag">حفظ تلقائي على السحابة</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">تحليل فوري</div>
+        <div class="feature-desc">حساب تلقائي لنسبة التحميل، حمل الكيبل، عدم التوازن بين الأطوار، والاستطاعة الظاهرية والفعلية</div>
+        <span class="feature-tag">معادلات كهربائية دقيقة</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚨</div>
+        <div class="feature-title">تنبيهات ذكية</div>
+        <div class="feature-desc">تنبيهات فورية عند تجاوز حمل الكيبل أو المحول، وكشف عدم التوازن وارتفاع تيار النيوترال</div>
+        <span class="feature-tag">تصنيف بالألوان (أحمر/أصفر/أخضر)</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📍</div>
+        <div class="feature-title">تحديد الموقع</div>
+        <div class="feature-desc">تسجيل موقع كل محول على الخريطة تلقائياً أو يدوياً، مع إمكانية فتحه مباشرة في Google Maps</div>
+        <span class="feature-tag">GPS تلقائي أو يدوي</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <div class="feature-title">تقارير احترافية</div>
+        <div class="feature-desc">تقرير تفصيلي لكل محول يشمل جميع القراءات والتحليلات وطريقة الحساب، قابل للطباعة كـ PDF</div>
+        <span class="feature-tag">جاهز للطباعة والأرشفة</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SCREENSHOTS ══ -->
+<section class="section screenshot-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">واجهة النظام</div>
+      <h2 class="section-title">شاشات النظام</h2>
+      <p class="section-sub">تصميم بسيط وواضح يعمل على الجوال والكمبيوتر</p>
+    </div>
+
+    <div class="screens-wrap">
+
+      <!-- Screen 1 -->
+      <div class="screen-item">
+        <div class="screen-placeholder">
+          <!-- ضع هنا صورة الصفحة الرئيسية (قائمة المحولات) -->
+          <div class="screen-placeholder-icon">🖼️</div>
+          <div class="screen-placeholder-hint">صورة: الصفحة الرئيسية — قائمة المحولات</div>
+        </div>
+        <div class="screen-text">
+          <div class="screen-num">١</div>
+          <div class="screen-title">الصفحة الرئيسية — لوحة التحكم</div>
+          <div class="screen-desc">نظرة شاملة على جميع المحولات مع إحصائيات فورية عن إجمالي السعة وعدد المخارج، مع خيارات تصفية وبحث متقدمة</div>
+          <ul class="screen-points">
+            <li>عرض جميع المحولات في جدول منظم</li>
+            <li>فلترة حسب المحطة والنوع والسعة</li>
+            <li>إحصائيات فورية في الأعلى</li>
+            <li>تصدير البيانات إلى Excel</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Screen 2 -->
+      <div class="screen-item reverse">
+        <div class="screen-text">
+          <div class="screen-num">٢</div>
+          <div class="screen-title">قراءات الأحمال</div>
+          <div class="screen-desc">واجهة تسجيل القراءات الميدانية — يدخل الفني قراءات التيار لكل فيدر مع اختيار حجم الكيبل وتظهر نسبة حمل الكيبل فوراً</div>
+          <ul class="screen-points">
+            <li>تسجيل تيار الأطوار الثلاثة والنيوترال</li>
+            <li>حساب حمل الكيبل تلقائياً</li>
+            <li>تسجيل الموقع الجغرافي</li>
+            <li>حفظ بتاريخ ووقت دقيق</li>
+          </ul>
+        </div>
+        <div class="screen-placeholder">
+          <!-- ضع هنا صورة صفحة قراءات الأحمال -->
+          <div class="screen-placeholder-icon">🖼️</div>
+          <div class="screen-placeholder-hint">صورة: نافذة قراءات الأحمال</div>
+        </div>
+      </div>
+
+      <!-- Screen 3 -->
+      <div class="screen-item">
+        <div class="screen-placeholder">
+          <!-- ضع هنا صورة صفحة التقرير -->
+          <div class="screen-placeholder-icon">🖼️</div>
+          <div class="screen-placeholder-hint">صورة: صفحة التقرير التفصيلي</div>
+        </div>
+        <div class="screen-text">
+          <div class="screen-num">٣</div>
+          <div class="screen-title">التقرير التفصيلي</div>
+          <div class="screen-desc">تقرير كامل لكل محول يشمل ملخص القراءات، تحليل الأحمال، ملخص التنبيهات، وطريقة الحساب — جاهز للطباعة أو الحفظ كـ PDF</div>
+          <ul class="screen-points">
+            <li>ملخص قراءات التيار لجميع الفيدرات</li>
+            <li>نسبة تحميل المحول والكيبل</li>
+            <li>تنبيهات ذكية مصنفة بالألوان</li>
+            <li>طريقة الحساب مع أمثلة فعلية</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Screen 4 -->
+      <div class="screen-item reverse">
+        <div class="screen-text">
+          <div class="screen-num">٤</div>
+          <div class="screen-title">تحديد الموقع على الخريطة</div>
+          <div class="screen-desc">تحديد موقع كل محول على الخريطة يدوياً أو تلقائياً عبر GPS، مع إمكانية فتح الموقع في Google Maps مباشرة</div>
+          <ul class="screen-points">
+            <li>خريطة تفاعلية لتحديد الموقع</li>
+            <li>حفظ الإحداثيات على السحابة</li>
+            <li>تسجيل من قام بالتعديل والتاريخ</li>
+            <li>فتح مباشر في Google Maps</li>
+          </ul>
+        </div>
+        <div class="screen-placeholder">
+          <!-- ضع هنا صورة نافذة الخريطة -->
+          <div class="screen-placeholder-icon">🖼️</div>
+          <div class="screen-placeholder-hint">صورة: نافذة تحديد الموقع</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ CALCULATIONS ══ -->
+<section class="calc-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label" style="background:rgba(0,212,255,0.1);color:#00d4ff;border-color:rgba(0,212,255,0.3)">الدقة التقنية</div>
+      <h2 class="section-title" style="color:#fff">معادلات كهربائية معتمدة</h2>
+      <p class="section-sub" style="color:rgba(255,255,255,0.6)">النظام يعتمد على المعادلات الكهربائية القياسية لنظام الثلاثة أطوار</p>
+    </div>
+    <div class="calc-grid">
+      <div class="calc-card">
+        <div class="calc-card-title">التيار المقنن للمحول</div>
+        <div class="calc-formula">I = KVA×1000 ÷ (√3 × V<sub>LL</sub>)</div>
+        <div class="calc-note">يُحدد الحد الأقصى المسموح به للتيار</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card-title">حمل الكيبل</div>
+        <div class="calc-formula">% = I<sub>max</sub> ÷ Ampacity × 100</div>
+        <div class="calc-note">مقارنة بقدرة الكيبل الحالية (120/185/240/300 mm²)</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card-title">الاستطاعة الظاهرية</div>
+        <div class="calc-formula">KVA = V<sub>LN</sub> × I ÷ 1000</div>
+        <div class="calc-note">لكل فاز على حدة باستخدام الجهد الفعلي المقاس</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card-title">الاستطاعة الفعلية</div>
+        <div class="calc-formula">KW = KVA × PF</div>
+        <div class="calc-note">تأخذ بعين الاعتبار معامل القدرة الفعلي</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card-title">عدم التوازن بين الأطوار</div>
+        <div class="calc-formula">% = (I<sub>max</sub>−I<sub>avg</sub>) ÷ I<sub>avg</sub> × 100</div>
+        <div class="calc-note">تحذير عند &gt;10% — خطر عند &gt;20%</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card-title">نسبة تحميل المحول</div>
+        <div class="calc-formula">% = I<sub>max</sub> ÷ I<sub>rated</sub> × 100</div>
+        <div class="calc-note">تحذير عند 60% — خطر عند 80%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ROLES ══ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">صلاحيات المستخدمين</div>
+      <h2 class="section-title">نظام صلاحيات متكامل</h2>
+      <p class="section-sub">كل فريق يرى بياناته فقط، والأدمن يشرف على الكل</p>
+    </div>
+    <div class="roles-grid">
+      <div class="role-card">
+        <div class="role-header">
+          <div class="role-icon">👷</div>
+          <div>
+            <div class="role-title">الفريق الميداني</div>
+            <div class="role-sub">6 فرق — كل فريق له كلمة مرور مستقلة</div>
+          </div>
+        </div>
+        <div class="role-perms">
+          <div class="perm-item"><div class="perm-dot green"></div>إضافة وتعديل المحولات</div>
+          <div class="perm-item"><div class="perm-dot green"></div>تسجيل قراءات الأحمال</div>
+          <div class="perm-item"><div class="perm-dot green"></div>تحديد مواقع المحولات</div>
+          <div class="perm-item"><div class="perm-dot green"></div>عرض التقارير</div>
+          <div class="perm-item"><div class="perm-dot blue"></div>يرى بيانات فريقه فقط</div>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-header">
+          <div class="role-icon">🔐</div>
+          <div>
+            <div class="role-title">المشرف (Admin)</div>
+            <div class="role-sub">صلاحيات كاملة على جميع الفرق</div>
+          </div>
+        </div>
+        <div class="role-perms">
+          <div class="perm-item"><div class="perm-dot green"></div>جميع صلاحيات الفرق</div>
+          <div class="perm-item"><div class="perm-dot red"></div>حذف السجلات</div>
+          <div class="perm-item"><div class="perm-dot red"></div>إدارة كلمات مرور الفرق</div>
+          <div class="perm-item"><div class="perm-dot blue"></div>يرى بيانات جميع الفرق</div>
+          <div class="perm-item"><div class="perm-dot blue"></div>التقارير الشاملة</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BENEFITS ══ -->
+<section class="section" style="background:var(--white)">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">القيمة المضافة</div>
+      <h2 class="section-title">الفوائد التشغيلية</h2>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-num">صفر</div>
+        <div class="benefit-unit">أوراق مفقودة</div>
+        <div class="benefit-desc">كل البيانات محفوظة رقمياً على السحابة بأمان</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num">فوري</div>
+        <div class="benefit-unit">تحليل الأحمال</div>
+        <div class="benefit-desc">النتائج والتنبيهات تظهر لحظة إدخال القراءة</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num">24/7</div>
+        <div class="benefit-unit">وصول مستمر</div>
+        <div class="benefit-desc">من أي جهاز — جوال أو كمبيوتر — في أي وقت</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num">PDF</div>
+        <div class="benefit-unit">تقارير جاهزة</div>
+        <div class="benefit-desc">تقارير احترافية قابلة للطباعة والأرشفة فوراً</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<hr class="divider">
+<footer class="footer-section">
+  <div class="footer-logo">
+    <img src="97ecfaff-2ca7-4e26-ada9-e87340085cc3.png" alt="نماء">
+  </div>
+  <div class="footer-title">نظام إدارة المحولات الكهربائية</div>
+  <div class="footer-sub" style="margin-top:0.3rem">تم التطوير بواسطة: أحمد محمد الهنائي</div>
+  <div class="footer-sub" style="margin-top:1rem;opacity:0.5">نماء لتوزيع الكهرباء</div>
+</footer>
+
+</body>
+</html>
