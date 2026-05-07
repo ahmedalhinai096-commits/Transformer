@@ -3095,6 +3095,7 @@ td{padding:0.6rem 0.8rem;text-align:center;vertical-align:middle;color:var(--tex
 .a-danger{background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.3);color:var(--danger)}
 .a-warn{background:rgba(217,119,6,0.1);border:1px solid rgba(217,119,6,0.35);color:#b45309}
 .a-ok{background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);color:#15803d}
+.a-info{background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.3);color:#1d4ed8}
 /* ── Feeder columns ── */
 .fc-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.6rem}
 .fc-title{font-size:0.9rem;font-weight:700;color:var(--accent)}
@@ -3334,18 +3335,56 @@ ${fResults.length?`<div class="section">
   <div class="section-title">🚨 ${isAr?'ملخص التنبيهات':'Alerts Summary'}</div>
   ${(()=>{
     const al=[];
-    const svr=fResults.filter(r=>r.imb>20);
-    if(svr.length){const mx=Math.max(...svr.map(r=>r.imb));al.push({t:'danger',m:`${t('severeImbalance')} (${svr.length} ${t('feeders')}) – ${t('max')}: ${mx.toFixed(1)}%`});}
-    const mod=fResults.filter(r=>r.imb>10&&r.imb<=20);
-    if(mod.length){const mx=Math.max(...mod.map(r=>r.imb));al.push({t:'warn',m:`${t('moderateImbalance')} (${mod.length} ${t('feeders')}) – ${t('max')}: ${mx.toFixed(1)}%`});}
-    if(loadPct>=HIGH) al.push({t:'danger',m:`${t('txOverload')}: ${loadPct.toFixed(1)}%`});
-    else if(loadPct>=60) al.push({t:'warn',m:`${t('txWarning')}: ${loadPct.toFixed(1)}%`});
-    else al.push({t:'ok',m:`${t('normal')}: ${loadPct.toFixed(1)}%`});
-    const hp=fResults.flatMap(({f,i1,i2,i3})=>[{feeder:f.name,ph:PH[0],v:i1},{feeder:f.name,ph:PH[1],v:i2},{feeder:f.name,ph:PH[2],v:i3}]).sort((a,b)=>b.v-a.v)[0];
-    if(hp&&hp.v>0) al.push({t:'warn',m:`${t('highestCurrent')}: ${hp.feeder} / ${hp.ph} – ${hp.v}A`});
-    const ord={danger:0,warn:1,ok:2};
+    const _cableAmpMap={120:312,185:394,240:455,300:509};
+    const lbl = (r) => `${isAr?'فيدر':'Feeder'} #${r.f.num||'—'}${r.f.name?' ('+r.f.name+' mm²)':''}`;
+
+    // ── 1. تحميل المحول الكلي
+    if(loadPct>=HIGH) al.push({t:'danger',m:`${t('txOverload')}: ${loadPct.toFixed(1)}% — ${totalKVA.toFixed(1)} / ${capKVA} KVA`});
+    else if(loadPct>=60) al.push({t:'warn',m:`${t('txWarning')}: ${loadPct.toFixed(1)}% — ${totalKVA.toFixed(1)} / ${capKVA} KVA`});
+    else al.push({t:'ok',m:`${t('normal')}: ${loadPct.toFixed(1)}% — ${totalKVA.toFixed(1)} / ${capKVA} KVA`});
+
+    // ── 2. تحميل الكيبل لكل فيدر
+    fResults.forEach(r=>{
+      const amp=_cableAmpMap[parseInt(r.f.name)];
+      if(!amp) return;
+      const pct=(r.iMax/amp)*100;
+      if(pct>=100) al.push({t:'danger',m:`${lbl(r)} — ${isAr?'تجاوز الكيبل':'Cable overload'}: ${pct.toFixed(1)}% (${r.iMax.toFixed(0)}A / ${amp}A)`});
+      else if(pct>=80) al.push({t:'warn',m:`${lbl(r)} — ${isAr?'تحذير الكيبل':'Cable warning'}: ${pct.toFixed(1)}% (${r.iMax.toFixed(0)}A / ${amp}A)`});
+    });
+
+    // ── 3. فيدرات بدون حجم كيبل
+    fResults.forEach(r=>{
+      if(!r.f.name) al.push({t:'warn',m:`${lbl(r)} — ${isAr?'حجم الكيبل غير محدد':'Cable size not set'}`});
+    });
+
+    // ── 4. عدم التوازن لكل فيدر
+    fResults.forEach(r=>{
+      if(r.imb>20) al.push({t:'danger',m:`${lbl(r)} — ${t('severeImbalance')}: ${r.imb.toFixed(1)}% | ${PH[0]}: ${r.i1}A  ${PH[1]}: ${r.i2}A  ${PH[2]}: ${r.i3}A`});
+      else if(r.imb>10) al.push({t:'warn',m:`${lbl(r)} — ${t('moderateImbalance')}: ${r.imb.toFixed(1)}% | ${PH[0]}: ${r.i1}A  ${PH[1]}: ${r.i2}A  ${PH[2]}: ${r.i3}A`});
+    });
+
+    // ── 5. تيار النيوترال العالي
+    fResults.forEach(r=>{
+      if(!r.iN||r.iAvg<=0) return;
+      const nPct=(r.iN/r.iAvg)*100;
+      if(nPct>=30) al.push({t:'info',m:`${lbl(r)} — ${isAr?'تيار نيوترال عالي':'High neutral current'}: ${r.iN}A (${nPct.toFixed(0)}% ${isAr?'من متوسط الأطوار':'of phase avg'})`});
+    });
+
+    // ── 6. أعلى 3 فيدرات حملاً على الكيبل
+    const cableLoaded = fResults
+      .filter(r=>_cableAmpMap[parseInt(r.f.name)])
+      .map(r=>({lbl:lbl(r), pct:(r.iMax/_cableAmpMap[parseInt(r.f.name)])*100, iMax:r.iMax}))
+      .sort((a,b)=>b.pct-a.pct).slice(0,3);
+    if(cableLoaded.length){
+      const top=cableLoaded.map(r=>`${r.lbl}: ${r.pct.toFixed(1)}%`).join(' | ');
+      al.push({t:'ok',m:`${isAr?'أعلى 3 فيدرات حملاً':'Top 3 cable loads'}: ${top}`});
+    }
+
+    const ord={danger:0,warn:1,info:2,ok:3};
     al.sort((a,b)=>(ord[a.t]||0)-(ord[b.t]||0));
-    return al.length?al.map(a=>`<div class="alert-item a-${a.t}">${a.t==='ok'?'✅':a.t==='warn'?'⚠️':'🔴'} ${a.m}</div>`).join(''):`<div class="alert-item a-ok">✅ ${isAr?'كل شيء طبيعي':'All readings normal'}</div>`;
+    return al.length
+      ? al.map(a=>`<div class="alert-item a-${a.t}">${a.t==='ok'?'✅':a.t==='warn'?'⚠️':a.t==='info'?'🔵':'🔴'} ${a.m}</div>`).join('')
+      : `<div class="alert-item a-ok">✅ ${isAr?'كل شيء طبيعي':'All readings normal'}</div>`;
   })()}
 </div>
 
