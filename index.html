@@ -3005,24 +3005,29 @@
     // ── نسبة التحميل: I_max / I_rated
     const loadPct = ratedCurrent > 0 ? Math.min(999, (maxCurrent / ratedCurrent) * 100) : 0;
 
-    // ── الاستطاعة الظاهرية والفعلية: KVA = √3 × V_LL × I_max / 1000
-    const totalKVA  = (SQRT3 * vLL * maxCurrent) / 1000;
-    const totalKWR  = totalKVA * pfR;
+    // ── جهد الفاز المقدّر (fallback لو ما في قراءة V_LN)
+    const vLN_est = vLL / SQRT3;
 
-    // ── نتائج الفيدرات (تشمل KVA و KW لكل فيدر)
+    // ── نتائج الفيدرات: KVA = V_LN × I / 1000 لكل فاز على حدة
     const fResults = feeders.filter(hasData).map(f=>{
       const v1=parseFloat(v.vL1N)||0, v2=parseFloat(v.vL2N)||0, v3=parseFloat(v.vL3N)||0;
       const i1=parseFloat(f.iL1)||0,i2=parseFloat(f.iL2)||0,i3=parseFloat(f.iL3)||0,iN=parseFloat(f.iN)||0;
       const iMax=Math.max(i1,i2,i3);
       const iAvg=(i1+i2+i3)/3;
-      // KVA لكل طور: √3 × V_LL × I_phase / 1000
-      const kva1=(SQRT3*vLL*i1)/1000, kva2=(SQRT3*vLL*i2)/1000, kva3=(SQRT3*vLL*i3)/1000;
-      // إجمالي KVA الفيدر = √3 × V_LL × I_max / 1000
-      const totalF=(SQRT3*vLL*iMax)/1000;
+      // V_LN الفعلي أو المقدّر لكل فاز
+      const vn1=v1||vLN_est, vn2=v2||vLN_est, vn3=v3||vLN_est;
+      // KVA لكل فاز: V_LN × I / 1000
+      const kva1=(vn1*i1)/1000, kva2=(vn2*i2)/1000, kva3=(vn3*i3)/1000;
+      // إجمالي KVA الفيدر = مجموع الثلاثة (أدق للأحمال غير المتزنة)
+      const totalF=kva1+kva2+kva3;
       const kw1=kva1*pfR, kw2=kva2*pfR, kw3=kva3*pfR, totalKW=totalF*pfR;
       const imb=iAvg>0?((iMax-iAvg)/iAvg*100):0;
       return {f,v1,v2,v3,i1,i2,i3,iN,kva1,kva2,kva3,totalF,kw1,kw2,kw3,totalKW,iAvg,iMax,imb};
     });
+
+    // ── إجمالي المحول = مجموع كل الفيدرات
+    const totalKVA  = fResults.reduce((s,r)=>s+r.totalF, 0) || (SQRT3*vLL*maxCurrent)/1000;
+    const totalKWR  = totalKVA * pfR;
 
     const loadColor=loadPct>=HIGH?'#dc2626':loadPct>=60?'#d97706':'#16a34a';
     const loadStatus=isAr?(loadPct>=HIGH?'تحميل عالي':loadPct>=60?'تحميل متوسط':'تحميل طبيعي'):(loadPct>=HIGH?'High Load':loadPct>=60?'Moderate':'Normal');
@@ -3398,9 +3403,9 @@ ${(()=>{
         `${maxCurrent.toFixed(1)} ÷ ${iRated.toFixed(1)} × 100 = <b>${loadPct.toFixed(1)}%</b>`
       )}
       ${row(
-        'KVA = √3 × V<sub>LL</sub> × I<sub>max</sub> ÷ 1000',
-        isAr2?'الاستطاعة الظاهرية للفيدر':'Feeder apparent power',
-        `1.732 × ${vLL} × ${imax1.toFixed(1)} ÷ 1000 = <b>${kva1ex.toFixed(2)} KVA</b>`
+        'KVA<sub>phase</sub> = V<sub>LN</sub> × I ÷ 1000',
+        isAr2?'الاستطاعة الظاهرية لكل فاز':'Per-phase apparent power',
+        `(${(f1.v1||vLL/SQRT3).toFixed(1)}×${f1.i1.toFixed(0)} + ${(f1.v2||vLL/SQRT3).toFixed(1)}×${f1.i2.toFixed(0)} + ${(f1.v3||vLL/SQRT3).toFixed(1)}×${f1.i3.toFixed(0)}) ÷ 1000 = <b>${kva1ex.toFixed(2)} KVA</b>`
       )}
       ${row(
         'KW = KVA × PF',
