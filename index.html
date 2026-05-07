@@ -218,6 +218,7 @@
   }
 
   .container { max-width: 1100px; margin: 0 auto; padding: 2rem; position: relative; z-index: 1; }
+  @media (max-width: 520px) { .container { padding: 1rem 0.75rem; } }
 
   header {
     text-align: center;
@@ -241,6 +242,7 @@
     height: 140px;
     width: auto;
   }
+  @media (max-width: 520px) { .header-icon img { height: 90px; } }
 
   h1 {
     font-size: 2.2rem;
@@ -787,6 +789,7 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
   }
   .load-modal-overlay.active .load-modal { transform: translateY(0); }
+  @media (max-width: 600px) { .load-modal { padding: 1rem; border-radius: 12px; } }
 
   .lm-header {
     display: flex;
@@ -1035,11 +1038,13 @@
   /* ── Login Screen ────────────────────────────────── */
   #loginScreen{position:fixed;inset:0;display:flex;align-items:safe center;justify-content:center;z-index:1000;background:var(--bg);padding:2rem 1rem;overflow-y:auto}
   .login-box{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:2.5rem 2rem;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.6);flex-shrink:0}
+  @media (max-width: 480px) { .login-box { padding: 1.5rem 1.2rem; border-radius: 16px; } }
   .login-logo{text-align:center;margin-bottom:0.8rem}
   .login-logo img{height:120px;width:auto}
   .login-title{text-align:center;font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.3rem}
   .login-sub{text-align:center;color:var(--text-muted);font-size:0.85rem;font-family:'Tajawal',sans-serif;margin-bottom:1.5rem}
   .team-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:1.2rem}
+  @media (max-width: 380px) { .team-grid { grid-template-columns: 1fr; } }
   .team-btn{padding:0.75rem;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:'Cairo',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
   .team-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
   .team-btn.selected{background:linear-gradient(135deg,var(--accent),#0099bb);color:#0a0f1e;border-color:var(--accent)}
@@ -1216,6 +1221,32 @@
     border-top: 1px solid var(--border);
     font-family: 'Tajawal', sans-serif;
     letter-spacing: 0.02em;
+  }
+
+  /* ── Mobile Responsive ───────────────────────────────── */
+  @media (max-width: 600px) {
+    h1 { font-size: 1.4rem; }
+    .stat-value { font-size: 1.3rem; }
+    .modal { padding: 1.2rem; }
+    .lm-title { font-size: 0.95rem; }
+    .reading-form { padding: 1rem; }
+    .lm-actions { flex-wrap: wrap; gap: 0.5rem; }
+    .feeder-tabs { gap: 0.4rem; }
+    .feeder-tab { padding: 0.45rem 0.7rem; font-size: 0.78rem; }
+  }
+
+  @media (max-width: 480px) {
+    .readings-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .form-grid { grid-template-columns: 1fr; }
+    .analysis-grid { grid-template-columns: 1fr; }
+    .btn { font-size: 0.82rem; padding: 0.5rem 0.8rem; }
+    td, th { font-size: 0.76rem; padding: 0.5rem 0.5rem; }
+  }
+
+  @media (max-width: 380px) {
+    h1 { font-size: 1.2rem; }
+    .login-title { font-size: 1.3rem; }
+    .stat-value { font-size: 1.1rem; }
   }
 </style>
 </head>
@@ -1498,12 +1529,12 @@
           <label style="font-size:0.73rem;color:var(--text-muted);font-family:'Tajawal',sans-serif">Tap Changer No</label>
           <input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" id="tapNo" placeholder=""
             oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-            style="background:var(--surface);border:1px solid rgba(167,139,250,0.4);border-radius:8px;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:0.95rem;font-weight:700;padding:0.5rem 0.8rem;outline:none;width:120px;text-align:center" />
+            style="background:var(--surface);border:1px solid rgba(167,139,250,0.4);border-radius:8px;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:0.95rem;font-weight:700;padding:0.5rem 0.8rem;outline:none;width:clamp(80px,20vw,120px);text-align:center" />
         </div>
         <div style="display:flex;flex-direction:column;gap:0.3rem">
           <label id="pfLabel" style="font-size:0.73rem;color:var(--text-muted);font-family:'Tajawal',sans-serif">Power Factor (PF)</label>
           <input type="text" inputmode="decimal" pattern="[0-9.]*" autocomplete="off" id="vPF" placeholder="0.90"
-            style="background:var(--surface);border:1px solid rgba(167,139,250,0.4);border-radius:8px;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:0.95rem;font-weight:700;padding:0.5rem 0.8rem;outline:none;width:120px;text-align:center"
+            style="background:var(--surface);border:1px solid rgba(167,139,250,0.4);border-radius:8px;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:0.95rem;font-weight:700;padding:0.5rem 0.8rem;outline:none;width:clamp(80px,20vw,120px);text-align:center"
             oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1');onPFChange(this.value)" />
         </div>
         <button class="btn btn-primary" onclick="saveVoltageReadings()" style="font-size:0.85rem;padding:0.5rem 1.2rem;align-self:flex-end">💾 <span id="btnSaveVolt">حفظ الفولتيج</span></button>
@@ -2401,12 +2432,12 @@
           <div style="display:flex;flex-direction:column;gap:0.3rem">
             <label style="font-size:0.73rem;color:var(--text-muted);font-family:'Tajawal',sans-serif">${t('lmFeederNum')}</label>
             <input disabled type="text" inputmode="numeric" pattern="[0-9]*" value="${f.num||i+1}" onchange="updateFeederNum(${i},this.value)"
-              style="background:var(--surface2);border:1px solid rgba(167,139,250,0.4);border-radius:8px;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;padding:0.5rem 0.8rem;outline:none;width:90px;text-align:center"/>
+              style="background:var(--surface2);border:1px solid rgba(167,139,250,0.4);border-radius:8px;color:#a78bfa;font-family:'Cairo',sans-serif;font-size:0.88rem;font-weight:700;padding:0.5rem 0.8rem;outline:none;width:90px;text-align:center;height:2.5rem;box-sizing:border-box"/>
           </div>
           <div style="display:flex;flex-direction:column;gap:0.3rem">
             <label style="font-size:0.73rem;color:var(--text-muted);font-family:'Tajawal',sans-serif">${t('lmFeederName')}</label>
             <select onchange="updateFeederName(${i},this.value)"
-              style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:0.78rem;padding:0.4rem 0.6rem;outline:none;cursor:pointer;width:auto;${lang==='en'?'direction:ltr;text-align:left;':''}">
+              style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:0.88rem;padding:0.5rem 0.8rem;outline:none;cursor:pointer;width:auto;height:2.5rem;box-sizing:border-box;${lang==='en'?'direction:ltr;text-align:left;':''}">
               <option value="">${lang==='ar'?'-- اختر --':'-- Select --'}</option>
               ${[120,185,240,300].map(s=>`<option value="${s}" ${f.name==s?'selected':''}>${s} mm² (${CABLE_AMPACITY[s]}A)</option>`).join('')}
             </select>
@@ -2414,11 +2445,13 @@
           ${(()=>{
             const cs = cableStatus(f);
             if (!cs || cs.level === 'nodata') return '';
-            const bg     = { ok:'#4ade80', warning:'#fbbf24', danger:'#f87171' };
+            const bg     = { ok:'rgba(74,222,128,0.18)', warning:'rgba(251,191,36,0.18)', danger:'rgba(248,113,113,0.18)' };
+            const border = { ok:'rgba(74,222,128,0.45)', warning:'rgba(251,191,36,0.45)', danger:'rgba(248,113,113,0.45)' };
+            const color  = { ok:'#000', warning:'#000', danger:'#000' };
             const labels = { ok: lang==='ar'?'جيد':'OK', warning: lang==='ar'?'تحذير':'Warn', danger: lang==='ar'?'تجاوز':'Over' };
             return `<div style="display:flex;flex-direction:column;gap:0.3rem">
               <label style="font-size:0.73rem;color:var(--text-muted);font-family:'Tajawal',sans-serif">${lang==='ar'?'الحمل على الكيبل':'Cable Load'}</label>
-              <div style="background:${bg[cs.level]};border:1px solid var(--border);border-radius:8px;color:#000;font-family:'Cairo',sans-serif;font-size:0.78rem;font-weight:700;padding:0.4rem 0.6rem;text-align:center;white-space:nowrap">
+              <div style="background:${bg[cs.level]};border:1px solid ${border[cs.level]};border-radius:8px;color:${color[cs.level]};font-family:'Cairo',sans-serif;font-size:0.88rem;font-weight:700;padding:0.5rem 0.8rem;text-align:center;white-space:nowrap;height:2.5rem;box-sizing:border-box;display:flex;align-items:center;justify-content:center">
                 ${cs.pct.toFixed(0)}% — ${labels[cs.level]}
               </div>
             </div>`;
@@ -2426,7 +2459,7 @@
         </div>
 
         <div class="reading-section-title">${t('lmCurrent')}</div>
-        <div class="readings-grid" style="grid-template-columns:repeat(4,1fr);max-width:480px">
+        <div class="readings-grid" style="grid-template-columns:repeat(auto-fill,minmax(100px,1fr));max-width:480px">
           ${currentField(i,'iL1', t('red'),     'current')}
           ${currentField(i,'iL2', t('yellow'),  'current')}
           ${currentField(i,'iL3', t('blue'),    'current')}
