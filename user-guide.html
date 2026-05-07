@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دليل الاستخدام — نظام إدارة المحولات الكهربائية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#CC0000;
+  --accent:#2563EB;
+  --green:#16A34A;
+  --yellow:#D97706;
+  --text:#111827;
+  --text-muted:#6B7280;
+  --border:#E5E7EB;
+  --surface:#F9FAFB;
+  --white:#FFFFFF;
+}
+body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-height:1.7}
+
+/* ── Hero ── */
+.hero{background:linear-gradient(135deg,#0a0f1e 0%,#1a2540 50%,#0d1929 100%);color:#fff;padding:4rem 2rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,212,255,0.04)1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.04)1px,transparent 1px);background-size:40px 40px}
+.hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
+.hero-logo{margin-bottom:1.2rem}
+.hero-logo img{height:80px;width:auto;filter:brightness(0) invert(1)}
+.hero-badge{display:inline-block;background:rgba(37,99,235,0.2);border:1px solid rgba(37,99,235,0.4);color:#93c5fd;font-size:0.8rem;padding:0.3rem 1rem;border-radius:20px;font-family:'Tajawal',sans-serif;margin-bottom:1rem}
+.hero h1{font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#00d4ff,#00ff9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.6rem}
+.hero p{font-size:1rem;color:rgba(255,255,255,0.7);font-family:'Tajawal',sans-serif;max-width:580px;margin:0 auto}
+
+/* ── TOC ── */
+.toc{background:var(--white);border-radius:16px;padding:2rem;margin:2rem auto;max-width:1100px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.toc-title{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:1.2rem;display:flex;align-items:center;gap:0.5rem}
+.toc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem}
+.toc-item{display:flex;align-items:center;gap:0.75rem;padding:0.7rem 1rem;border-radius:10px;background:var(--surface);border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all 0.2s;font-family:'Tajawal',sans-serif;font-size:0.9rem}
+.toc-item:hover{background:rgba(37,99,235,0.06);border-color:rgba(37,99,235,0.3);color:var(--accent)}
+.toc-num{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── Container ── */
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+
+/* ── Section ── */
+.section{padding:3rem 0}
+.section-header{margin-bottom:2.5rem}
+.step-label{display:inline-flex;align-items:center;gap:0.5rem;background:var(--accent);color:#fff;font-size:0.8rem;font-weight:700;padding:0.3rem 1rem;border-radius:20px;font-family:'Tajawal',sans-serif;margin-bottom:0.8rem}
+.step-label span{background:rgba(255,255,255,0.25);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem}
+.section-title{font-size:1.7rem;font-weight:900;color:var(--text);margin-bottom:0.4rem}
+.section-sub{font-size:0.95rem;color:var(--text-muted);font-family:'Tajawal',sans-serif}
+
+/* ── Step Card ── */
+.step-card{background:var(--white);border-radius:16px;padding:2rem;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.04);margin-bottom:1.5rem}
+.step-card-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.step-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.step-icon.blue{background:rgba(37,99,235,0.1)}
+.step-icon.green{background:rgba(22,163,74,0.1)}
+.step-icon.yellow{background:rgba(217,119,6,0.1)}
+.step-icon.red{background:rgba(220,38,38,0.1)}
+.step-icon.purple{background:rgba(124,58,237,0.1)}
+.step-card-title{font-size:1.15rem;font-weight:700;color:var(--text)}
+.step-card-sub{font-size:0.85rem;color:var(--text-muted);font-family:'Tajawal',sans-serif}
+
+/* ── Two-column layout ── */
+.step-body{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.step-body.full{grid-template-columns:1fr}
+.step-body.img-first{direction:ltr}
+
+/* ── Screenshot placeholder ── */
+.screenshot{background:linear-gradient(135deg,#1a2540,#0d1929);border-radius:12px;overflow:hidden;position:relative;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px dashed rgba(0,212,255,0.3)}
+.screenshot-hint{color:rgba(255,255,255,0.5);font-family:'Tajawal',sans-serif;font-size:0.82rem;text-align:center;padding:1.5rem;direction:rtl}
+.screenshot-hint strong{display:block;color:#00d4ff;font-size:1rem;margin-bottom:0.4rem}
+.screenshot-hint em{display:block;color:rgba(255,255,255,0.35);font-size:0.75rem;margin-top:0.5rem;font-style:normal}
+.screenshot img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+
+/* ── Steps list ── */
+.steps-list{list-style:none;display:flex;flex-direction:column;gap:0.8rem}
+.steps-list li{display:flex;align-items:flex-start;gap:0.8rem;font-family:'Tajawal',sans-serif;font-size:0.92rem;color:var(--text)}
+.steps-list li .n{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.steps-list li .n.green{background:var(--green)}
+.steps-list li .n.yellow{background:var(--yellow)}
+.steps-list li .n.red{background:#DC2626}
+.steps-list li .n.purple{background:#7C3AED}
+
+/* ── Tip / Warning box ── */
+.tip{background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.2);border-radius:10px;padding:0.9rem 1.1rem;margin-top:1rem;font-family:'Tajawal',sans-serif;font-size:0.88rem;color:#1d4ed8;display:flex;gap:0.6rem;align-items:flex-start}
+.warn{background:rgba(217,119,6,0.07);border:1px solid rgba(217,119,6,0.25);border-radius:10px;padding:0.9rem 1.1rem;margin-top:1rem;font-family:'Tajawal',sans-serif;font-size:0.88rem;color:#92400e;display:flex;gap:0.6rem;align-items:flex-start}
+.info-box{background:rgba(22,163,74,0.06);border:1px solid rgba(22,163,74,0.2);border-radius:10px;padding:0.9rem 1.1rem;margin-top:1rem;font-family:'Tajawal',sans-serif;font-size:0.88rem;color:#14532d;display:flex;gap:0.6rem;align-items:flex-start}
+
+/* ── Role table ── */
+.role-table{width:100%;border-collapse:collapse;font-family:'Tajawal',sans-serif;font-size:0.88rem}
+.role-table th{background:var(--surface);padding:0.7rem 1rem;text-align:right;font-weight:700;color:var(--text);border-bottom:2px solid var(--border)}
+.role-table td{padding:0.65rem 1rem;border-bottom:1px solid var(--border);color:var(--text)}
+.role-table tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:0.2rem 0.6rem;border-radius:6px;font-size:0.78rem;font-weight:700}
+.badge.yes{background:rgba(22,163,74,0.12);color:#15803d}
+.badge.no{background:rgba(220,38,38,0.1);color:#b91c1c}
+.badge.partial{background:rgba(217,119,6,0.1);color:#b45309}
+
+/* ── Divider ── */
+.divider{height:1px;background:var(--border);margin:1rem 0}
+
+/* ── Footer ── */
+.footer{background:linear-gradient(135deg,#0a0f1e,#1a2540);color:rgba(255,255,255,0.6);text-align:center;padding:2rem;font-family:'Tajawal',sans-serif;font-size:0.85rem}
+.footer strong{color:#00d4ff}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .toc-grid{grid-template-columns:repeat(2,1fr)}
+  .step-body{grid-template-columns:1fr}
+  .hero h1{font-size:1.8rem}
+}
+@media(max-width:480px){
+  .toc-grid{grid-template-columns:1fr}
+  .container{padding:0 1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ Hero ══ -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-logo">
+      <img src="nama-logo.png" alt="نماء" onerror="this.style.display='none'">
+    </div>
+    <div class="hero-badge">دليل المستخدم</div>
+    <h1>كيفية استخدام النظام</h1>
+    <p>شرح تفصيلي خطوة بخطوة لجميع وظائف نظام إدارة المحولات الكهربائية</p>
+  </div>
+</div>
+
+<!-- ══ TOC ══ -->
+<div class="toc container" style="margin-top:2rem">
+  <div class="toc-title">📋 محتويات الدليل</div>
+  <div class="toc-grid">
+    <a href="#login" class="toc-item"><div class="toc-num">1</div>تسجيل الدخول</a>
+    <a href="#main" class="toc-item"><div class="toc-num">2</div>الصفحة الرئيسية</a>
+    <a href="#add" class="toc-item"><div class="toc-num">3</div>إضافة محول جديد</a>
+    <a href="#readings" class="toc-item"><div class="toc-num">4</div>إدخال قراءات الأحمال</a>
+    <a href="#location" class="toc-item"><div class="toc-num">5</div>تحديد الموقع</a>
+    <a href="#report" class="toc-item"><div class="toc-num">6</div>توليد التقرير</a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     STEP 1 — LOGIN
+══════════════════════════════════════ -->
+<div class="section" id="login">
+  <div class="container">
+    <div class="section-header">
+      <div class="step-label"><span>1</span> الخطوة الأولى</div>
+      <div class="section-title">تسجيل الدخول</div>
+      <div class="section-sub">اختيار الفريق وإدخال كلمة المرور للوصول إلى النظام</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon blue">🔐</div>
+        <div>
+          <div class="step-card-title">الدخول إلى النظام</div>
+          <div class="step-card-sub">يتم تسجيل الدخول مرة واحدة وتبقى الجلسة محفوظة</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <div>
+          <ul class="steps-list">
+            <li><div class="n">1</div><span>افتح التطبيق في المتصفح</span></li>
+            <li><div class="n">2</div><span>اختر <strong>اسم فريقك</strong> من القائمة المنسدلة (فريق 1 إلى فريق 6، أو مشرف)</span></li>
+            <li><div class="n">3</div><span>أدخل <strong>كلمة المرور</strong> الخاصة بفريقك</span></li>
+            <li><div class="n">4</div><span>اضغط زر <strong>دخول</strong> للوصول إلى النظام</span></li>
+          </ul>
+
+          <div class="tip">💡 كلمة المرور خاصة بكل فريق، تواصل مع المسؤول للحصول عليها.</div>
+          <div class="warn">⚠️ صلاحيات كل فريق محدودة — كل فريق يرى ويعدّل بياناته فقط. المشرف يملك صلاحية الاطلاع على جميع البيانات وإدارتها.</div>
+        </div>
+        <div class="screenshot">
+          <div class="screenshot-hint">
+            <strong>📸 صورة مطلوبة</strong>
+            التقط صورة لنافذة تسجيل الدخول<br>تأكد من ظهور القائمة المنسدلة وحقل كلمة المرور
+            <em>ضع الصورة هنا</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     STEP 2 — MAIN PAGE
+══════════════════════════════════════ -->
+<div class="section" id="main" style="background:var(--white)">
+  <div class="container">
+    <div class="section-header">
+      <div class="step-label"><span>2</span> الخطوة الثانية</div>
+      <div class="section-title">الصفحة الرئيسية</div>
+      <div class="section-sub">نظرة عامة على جدول المحولات وأدوات البحث والفلترة</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon green">🏠</div>
+        <div>
+          <div class="step-card-title">مكونات الصفحة الرئيسية</div>
+          <div class="step-card-sub">تحتوي على أدوات البحث والجدول وأزرار الإجراءات</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <div class="screenshot">
+          <div class="screenshot-hint">
+            <strong>📸 صورة مطلوبة</strong>
+            التقط صورة للصفحة الرئيسية كاملة<br>مع ظهور الجدول وشريط الأدوات
+            <em>ضع الصورة هنا</em>
+          </div>
+        </div>
+        <div>
+          <ul class="steps-list">
+            <li><div class="n green">A</div><span><strong>شريط البحث</strong> — ابحث باسم المحول أو رقمه أو الفيدر</span></li>
+            <li><div class="n green">B</div><span><strong>فلتر الفريق</strong> — عرض محولات فريق معين (للمشرف فقط)</span></li>
+            <li><div class="n green">C</div><span><strong>فلتر الحالة</strong> — تصفية حسب حالة القراءات (مكتملة / ناقصة / بدون)</span></li>
+            <li><div class="n green">D</div><span><strong>جدول المحولات</strong> — يعرض جميع المحولات مع بياناتها الأساسية</span></li>
+            <li><div class="n green">E</div><span><strong>أزرار الإجراءات</strong> لكل محول: قراءة، موقع، تقرير، تعديل، حذف</span></li>
+            <li><div class="n green">F</div><span><strong>زر إضافة محول</strong> في أعلى الصفحة لإدخال محول جديد</span></li>
+          </ul>
+          <div class="info-box">✅ العمود الملوّن في الجدول يشير إلى حالة القراءات: أخضر = مكتملة، أصفر = جزئية، رمادي = لا توجد قراءات.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     STEP 3 — ADD TRANSFORMER
+══════════════════════════════════════ -->
+<div class="section" id="add">
+  <div class="container">
+    <div class="section-header">
+      <div class="step-label"><span>3</span> الخطوة الثالثة</div>
+      <div class="section-title">إضافة محول جديد</div>
+      <div class="section-sub">إدخال بيانات محول كهربائي جديد في النظام</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon yellow">➕</div>
+        <div>
+          <div class="step-card-title">نموذج إضافة المحول</div>
+          <div class="step-card-sub">يفتح نافذة منبثقة لإدخال بيانات المحول</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <div>
+          <ul class="steps-list">
+            <li><div class="n yellow">1</div><span>اضغط زر <strong>+ إضافة محول</strong> في أعلى الصفحة</span></li>
+            <li><div class="n yellow">2</div><span>أدخل <strong>اسم المحول</strong> (مثال: SS-101)</span></li>
+            <li><div class="n yellow">3</div><span>أدخل <strong>رقم الفيدر الرئيسي</strong> (MV Feeder)</span></li>
+            <li><div class="n yellow">4</div><span>اختر <strong>سعة المحول</strong> من القائمة (100 — 2000 KVA)</span></li>
+            <li><div class="n yellow">5</div><span>اختر <strong>حجم الكيبل</strong> (120 / 185 / 240 / 300 mm²)</span></li>
+            <li><div class="n yellow">6</div><span>أدخل <strong>عدد فيدرات الجهد المنخفض</strong> المتوقعة</span></li>
+            <li><div class="n yellow">7</div><span>اضغط <strong>حفظ</strong> لإضافة المحول إلى القائمة</span></li>
+          </ul>
+          <div class="tip">💡 حجم الكيبل مهم جداً — يُستخدم لحساب نسبة تحميل الكيبل في التقرير.</div>
+          <div class="warn">⚠️ يمكن لكل فريق تعديل بيانات محولاته فقط. المشرف يستطيع تعديل جميع المحولات.</div>
+        </div>
+        <div class="screenshot">
+          <div class="screenshot-hint">
+            <strong>📸 صورة مطلوبة</strong>
+            التقط صورة لنافذة إضافة المحول<br>مع ظهور جميع الحقول
+            <em>ضع الصورة هنا</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fields reference -->
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon blue">📋</div>
+        <div>
+          <div class="step-card-title">دليل الحقول</div>
+          <div class="step-card-sub">شرح كل حقل في نموذج المحول</div>
+        </div>
+      </div>
+      <div class="step-body full">
+        <table class="role-table">
+          <thead>
+            <tr><th>الحقل</th><th>الوصف</th><th>مثال</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>اسم المحول</strong></td><td>المعرف الفريد للمحول في الشبكة</td><td>SS-101-A</td></tr>
+            <tr><td><strong>الفيدر الرئيسي</strong></td><td>رقم خط الجهد المتوسط المغذي</td><td>F-05</td></tr>
+            <tr><td><strong>السعة (KVA)</strong></td><td>الطاقة الكهربائية القصوى للمحول</td><td>500 KVA</td></tr>
+            <tr><td><strong>حجم الكيبل</strong></td><td>مقطع كيبل خروج الجهد المنخفض بالـ mm²</td><td>240 mm²</td></tr>
+            <tr><td><strong>عدد الفيدرات</strong></td><td>عدد فيدرات الجهد المنخفض الإجمالية</td><td>8</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     STEP 4 — LOAD READINGS
+══════════════════════════════════════ -->
+<div class="section" id="readings" style="background:var(--white)">
+  <div class="container">
+    <div class="section-header">
+      <div class="step-label"><span>4</span> الخطوة الرابعة</div>
+      <div class="section-title">إدخال قراءات الأحمال</div>
+      <div class="section-sub">تسجيل قيم التيار والجهد لكل فيدر من فيدرات المحول</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon purple">⚡</div>
+        <div>
+          <div class="step-card-title">فتح نافذة القراءات</div>
+          <div class="step-card-sub">اضغط زر القراءة بجانب المحول المطلوب</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <div>
+          <ul class="steps-list">
+            <li><div class="n purple">1</div><span>في صف المحول، اضغط زر <strong>⚡ قراءة</strong></span></li>
+            <li><div class="n purple">2</div><span>ستفتح نافذة تحتوي على <strong>بطاقة لكل فيدر</strong></span></li>
+            <li><div class="n purple">3</div><span>أدخل <strong>قيم التيار</strong> لكل فيز (I_R, I_Y, I_B) بالأمبير</span></li>
+            <li><div class="n purple">4</div><span>أدخل <strong>قيم الجهد</strong> (V_L1N, V_L2N, V_L3N) اختياري</span></li>
+            <li><div class="n purple">5</div><span>أدخل <strong>تيار النيوترال</strong> (I_N) اختياري</span></li>
+            <li><div class="n purple">6</div><span>اضغط <strong>حفظ القراءات</strong> لتخزين البيانات</span></li>
+          </ul>
+          <div class="tip">💡 لا تحتاج لإدخال قراءات جميع الفيدرات — يكفي إدخال الفيدرات النشطة فقط.</div>
+          <div class="info-box">✅ يتم حساب نسبة التحميل تلقائياً بعد الحفظ وتظهر ألواناً في الجدول الرئيسي.</div>
+        </div>
+        <div class="screenshot">
+          <div class="screenshot-hint">
+            <strong>📸 صورة مطلوبة</strong>
+            التقط صورة لنافذة قراءات الأحمال<br>مع ظهور بطاقات الفيدرات وحقول الإدخال
+            <em>ضع الصورة هنا</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon blue">📊</div>
+        <div>
+          <div class="step-card-title">مؤشرات القراءات</div>
+          <div class="step-card-sub">ما يظهر بعد إدخال القيم</div>
+        </div>
+      </div>
+      <div class="step-body full">
+        <ul class="steps-list">
+          <li><div class="n">A</div><span><strong>نسبة تحميل المحول</strong> — تُحسب من مجموع أعلى تيار من الفيزات الثلاث مقارنة بالتيار المقنن</span></li>
+          <li><div class="n">B</div><span><strong>نسبة تحميل الكيبل</strong> — تُحسب من أعلى تيار مقارنة بأمبيرية الكيبل (تعتمد على حجمه)</span></li>
+          <li><div class="n">C</div><span><strong>لون البطاقة</strong> — أخضر (أقل من 70%) ← أصفر (70%-90%) ← أحمر (أكثر من 90%)</span></li>
+        </ul>
+        <div style="margin-top:1.2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
+          <div style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.25);border-radius:10px;padding:1rem;text-align:center;font-family:'Tajawal',sans-serif">
+            <div style="font-size:1.4rem;font-weight:900;color:#16a34a">أقل من 70%</div>
+            <div style="font-size:0.82rem;color:#15803d;margin-top:0.3rem">تحميل طبيعي ✅</div>
+          </div>
+          <div style="background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.25);border-radius:10px;padding:1rem;text-align:center;font-family:'Tajawal',sans-serif">
+            <div style="font-size:1.4rem;font-weight:900;color:#d97706">70% — 90%</div>
+            <div style="font-size:0.82rem;color:#92400e;margin-top:0.3rem">تحميل مرتفع ⚠️</div>
+          </div>
+          <div style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.25);border-radius:10px;padding:1rem;text-align:center;font-family:'Tajawal',sans-serif">
+            <div style="font-size:1.4rem;font-weight:900;color:#dc2626">أكثر من 90%</div>
+            <div style="font-size:0.82rem;color:#b91c1c;margin-top:0.3rem">تحميل زائد 🔴</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     STEP 5 — LOCATION
+══════════════════════════════════════ -->
+<div class="section" id="location">
+  <div class="container">
+    <div class="section-header">
+      <div class="step-label"><span>5</span> الخطوة الخامسة</div>
+      <div class="section-title">تحديد موقع المحول</div>
+      <div class="section-sub">تسجيل الإحداثيات الجغرافية للمحول على الخريطة</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon yellow">📍</div>
+        <div>
+          <div class="step-card-title">تحديد الموقع عبر الخريطة</div>
+          <div class="step-card-sub">خريطة تفاعلية لتحديد الإحداثيات بدقة</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <div>
+          <ul class="steps-list">
+            <li><div class="n yellow">1</div><span>اضغط زر <strong>📍 الموقع</strong> بجانب المحول في الجدول</span></li>
+            <li><div class="n yellow">2</div><span>ستفتح <strong>نافذة الخريطة التفاعلية</strong></span></li>
+            <li><div class="n yellow">3</div><span>اضغط على <strong>موقع المحول الفعلي</strong> في الخريطة لوضع الدبوس</span></li>
+            <li><div class="n yellow">4</div><span>يمكن <strong>تحريك الدبوس</strong> بالسحب لضبط الموقع بدقة</span></li>
+            <li><div class="n yellow">5</div><span>اضغط <strong>↗ Google Maps</strong> للتحقق من الموقع في خرائط جوجل</span></li>
+            <li><div class="n yellow">6</div><span>اضغط <strong>💾 حفظ الموقع</strong> لتخزين الإحداثيات</span></li>
+          </ul>
+          <div class="tip">💡 زر الموقع يتحول إلى اللون الأصفر 🟡 عند وجود إحداثيات محفوظة، ورمادي عند غيابها.</div>
+          <div class="info-box">✅ يتم تسجيل اسم الفريق والوقت الذي تم فيه تحديد الموقع تلقائياً.</div>
+        </div>
+        <div class="screenshot">
+          <div class="screenshot-hint">
+            <strong>📸 صورة مطلوبة</strong>
+            التقط صورة لنافذة الخريطة<br>مع ظهور الدبوس على موقع المحول
+            <em>ضع الصورة هنا</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     STEP 6 — REPORT
+══════════════════════════════════════ -->
+<div class="section" id="report" style="background:var(--white)">
+  <div class="container">
+    <div class="section-header">
+      <div class="step-label"><span>6</span> الخطوة السادسة</div>
+      <div class="section-title">توليد التقرير</div>
+      <div class="section-sub">إنشاء تقرير تفصيلي بالحسابات الكهربائية والتنبيهات</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon red">📄</div>
+        <div>
+          <div class="step-card-title">فتح التقرير</div>
+          <div class="step-card-sub">يفتح في نافذة جديدة جاهز للطباعة</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <div>
+          <ul class="steps-list">
+            <li><div class="n red">1</div><span>اضغط زر <strong>📄 تقرير</strong> بجانب المحول في الجدول</span></li>
+            <li><div class="n red">2</div><span>يفتح التقرير في <strong>نافذة متصفح جديدة</strong></span></li>
+            <li><div class="n red">3</div><span>راجع <strong>ملخص التحميل الكلي</strong> والتنبيهات</span></li>
+            <li><div class="n red">4</div><span>للطباعة: اضغط <strong>Ctrl+P</strong> أو زر الطباعة في المتصفح</span></li>
+          </ul>
+          <div class="warn">⚠️ يجب إدخال قراءات الأحمال أولاً قبل توليد التقرير للحصول على نتائج دقيقة.</div>
+        </div>
+        <div class="screenshot">
+          <div class="screenshot-hint">
+            <strong>📸 صورة مطلوبة</strong>
+            التقط صورة لصفحة التقرير الكاملة<br>مع ظهور الجداول والتنبيهات
+            <em>ضع الصورة هنا</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon blue">📑</div>
+        <div>
+          <div class="step-card-title">محتويات التقرير</div>
+          <div class="step-card-sub">ما يحتويه التقرير من أقسام ومعلومات</div>
+        </div>
+      </div>
+      <div class="step-body full">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
+            <div style="font-size:1.3rem;margin-bottom:0.4rem">🏷️</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">بيانات المحول</div>
+            <div style="font-size:0.82rem;color:var(--text-muted)">الاسم، السعة، حجم الكيبل، عدد الفيدرات المستخدمة</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
+            <div style="font-size:1.3rem;margin-bottom:0.4rem">⚡</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">تحميل المحول</div>
+            <div style="font-size:0.82rem;color:var(--text-muted)">نسبة التحميل الكلية مع شريط تصويري وقيم KVA و KW</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
+            <div style="font-size:1.3rem;margin-bottom:0.4rem">🔌</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">تفاصيل الفيدرات</div>
+            <div style="font-size:0.82rem;color:var(--text-muted)">جدول بقيم التيار والجهد ونسب التحميل لكل فيدر</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
+            <div style="font-size:1.3rem;margin-bottom:0.4rem">🔔</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">ملخص التنبيهات</div>
+            <div style="font-size:0.82rem;color:var(--text-muted)">تنبيهات تحميل الكيبل، عدم التوازن، النيوترال المرتفع</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
+            <div style="font-size:1.3rem;margin-bottom:0.4rem">📐</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">طرق الحساب</div>
+            <div style="font-size:0.82rem;color:var(--text-muted)">جدول المعادلات الكهربائية المستخدمة مع أمثلة توضيحية</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
+            <div style="font-size:1.3rem;margin-bottom:0.4rem">📊</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">ملخص القراءات</div>
+            <div style="font-size:0.82rem;color:var(--text-muted)">جدول شامل بجميع قيم التيار لكل فيدر مع الإجماليات</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PERMISSIONS TABLE
+══════════════════════════════════════ -->
+<div class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="step-label" style="background:#7C3AED">👥 الصلاحيات</div>
+      <div class="section-title">صلاحيات المستخدمين</div>
+      <div class="section-sub">ما يستطيع كل مستخدم فعله في النظام</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-body full">
+        <table class="role-table">
+          <thead>
+            <tr>
+              <th>الإجراء</th>
+              <th style="text-align:center">الفريق (1-6)</th>
+              <th style="text-align:center">المشرف</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>عرض المحولات</td>
+              <td style="text-align:center"><span class="badge partial">فريقه فقط</span></td>
+              <td style="text-align:center"><span class="badge yes">الكل</span></td>
+            </tr>
+            <tr>
+              <td>إضافة محول جديد</td>
+              <td style="text-align:center"><span class="badge yes">نعم</span></td>
+              <td style="text-align:center"><span class="badge yes">نعم</span></td>
+            </tr>
+            <tr>
+              <td>تعديل بيانات المحول</td>
+              <td style="text-align:center"><span class="badge partial">فريقه فقط</span></td>
+              <td style="text-align:center"><span class="badge yes">الكل</span></td>
+            </tr>
+            <tr>
+              <td>إدخال قراءات الأحمال</td>
+              <td style="text-align:center"><span class="badge partial">فريقه فقط</span></td>
+              <td style="text-align:center"><span class="badge yes">الكل</span></td>
+            </tr>
+            <tr>
+              <td>تحديد الموقع الجغرافي</td>
+              <td style="text-align:center"><span class="badge partial">فريقه فقط</span></td>
+              <td style="text-align:center"><span class="badge yes">الكل</span></td>
+            </tr>
+            <tr>
+              <td>توليد التقرير</td>
+              <td style="text-align:center"><span class="badge partial">فريقه فقط</span></td>
+              <td style="text-align:center"><span class="badge yes">الكل</span></td>
+            </tr>
+            <tr>
+              <td>حذف محول</td>
+              <td style="text-align:center"><span class="badge no">لا</span></td>
+              <td style="text-align:center"><span class="badge yes">نعم</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Footer ══ -->
+<div class="footer">
+  <div>دليل استخدام — <strong>نظام إدارة المحولات الكهربائية</strong></div>
+  <div style="margin-top:0.3rem;font-size:0.78rem">شركة نماء لتوزيع الكهرباء — <strong>أحمد محمد الهنائي</strong></div>
+</div>
+
+</body>
+</html>
