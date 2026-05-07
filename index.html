@@ -528,7 +528,11 @@
     transition: width 0.4s ease;
   }
 
-  .actions { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+  .actions { display: flex; gap: 0.25rem; flex-wrap: nowrap; }
+  @media (max-width: 480px) {
+    .actions { gap: 0.15rem; }
+    .btn-icon { padding: 0.2rem 0.3rem; font-size: 0.72rem; border-radius: 5px; }
+  }
 
   .btn-icon {
     background: none;
@@ -1251,6 +1255,7 @@
     .analysis-grid { grid-template-columns: 1fr; }
     .btn { font-size: 0.82rem; padding: 0.5rem 0.8rem; }
     td, th { font-size: 0.76rem; padding: 0.5rem 0.5rem; }
+    .col-outputs { display: none !important; }
   }
 
   @media (max-width: 380px) {
@@ -1454,7 +1459,7 @@
             <th data-i18n="colType">نوع المحول</th>
             <th data-i18n="colId">رقم المحول</th>
             <th data-i18n="colCapacity">السعة (KVA)</th>
-            <th data-i18n="colOutputs">عدد مخارج LV</th>
+            <th data-i18n="colOutputs" class="col-outputs">عدد مخارج LV</th>
             <th data-i18n="colActions">الإجراءات</th>
           </tr>
         </thead>
@@ -1876,7 +1881,7 @@
             <td style="text-align:center"><span class="badge ${typeColor(r.type)}">${translateType(r.type)}</span></td>
             <td style="font-family:monospace;color:var(--accent);text-align:center">${r.id}</td>
             <td style="font-weight:600;text-align:center">${String(r.capacity || '').replace(/,/g, '')}</td>
-            <td style="font-weight:600;color:var(--accent3);text-align:center">${r.outputs}</td>
+            <td class="col-outputs" style="font-weight:600;color:var(--accent3);text-align:center">${r.outputs}</td>
             <td style="text-align:center">
               <div class="actions" style="justify-content:center">
                 <button class="btn-icon edit" title="${t('editTitle')}" onclick="editRecord('${r.uid}')">✏️</button>
