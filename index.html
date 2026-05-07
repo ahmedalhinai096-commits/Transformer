@@ -6,6 +6,8 @@
 <title>سجل المحولات الكهربائية</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   // ── Supabase Config ──────────────────────────────────
   const SUPA_URL = 'https://hgnufhugpqqbkbxflyot.supabase.co';
@@ -1223,6 +1225,14 @@
     letter-spacing: 0.02em;
   }
 
+  /* ── Location Modal ──────────────────────────────────── */
+  #locModalOverlay { z-index: 2000; }
+  #locModal { max-width: 620px; width: 95%; padding: 1.5rem; }
+  #locMap { height: 350px; border-radius: 12px; margin: 1rem 0; border: 1px solid var(--border); }
+  .loc-hint { font-size: 0.82rem; color: var(--text-muted); font-family: 'Tajawal', sans-serif; margin-bottom: 1rem; text-align: center; }
+  .loc-edited-by { font-size: 0.75rem; color: var(--text-muted); font-family: 'Tajawal', sans-serif; text-align: center; margin-top: 0.5rem; opacity: 0.7; }
+  @media (max-width: 520px) { #locMap { height: 260px; } }
+
   /* ── Mobile Responsive ───────────────────────────────── */
   @media (max-width: 600px) {
     h1 { font-size: 1.4rem; }
@@ -1564,6 +1574,23 @@
   </div>
 </div>
 
+<!-- Location Picker Modal -->
+<div class="modal-overlay" id="locModalOverlay" onclick="if(event.target===this)closeLocationModal()">
+  <div class="modal" id="locModal">
+    <button class="btn-close-modal" onclick="closeLocationModal()">✕</button>
+    <span class="modal-icon">📍</span>
+    <h2 id="locModalTitle">تحديد الموقع</h2>
+    <p class="loc-hint" id="locHint">اضغط على الخريطة أو اسحب الدبوس لتحديد الموقع الصحيح</p>
+    <div id="locMap"></div>
+    <p class="loc-edited-by" id="locEditedBy"></p>
+    <div style="display:flex;gap:0.7rem;justify-content:flex-end;flex-wrap:wrap;margin-top:0.5rem">
+      <button onclick="locOpenGoogleMaps()" class="btn btn-secondary" style="font-size:0.85rem">↗ Google Maps</button>
+      <button onclick="closeLocationModal()" class="btn btn-secondary" style="font-size:0.85rem" id="locCancelBtn">إلغاء</button>
+      <button onclick="confirmLocation()" class="btn btn-primary" style="font-size:0.85rem" id="locSaveBtn">💾 حفظ الموقع</button>
+    </div>
+  </div>
+</div>
+
 <!-- Login Modal -->
 <div class="modal-overlay" id="loginModal">
   <div class="modal">
@@ -1855,7 +1882,7 @@
                 <button class="btn-icon edit" title="${t('editTitle')}" onclick="editRecord('${r.uid}')">✏️</button>
                 <button class="btn-icon" title="${t('loadTitle')}" onclick="openLoadModal('${r.uid}')" style="border-color:rgba(0,255,157,0.3);color:var(--accent3)">📊</button>
                 <button class="btn-icon" title="${lang==='ar'?'تقرير':'Report'}" onclick="openReport('${r.uid}')" style="border-color:rgba(167,139,250,0.4);color:#a78bfa">📄</button>
-                ${r.lat ? `<a href="https://www.google.com/maps?q=${r.lat},${r.lng}" target="_blank" rel="noopener" class="btn-icon" title="${lang==='ar'?'الموقع':'Location'}" style="border-color:rgba(251,191,36,0.4);color:#fbbf24;text-decoration:none">📍</a>` : `<span class="btn-icon" title="${lang==='ar'?'لا يوجد موقع':'No location'}" style="opacity:0.3;cursor:default">📍</span>`}
+                <button class="btn-icon" title="${r.lat ? (lang==='ar'?'تعديل الموقع':'Edit Location') : (lang==='ar'?'تحديد الموقع':'Set Location')}" onclick="openLocationModal('${r.uid}')" style="border-color:${r.lat?'rgba(251,191,36,0.4)':'rgba(107,127,163,0.25)'};color:${r.lat?'#fbbf24':'var(--text-muted)'};opacity:${r.lat?'1':'0.5'}">📍</button>
                 ${isAdmin ? `<button class="btn-icon del" title="${t('delTitle')}" onclick="deleteRecord('${r.uid}')" data-uid="${r.uid}">🗑️</button>` : ''}
               </div>
             </td>
@@ -2231,6 +2258,100 @@
   function closeLoadModal() {
     document.getElementById('loadModal').classList.remove('active');
     currentLoadUid = null;
+  }
+
+  // ── Location Picker ──────────────────────────────────
+  let locMap = null, locMarker = null, locTargetUid = null;
+
+  function openLocationModal(uid) {
+    locTargetUid = uid;
+    const rec = records.find(r => r.uid === uid);
+    const hasLoc = !!(rec?.lat);
+
+    document.getElementById('locModalTitle').textContent = lang === 'ar'
+      ? (hasLoc ? 'تعديل الموقع' : 'تحديد الموقع')
+      : (hasLoc ? 'Edit Location' : 'Set Location');
+    document.getElementById('locHint').textContent = lang === 'ar'
+      ? 'اضغط على الخريطة أو اسحب الدبوس لتحديد الموقع الصحيح'
+      : 'Click on the map or drag the pin to set the correct location';
+    document.getElementById('locCancelBtn').textContent = lang === 'ar' ? 'إلغاء' : 'Cancel';
+    document.getElementById('locSaveBtn').innerHTML = lang === 'ar' ? '💾 حفظ الموقع' : '💾 Save Location';
+
+    const editedBy = rec?.locationEditedBy;
+    const editedAt = rec?.locationEditedAt;
+    const editedEl = document.getElementById('locEditedBy');
+    if (editedBy && editedAt) {
+      const dt = new Date(editedAt);
+      editedEl.textContent = (lang === 'ar' ? 'آخر تعديل: ' : 'Last edited by: ') + editedBy + ' — ' + dt.toLocaleString(lang === 'ar' ? 'ar-SA' : 'en-GB');
+    } else {
+      editedEl.textContent = '';
+    }
+
+    document.getElementById('locModalOverlay').classList.add('active');
+
+    const lat = rec?.lat || 23.5;
+    const lng = rec?.lng || 57.5;
+    const zoom = hasLoc ? 15 : 8;
+
+    setTimeout(() => {
+      if (!locMap) {
+        locMap = L.map('locMap').setView([lat, lng], zoom);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(locMap);
+        locMarker = L.marker([lat, lng], { draggable: true }).addTo(locMap);
+        locMap.on('click', e => locMarker.setLatLng(e.latlng));
+      } else {
+        locMap.setView([lat, lng], zoom);
+        locMarker.setLatLng([lat, lng]);
+      }
+      locMap.invalidateSize();
+    }, 120);
+  }
+
+  function closeLocationModal() {
+    document.getElementById('locModalOverlay').classList.remove('active');
+  }
+
+  function locOpenGoogleMaps() {
+    if (!locMarker) return;
+    const { lat, lng } = locMarker.getLatLng();
+    window.open(`https://www.google.com/maps?q=${lat.toFixed(6)},${lng.toFixed(6)}`, '_blank', 'noopener');
+  }
+
+  async function confirmLocation() {
+    if (!locMarker || !locTargetUid) return;
+    const { lat, lng } = locMarker.getLatLng();
+    const flatLat = parseFloat(lat.toFixed(6));
+    const flatLng = parseFloat(lng.toFixed(6));
+
+    const rec = records.find(r => r.uid === locTargetUid);
+    if (rec) {
+      rec.lat = flatLat;
+      rec.lng = flatLng;
+      rec.locationEditedBy = currentTeam || 'admin';
+      rec.locationEditedAt = new Date().toISOString();
+    }
+    if (loadings[locTargetUid]) {
+      loadings[locTargetUid].location = { lat: flatLat, lng: flatLng, accuracy: 0, capturedAt: new Date().toISOString() };
+      const round = loadings[locTargetUid]._round;
+      if (round && loadings[locTargetUid]._allRounds?.[round]) {
+        loadings[locTargetUid]._allRounds[round].location = loadings[locTargetUid].location;
+      }
+      localStorage.setItem('loadings', JSON.stringify(loadings));
+    }
+    localStorage.setItem('transformers', JSON.stringify(records));
+
+    try {
+      await supa.patch(`transformers?uid=eq.${locTargetUid}`, { lat: flatLat, lng: flatLng });
+      showToast(lang === 'ar' ? '📍 تم حفظ الموقع' : '📍 Location saved', 'success');
+    } catch (e) {
+      showToast('⚠️ ' + e.message, 'error');
+    }
+
+    renderTable();
+    if (currentLoadUid === locTargetUid) updateLocationBadge(locTargetUid);
+    closeLocationModal();
   }
 
   function updateLocationBadge(uid) {
