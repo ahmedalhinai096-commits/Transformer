@@ -2142,7 +2142,25 @@ tbody tr{border-bottom:1px solid var(--border)}
 tbody tr:nth-child(even){background:var(--surface)}
 td{padding:0.6rem 0.8rem;text-align:center;vertical-align:middle;color:var(--text)}
 .footer{text-align:center;font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)}
-@media print{.print-btn{display:none}}
+@media print{
+@page{size:A4 portrait;margin:12mm 10mm}
+html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff!important;color:#000!important;padding:0!important;margin:0!important}
+.print-btn{display:none!important}
+.page{max-width:100%!important;padding:0!important;margin:0!important}
+.report-header{padding:0.5rem!important;margin-bottom:0.8rem!important;box-shadow:none!important;border-color:#ccc!important;background:#f5f5f5!important;break-inside:avoid;page-break-inside:avoid}
+.report-header h1{font-size:1.2rem!important;color:#003366!important}
+.sub{font-size:0.72rem!important}
+.section{background:#f5f5f5!important;border-color:#ccc!important;padding:0.8rem!important;margin-bottom:0.8rem!important;break-inside:avoid;page-break-inside:avoid;border-radius:4px!important}
+.section-title{color:#0077aa!important;font-size:0.8rem!important;break-after:avoid;page-break-after:avoid}
+table{font-size:0.75rem!important}
+thead{display:table-header-group!important}
+thead th{background:#e0e8f0!important;color:#333!important;font-size:0.68rem!important;padding:0.3rem 0.5rem!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+tbody tr{break-inside:avoid;page-break-inside:avoid}
+tbody tr:nth-child(even){background:#f0f0f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+td{padding:0.3rem 0.5rem!important;font-size:0.72rem!important;word-break:break-word!important}
+.footer{font-size:0.65rem!important;margin-top:0.8rem!important;break-inside:avoid;page-break-inside:avoid}
+span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+}
 </style></head>
 <body>
 <div class="page">
@@ -3327,8 +3345,8 @@ td{padding:0.6rem 0.8rem;text-align:center;vertical-align:middle;color:var(--tex
 .footer{text-align:center;margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.75rem;color:var(--text-muted);font-family:'Tajawal',sans-serif}
 @media(max-width:700px){.info-grid-row{grid-template-columns:repeat(3,1fr)!important}}
 @media print{
-@page{size:A4 landscape;margin:10mm}
-html,body{background:#fff!important;color:#000!important;width:100%;margin:0;padding:0}
+@page{size:A4 portrait;margin:12mm 10mm}
+html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff!important;color:#000!important;width:100%;margin:0;padding:0}
 body::before{display:none!important}
 .print-btn{display:none!important}
 .page{max-width:100%!important;width:100%!important;padding:0!important;margin:0!important}
@@ -3387,6 +3405,11 @@ th{word-break:break-word!important;overflow:visible!important}
 .current-row span{font-size:0.6rem!important}
 .current-row.ct-header span{font-size:0.55rem!important}
 .current-bar{background:#ddd!important;height:5px!important}
+thead th{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+tbody tr:nth-child(even){-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+.a-danger,.a-warn,.a-ok,.a-info,.load-status,.load-bar-fill,.imb-badge,.ts-chip,.badge{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+.fc-col,.fc-summary,.info-card,.load-box,.feeder-card,.section{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 <\/style><\/head><body><div class="page">
 <button class="print-btn" onclick="window.print()">🖨️ ${isAr?'طباعة / PDF':'Print / PDF'}</button>
