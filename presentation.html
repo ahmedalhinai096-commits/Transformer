@@ -72,8 +72,8 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
 .screen-item{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
 .screen-item.reverse{direction:ltr}
 .screen-item.reverse .screen-text{direction:rtl}
-.screen-placeholder{background:linear-gradient(135deg,#f1f5f9,#e2e8f0);border-radius:16px;border:2px dashed #CBD5E1;min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;position:relative;overflow:hidden}
-.screen-placeholder img{width:100%;height:100%;object-fit:cover;border-radius:14px;position:absolute;inset:0}
+.screen-placeholder{aspect-ratio:16/10;border-radius:14px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.13);border:1px solid #E2E8F0;background:#f0f4f8;position:relative;align-self:center}
+.screen-placeholder img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:10px}
 .screen-placeholder-icon{font-size:2.5rem;color:#94A3B8;position:relative;z-index:1}
 .screen-placeholder-hint{font-size:0.78rem;color:#94A3B8;font-family:'Tajawal',sans-serif;position:relative;z-index:1}
 .screen-num{display:inline-flex;width:32px;height:32px;background:var(--accent);color:#fff;border-radius:50%;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;margin-bottom:0.8rem;flex-shrink:0}
@@ -108,7 +108,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
 /* ── Benefits ── */
 .benefits-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2rem}
 .benefit-card{background:var(--white);border-radius:12px;padding:1.5rem;border:1px solid var(--border);text-align:center}
-.benefit-num{font-size:2.5rem;font-weight:900;color:var(--accent);line-height:1}
+.benefit-num{font-size:2.5rem;font-weight:900;color:var(--accent);line-height:1.2;margin-bottom:0.3rem}
 .benefit-unit{font-size:0.75rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.5rem}
 .benefit-desc{font-size:0.82rem;color:var(--text);font-family:'Tajawal',sans-serif}
 
@@ -262,15 +262,49 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
 
     <div class="screens-wrap">
 
-      <!-- Screen 1 -->
+      <!-- Screen 1 — تسجيل الدخول -->
       <div class="screen-item">
         <div class="screen-placeholder">
-          <!-- ضع هنا صورة الصفحة الرئيسية (قائمة المحولات) -->
-          <div class="screen-placeholder-icon">🖼️</div>
-          <div class="screen-placeholder-hint">صورة: الصفحة الرئيسية — قائمة المحولات</div>
+          <img src="صورة تسجيل الدخول.png" alt="تسجيل الدخول">
         </div>
         <div class="screen-text">
           <div class="screen-num">١</div>
+          <div class="screen-title">تسجيل الدخول</div>
+          <div class="screen-desc">كل فريق ميداني يدخل بكلمة مرور مستقلة — النظام يتعرف على الفريق تلقائياً ويعرض بياناته فقط دون الحاجة لإعداد مسبق</div>
+          <ul class="screen-points">
+            <li>٦ فرق ميدانية بكلمة مرور مستقلة لكل فريق</li>
+            <li>صلاحيات الأدمن منفصلة وآمنة</li>
+            <li>كل فريق يرى بياناته فقط</li>
+            <li>يعمل من أي جهاز — جوال أو كمبيوتر</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Screen 2 — إضافة وتعديل المحول -->
+      <div class="screen-item reverse">
+        <div class="screen-text">
+          <div class="screen-num">٢</div>
+          <div class="screen-title">إضافة وتعديل المحول</div>
+          <div class="screen-desc">نموذج بسيط لإضافة محول جديد أو تعديل بياناته — يشمل اسم المحطة، رقم فيدر HV، نوع المحول، سعته، وعدد مخارج LV</div>
+          <ul class="screen-points">
+            <li>اختيار المحطة من قائمة جاهزة</li>
+            <li>تحديد النوع والسعة بسهولة</li>
+            <li>حفظ فوري على السحابة</li>
+            <li>تعديل أي بيانات موجودة بضغطة واحدة</li>
+          </ul>
+        </div>
+        <div class="screen-placeholder">
+          <img src="اضافة محول جديد.png" alt="إضافة محول جديد">
+        </div>
+      </div>
+
+      <!-- Screen 3 — قائمة المحولات -->
+      <div class="screen-item">
+        <div class="screen-placeholder">
+          <img src="قائمة المحولات.png" alt="قائمة المحولات">
+        </div>
+        <div class="screen-text">
+          <div class="screen-num">٣</div>
           <div class="screen-title">الصفحة الرئيسية — لوحة التحكم</div>
           <div class="screen-desc">نظرة شاملة على جميع المحولات مع إحصائيات فورية عن إجمالي السعة وعدد المخارج، مع خيارات تصفية وبحث متقدمة</div>
           <ul class="screen-points">
@@ -282,10 +316,10 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
         </div>
       </div>
 
-      <!-- Screen 2 -->
+      <!-- Screen 4 — قراءات الأحمال -->
       <div class="screen-item reverse">
         <div class="screen-text">
-          <div class="screen-num">٢</div>
+          <div class="screen-num">٤</div>
           <div class="screen-title">قراءات الأحمال</div>
           <div class="screen-desc">واجهة تسجيل القراءات الميدانية — يدخل الفني قراءات التيار لكل فيدر مع اختيار حجم الكيبل وتظهر نسبة حمل الكيبل فوراً</div>
           <ul class="screen-points">
@@ -296,36 +330,17 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
           </ul>
         </div>
         <div class="screen-placeholder">
-          <!-- ضع هنا صورة صفحة قراءات الأحمال -->
-          <div class="screen-placeholder-icon">🖼️</div>
-          <div class="screen-placeholder-hint">صورة: نافذة قراءات الأحمال</div>
+          <img src="قراءة الاحمال.png" alt="قراءات الأحمال">
         </div>
       </div>
 
-      <!-- Screen 3 -->
+      <!-- Screen 5 — تحديد الموقع -->
       <div class="screen-item">
         <div class="screen-placeholder">
-          <!-- ضع هنا صورة صفحة التقرير -->
-          <div class="screen-placeholder-icon">🖼️</div>
-          <div class="screen-placeholder-hint">صورة: صفحة التقرير التفصيلي</div>
+          <img src="تحديد المواقع.png" alt="تحديد الموقع">
         </div>
         <div class="screen-text">
-          <div class="screen-num">٣</div>
-          <div class="screen-title">التقرير التفصيلي</div>
-          <div class="screen-desc">تقرير كامل لكل محول يشمل ملخص القراءات، تحليل الأحمال، ملخص التنبيهات، وطريقة الحساب — جاهز للطباعة أو الحفظ كـ PDF</div>
-          <ul class="screen-points">
-            <li>ملخص قراءات التيار لجميع الفيدرات</li>
-            <li>نسبة تحميل المحول والكيبل</li>
-            <li>تنبيهات ذكية مصنفة بالألوان</li>
-            <li>طريقة الحساب مع أمثلة فعلية</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Screen 4 -->
-      <div class="screen-item reverse">
-        <div class="screen-text">
-          <div class="screen-num">٤</div>
+          <div class="screen-num">٥</div>
           <div class="screen-title">تحديد الموقع على الخريطة</div>
           <div class="screen-desc">تحديد موقع كل محول على الخريطة يدوياً أو تلقائياً عبر GPS، مع إمكانية فتح الموقع في Google Maps مباشرة</div>
           <ul class="screen-points">
@@ -334,11 +349,6 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
             <li>تسجيل من قام بالتعديل والتاريخ</li>
             <li>فتح مباشر في Google Maps</li>
           </ul>
-        </div>
-        <div class="screen-placeholder">
-          <!-- ضع هنا صورة نافذة الخريطة -->
-          <div class="screen-placeholder-icon">🖼️</div>
-          <div class="screen-placeholder-hint">صورة: نافذة تحديد الموقع</div>
         </div>
       </div>
 
