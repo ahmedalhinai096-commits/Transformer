@@ -1492,21 +1492,7 @@
         <div class="table-title">📄 تقرير مختصر للمحطات</div>
         <button class="btn btn-secondary" onclick="closeSummaryReport()" style="padding:0.4rem 0.8rem;font-size:0.8rem;border-color:rgba(255,71,87,0.4);color:var(--danger)">✕ إغلاق</button>
       </div>
-      <div style="overflow-x:auto;direction:ltr">
-        <table class="summary-report-table" style="direction:ltr">
-          <thead>
-            <tr>
-              <th>Station</th>
-              <th>Transformers</th>
-              <th>Total Capacity KVA</th>
-              <th>Ground</th>
-              <th>Pole</th>
-              <th>Total LV Feeders</th>
-            </tr>
-          </thead>
-          <tbody id="summaryReportBody"></tbody>
-        </table>
-      </div>
+      <div id="summaryReportCards" style="padding:1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem"></div>
     </div>
   </div>
 
@@ -1948,51 +1934,96 @@
     const data = getFilteredTransformers();
     const grouped = {};
     data.forEach(rec => {
-      const station = rec.station || 'Unknown';
-      if (!grouped[station]) {
-        grouped[station] = { station, transformers: 0, totalCapacity: 0, ground: 0, pole: 0, totalLvFeeders: 0 };
-      }
-      grouped[station].transformers++;
-      grouped[station].totalCapacity += Number(String(rec.capacity || 0).replace(/,/g, '')) || 0;
-      grouped[station].totalLvFeeders += Number(rec.outputs || 0) || 0;
-      if (rec.type === 'أرضي' || rec.type === 'Ground') grouped[station].ground++;
-      if (rec.type === 'معلق' || rec.type === 'Pole')   grouped[station].pole++;
+      const station = rec.station || 'غير محدد';
+      if (!grouped[station]) grouped[station] = [];
+      grouped[station].push(rec);
     });
-    renderSummaryReport(Object.values(grouped));
+    renderSummaryReport(grouped);
   }
 
-  function renderSummaryReport(rows) {
-    const section = document.getElementById('summaryReportSection');
-    const tbody   = document.getElementById('summaryReportBody');
-    if (!section || !tbody) return;
-    if (rows.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:2rem;font-family:'Tajawal',sans-serif">لا توجد بيانات</td></tr>`;
+  function renderSummaryReport(grouped) {
+    const section   = document.getElementById('summaryReportSection');
+    const container = document.getElementById('summaryReportCards');
+    if (!section || !container) return;
+
+    const SQRT3    = Math.sqrt(3);
+    const stations = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+
+    if (stations.length === 0) {
+      container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:2rem;font-family:'Tajawal',sans-serif;grid-column:1/-1">لا توجد بيانات</div>`;
     } else {
-      let totalTx = 0, totalCap = 0, totalGround = 0, totalPole = 0, totalLv = 0;
-      tbody.innerHTML = rows.sort((a, b) => a.station.localeCompare(b.station)).map(r => {
-        totalTx     += r.transformers;
-        totalCap    += r.totalCapacity;
-        totalGround += r.ground;
-        totalPole   += r.pole;
-        totalLv     += r.totalLvFeeders;
-        return `<tr>
-          <td style="font-weight:600;color:var(--text)">${r.station}</td>
-          <td style="color:var(--accent)">${r.transformers}</td>
-          <td style="color:var(--accent2);font-weight:700">${r.totalCapacity.toLocaleString()}</td>
-          <td style="color:var(--accent3)">${r.ground}</td>
-          <td style="color:#a78bfa">${r.pole}</td>
-          <td style="color:var(--accent)">${r.totalLvFeeders}</td>
-        </tr>`;
+      container.innerHTML = stations.map(stName => {
+        const recs  = grouped[stName];
+        const ground = recs.filter(r => r.type === 'أرضي' || r.type === 'Ground').length;
+        const pole   = recs.filter(r => r.type === 'معلق' || r.type === 'Pole').length;
+
+        let overloadedFeeders = 0;
+        recs.forEach(rec => {
+          (loadings[rec.uid]?.feeders || []).filter(hasData).forEach(f => {
+            const cs = cableStatus(f);
+            if (cs && (cs.level === 'warning' || cs.level === 'danger')) overloadedFeeders++;
+          });
+        });
+
+        const txLoads = recs.map(rec => {
+          const feeders = (loadings[rec.uid]?.feeders || []).filter(hasData);
+          if (!feeders.length) return { id: rec.id || rec.uid, pct: null };
+          const capKVA = Number(rec.capacity);
+          if (!capKVA) return { id: rec.id || rec.uid, pct: null };
+          const v      = loadings[rec.uid]?.volt || {};
+          const vLL    = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
+          const rated  = (capKVA * 1000) / (SQRT3 * vLL);
+          if (!rated) return { id: rec.id || rec.uid, pct: null };
+          const totalR = feeders.reduce((s, f) => s + (parseFloat(f.iL1) || 0), 0);
+          const totalY = feeders.reduce((s, f) => s + (parseFloat(f.iL2) || 0), 0);
+          const totalB = feeders.reduce((s, f) => s + (parseFloat(f.iL3) || 0), 0);
+          return { id: rec.id || rec.uid, pct: Math.min(999, (Math.max(totalR, totalY, totalB) / rated) * 100) };
+        });
+
+        const top3        = txLoads.filter(x => x.pct !== null).sort((a, b) => b.pct - a.pct).slice(0, 3);
+        const overColor   = overloadedFeeders > 0 ? 'var(--danger)' : 'var(--accent3)';
+        const overBg      = overloadedFeeders > 0 ? 'rgba(255,71,87,0.08)' : 'rgba(0,255,157,0.06)';
+        const overBorder  = overloadedFeeders > 0 ? 'rgba(255,71,87,0.25)' : 'rgba(0,255,157,0.2)';
+
+        const topRows = top3.length === 0
+          ? `<div style="font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;text-align:center;padding:0.4rem 0">لا توجد قراءات</div>`
+          : top3.map((tx, i) => {
+              const color = tx.pct >= 80 ? 'var(--danger)' : tx.pct >= 60 ? '#ffcc00' : 'var(--accent3)';
+              const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉';
+              return `<div style="display:flex;align-items:center;justify-content:space-between;padding:0.3rem 0.6rem;border-radius:6px;background:var(--surface);margin-bottom:0.25rem">
+                <span style="font-family:'Cairo',sans-serif;font-size:0.82rem;color:var(--text)">${medal} ${tx.id}</span>
+                <span style="font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:700;color:${color}">${tx.pct.toFixed(1)}%</span>
+              </div>`;
+            }).join('');
+
+        return `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1rem;display:flex;flex-direction:column;gap:0.75rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.4rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border)">
+            <div style="font-weight:700;font-size:0.95rem;color:var(--accent);font-family:'Cairo',sans-serif">🏭 ${stName}</div>
+            <div style="display:flex;gap:0.35rem;flex-wrap:wrap">
+              <span style="background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.3);color:var(--accent3);font-size:0.7rem;padding:0.12rem 0.45rem;border-radius:6px;font-family:'Cairo',sans-serif">أرضي: ${ground}</span>
+              <span style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:#a78bfa;font-size:0.7rem;padding:0.12rem 0.45rem;border-radius:6px;font-family:'Cairo',sans-serif">معلق: ${pole}</span>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.6rem;text-align:center">
+              <div style="font-size:0.65rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.2rem">إجمالي المحولات</div>
+              <div style="font-size:1.4rem;font-weight:800;color:var(--accent);font-family:'Cairo',sans-serif">${recs.length}</div>
+            </div>
+            <div style="background:${overBg};border:1px solid ${overBorder};border-radius:8px;padding:0.6rem;text-align:center">
+              <div style="font-size:0.65rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.2rem">فيدرات كيبل ≥ 80%</div>
+              <div style="font-size:1.4rem;font-weight:800;color:${overColor};font-family:'Cairo',sans-serif">${overloadedFeeders}</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:0.68rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.04em">أعلى المحولات تحميلاً</div>
+            ${topRows}
+          </div>
+        </div>`;
       }).join('');
-      tbody.innerHTML += `<tr style="border-top:2px solid var(--border)">
-        <td style="font-weight:700;color:var(--accent)">الإجمالي</td>
-        <td style="font-weight:700;color:var(--accent)">${totalTx}</td>
-        <td style="font-weight:700;color:var(--accent2)">${totalCap.toLocaleString()}</td>
-        <td style="font-weight:700;color:var(--accent3)">${totalGround}</td>
-        <td style="font-weight:700;color:#a78bfa">${totalPole}</td>
-        <td style="font-weight:700;color:var(--accent)">${totalLv}</td>
-      </tr>`;
     }
+
     section.style.display = 'block';
     section.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
