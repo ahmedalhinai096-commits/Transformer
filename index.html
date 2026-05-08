@@ -2144,22 +2144,23 @@ td{padding:0.6rem 0.8rem;text-align:center;vertical-align:middle;color:var(--tex
 .footer{text-align:center;font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)}
 @media print{
 @page{size:A4 portrait;margin:12mm 10mm}
-html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff!important;color:#000!important;padding:0!important;margin:0!important}
+html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff!important;color:#000!important;padding:0!important;margin:0!important;font-size:13px!important}
 .print-btn{display:none!important}
 .page{max-width:100%!important;padding:0!important;margin:0!important}
-.report-header{padding:0.5rem!important;margin-bottom:0.8rem!important;box-shadow:none!important;border-color:#ccc!important;background:#f5f5f5!important;break-inside:avoid;page-break-inside:avoid}
-.report-header h1{font-size:1.2rem!important;color:#003366!important}
-.sub{font-size:0.72rem!important}
-.section{background:#f5f5f5!important;border-color:#ccc!important;padding:0.8rem!important;margin-bottom:0.8rem!important;border-radius:4px!important}
-.section-title{color:#0077aa!important;font-size:0.8rem!important;break-after:avoid;page-break-after:avoid}
-table{font-size:0.75rem!important;table-layout:auto!important;border-collapse:collapse!important;width:100%!important}
+.report-header{padding:0.6rem 0.8rem!important;margin-bottom:0!important;box-shadow:none!important;border-color:#ccc!important;background:#f0f4ff!important;break-inside:avoid;page-break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.report-header h1{font-size:1.1rem!important;color:#003366!important}
+.sub{font-size:0.7rem!important;color:#555!important}
+.section{background:#f8f8f8!important;border:1px solid #ccc!important;padding:0.8rem!important;margin-bottom:0!important;border-radius:0!important}
+.section+.section{break-before:page;page-break-before:always}
+.section-title{color:#0077aa!important;font-size:0.82rem!important;font-weight:700!important;break-after:avoid;page-break-after:avoid;margin-bottom:0.6rem!important}
+table{font-size:0.72rem!important;table-layout:auto!important;border-collapse:collapse!important;width:100%!important}
 thead{display:table-header-group!important}
-thead th{background:#e0e8f0!important;color:#333!important;font-size:0.68rem!important;padding:0.3rem 0.5rem!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+thead th{background:#dce8f5!important;color:#222!important;font-size:0.68rem!important;padding:0.35rem 0.5rem!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;border:1px solid #bbb!important}
 tbody tr{break-inside:avoid;page-break-inside:avoid}
-tbody tr:nth-child(even){background:#f0f0f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-td{padding:0.3rem 0.5rem!important;font-size:0.72rem!important;word-break:break-word!important}
-.footer{font-size:0.65rem!important;margin-top:0.8rem!important}
+tbody tr:nth-child(even){background:#f0f0f0!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+td{padding:0.35rem 0.5rem!important;font-size:0.72rem!important;word-break:break-word!important;border:1px solid #ddd!important}
 span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+.footer{font-size:0.65rem!important;margin-top:0.6rem!important;break-inside:avoid;page-break-inside:avoid}
 }
 </style></head>
 <body>
@@ -3353,9 +3354,10 @@ body::before{display:none!important}
 .report-header{padding:0.5rem 0!important;margin-bottom:0.8rem!important;break-after:avoid;page-break-after:avoid;break-inside:avoid;page-break-inside:avoid}
 .report-header h1{font-size:1.2rem!important;-webkit-text-fill-color:#003366!important;background:none!important;color:#003366!important}
 .sub{font-size:0.72rem!important}
-.section{margin-bottom:0.8rem!important}
+.section{margin-bottom:0.8rem!important;border:1px solid #ccc!important;background:#f8f8f8!important;border-radius:6px!important;padding:0.8rem!important}
 .section+.section{break-before:page;page-break-before:always}
-.section-title{color:#0077aa!important;font-size:0.78rem!important;padding-bottom:0.3rem!important;margin-bottom:0.6rem!important;break-after:avoid;page-break-after:avoid}
+.calc-section{display:none!important}
+.section-title{color:#0077aa!important;font-size:0.82rem!important;padding-bottom:0.3rem!important;margin-bottom:0.6rem!important;break-after:avoid;page-break-after:avoid}
 .info-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))!important;gap:0.3rem!important}
 .info-card{border:1px solid #ccc!important;background:#f5f5f5!important;padding:0.35rem 0.5rem!important;border-radius:4px!important;break-inside:avoid;page-break-inside:avoid}
 .info-label{font-size:0.6rem!important}
@@ -3675,7 +3677,7 @@ ${(()=>{
   const iRated = ratedCurrent;
 
   return `
-<div class="section">
+<div class="section calc-section">
   <div class="section-title">📐 ${isAr2?'طريقة الحساب':'Calculation Methods'}</div>
   <p style="font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.9rem">
     ${isAr2?`المعادلات المستخدمة في هذا التقرير — المثال من الفيدر #${fn1}${f1.f.name?' ('+f1.f.name+' mm²)':''}`
