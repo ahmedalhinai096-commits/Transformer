@@ -1980,10 +1980,14 @@
           return { id: rec.id || rec.uid, pct: Math.min(999, (Math.max(totalR, totalY, totalB) / rated) * 100) };
         });
 
-        const top3        = txLoads.filter(x => x.pct !== null).sort((a, b) => b.pct - a.pct).slice(0, 3);
-        const overColor   = overloadedFeeders > 0 ? 'var(--danger)' : 'var(--accent3)';
-        const overBg      = overloadedFeeders > 0 ? 'rgba(255,71,87,0.08)' : 'rgba(0,255,157,0.06)';
-        const overBorder  = overloadedFeeders > 0 ? 'rgba(255,71,87,0.25)' : 'rgba(0,255,157,0.2)';
+        const top3           = txLoads.filter(x => x.pct !== null).sort((a, b) => b.pct - a.pct).slice(0, 3);
+        const highLoadCount  = txLoads.filter(x => x.pct !== null && x.pct >= 80).length;
+        const overColor      = overloadedFeeders > 0 ? 'var(--danger)' : 'var(--accent3)';
+        const overBg         = overloadedFeeders > 0 ? 'rgba(255,71,87,0.08)' : 'rgba(0,255,157,0.06)';
+        const overBorder     = overloadedFeeders > 0 ? 'rgba(255,71,87,0.25)' : 'rgba(0,255,157,0.2)';
+        const hlColor        = highLoadCount > 0 ? 'var(--danger)' : 'var(--accent3)';
+        const hlBg           = highLoadCount > 0 ? 'rgba(255,71,87,0.08)' : 'rgba(0,255,157,0.06)';
+        const hlBorder       = highLoadCount > 0 ? 'rgba(255,71,87,0.25)' : 'rgba(0,255,157,0.2)';
 
         const topRows = top3.length === 0
           ? `<div style="font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;text-align:center;padding:0.4rem 0">لا توجد قراءات</div>`
@@ -2006,9 +2010,9 @@
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
-            <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.6rem;text-align:center">
-              <div style="font-size:0.65rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.2rem">إجمالي المحولات</div>
-              <div style="font-size:1.4rem;font-weight:800;color:var(--accent);font-family:'Cairo',sans-serif">${recs.length}</div>
+            <div style="background:${hlBg};border:1px solid ${hlBorder};border-radius:8px;padding:0.6rem;text-align:center">
+              <div style="font-size:0.65rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.2rem">محولات لود ≥ 80%</div>
+              <div style="font-size:1.4rem;font-weight:800;color:${hlColor};font-family:'Cairo',sans-serif">${highLoadCount}</div>
             </div>
             <div style="background:${overBg};border:1px solid ${overBorder};border-radius:8px;padding:0.6rem;text-align:center">
               <div style="font-size:0.65rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.2rem">فيدرات كيبل ≥ 80%</div>
