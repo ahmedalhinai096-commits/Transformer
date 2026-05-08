@@ -1065,6 +1065,9 @@
   .forgot-link{text-align:center;margin-top:0.6rem}
   .forgot-link button{background:none;border:none;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:0.78rem;cursor:pointer;text-decoration:underline;transition:color 0.2s}
   .forgot-link button:hover{color:var(--accent)}
+  .guide-link{text-align:center;margin-top:0.6rem}
+  .guide-link a{color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:0.78rem;text-decoration:none;transition:color 0.2s}
+  .guide-link a:hover{color:var(--accent)}
   /* Admin Reset Requests Panel */
   #adminResetPanel{display:none;margin-bottom:1.5rem}
   .arp-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
@@ -1276,6 +1279,7 @@
     <input type="password" class="login-pw" id="loginPw" placeholder="كلمة المرور ••••••" onkeydown="if(event.key==='Enter')doTeamLogin()"/>
     <button class="btn-login-go" onclick="doTeamLogin()">دخول →</button>
     <div class="login-err" id="loginErr"></div>
+    <div class="guide-link"><a href="user-guide.html" target="_blank">📖 دليل الاستخدام</a></div>
     <div class="forgot-link"><button onclick="showForgotPanel()">🔑 نسيت كلمة المرور؟</button></div>
     <div class="admin-toggle"><button onclick="showAdminLogin()">🔐 دخول كمدير النظام</button></div>
 
