@@ -2030,6 +2030,9 @@
             <div style="font-size:0.68rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.04em">${isAr ? 'أعلى المحولات تحميلاً' : 'Top Loaded Transformers'}</div>
             ${topRows}
           </div>
+          <button onclick="openStationReport('${stName.replace(/'/g,"\\'")}')" style="width:100%;padding:0.5rem;border-radius:8px;border:1px solid rgba(37,99,235,0.4);background:rgba(37,99,235,0.07);color:#2563EB;font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer">
+            ${isAr ? '📋 تقرير تفصيلي' : '📋 Detailed Report'}
+          </button>
         </div>`;
       }).join('');
     }
@@ -2041,6 +2044,151 @@
   function closeSummaryReport() {
     const section = document.getElementById('summaryReportSection');
     if (section) section.style.display = 'none';
+  }
+
+  function openStationReport(stName) {
+    const isAr  = lang === 'ar';
+    const dir   = isAr ? 'rtl' : 'ltr';
+    const SQRT3 = Math.sqrt(3);
+    const now   = new Date();
+    const dateStr = now.toLocaleDateString('en-GB') + ' — ' + now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+
+    const stRecs = records.filter(r => (r.station || 'غير محدد') === stName);
+
+    // ── حساب لود كل محول
+    const txRows = stRecs.map(rec => {
+      const fds = (loadings[rec.uid]?.feeders || []).filter(hasData);
+      if (!fds.length) return { id: rec.id || rec.uid, type: rec.type, cap: Number(rec.capacity), pct: null };
+      const capKVA = Number(rec.capacity);
+      const v      = loadings[rec.uid]?.volt || {};
+      const vLL    = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
+      const rated  = (capKVA * 1000) / (SQRT3 * vLL);
+      const totR   = fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0),0);
+      const totY   = fds.reduce((s,f)=>s+(parseFloat(f.iL2)||0),0);
+      const totB   = fds.reduce((s,f)=>s+(parseFloat(f.iL3)||0),0);
+      const pct    = rated > 0 ? Math.min(999,(Math.max(totR,totY,totB)/rated)*100) : null;
+      return { id: rec.id || rec.uid, type: rec.type, cap: capKVA, pct };
+    }).sort((a,b) => (b.pct ?? -1) - (a.pct ?? -1));
+
+    // ── حساب لود كل فيدر
+    const feederRows = [];
+    stRecs.forEach(rec => {
+      (loadings[rec.uid]?.feeders || []).filter(hasData).forEach(f => {
+        const cs = cableStatus(f);
+        if (!cs) return;
+        feederRows.push({ txId: rec.id || rec.uid, name: f.name, maxI: cs.maxI, ampacity: cs.ampacity, pct: cs.pct, level: cs.level });
+      });
+    });
+    feederRows.sort((a,b) => b.pct - a.pct);
+
+    const txColor  = p => p >= 80 ? '#dc2626' : p >= 60 ? '#d97706' : '#16a34a';
+    const csColor  = l => l === 'danger' ? '#dc2626' : l === 'warning' ? '#d97706' : '#16a34a';
+    const csLabel  = l => l === 'danger' ? (isAr?'تجاوز':'Over') : l === 'warning' ? (isAr?'تحذير':'Warn') : (isAr?'جيد':'OK');
+
+    const txTableRows = txRows.map((r,i) => {
+      if (r.pct === null) return `<tr>
+        <td>${i+1}</td><td style="font-weight:700">${r.id}</td>
+        <td>${isAr?(r.type==='أرضي'?'أرضي':'معلق'):(r.type==='أرضي'||r.type==='Ground'?'Ground':'Pole')}</td>
+        <td>${r.cap.toLocaleString()}</td>
+        <td colspan="2" style="color:#9ca3af;font-size:0.78rem">${isAr?'لا توجد قراءات':'No readings'}</td>
+      </tr>`;
+      const c = txColor(r.pct);
+      const lbl = r.pct>=80?(isAr?'تحميل عالي':'High Load'):r.pct>=60?(isAr?'متوسط':'Moderate'):(isAr?'طبيعي':'Normal');
+      return `<tr>
+        <td>${i+1}</td>
+        <td style="font-weight:700">${r.id}</td>
+        <td>${isAr?(r.type==='أرضي'?'أرضي':'معلق'):(r.type==='أرضي'||r.type==='Ground'?'Ground':'Pole')}</td>
+        <td>${r.cap.toLocaleString()}</td>
+        <td style="font-weight:800;color:${c}">${r.pct.toFixed(1)}%</td>
+        <td><span style="background:${c}18;border:1px solid ${c}55;color:${c};padding:0.15rem 0.6rem;border-radius:10px;font-size:0.75rem;font-family:'Tajawal',sans-serif;font-weight:600">${lbl}</span></td>
+      </tr>`;
+    }).join('');
+
+    const fdTableRows = feederRows.length === 0
+      ? `<tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:1.5rem;font-family:'Tajawal',sans-serif">${isAr?'لا توجد قراءات فيدرات':'No feeder readings'}</td></tr>`
+      : feederRows.map((r,i) => {
+          const c = csColor(r.level);
+          const lbl = csLabel(r.level);
+          return `<tr>
+            <td>${i+1}</td>
+            <td style="font-weight:700">${r.txId}</td>
+            <td>${r.name ? r.name+' mm²' : '—'}</td>
+            <td style="font-family:monospace">${r.maxI.toFixed(1)} A</td>
+            <td style="font-family:monospace">${r.ampacity} A</td>
+            <td style="font-weight:800;color:${c}">${r.pct.toFixed(1)}%</td>
+            <td><span style="background:${c}18;border:1px solid ${c}55;color:${c};padding:0.15rem 0.6rem;border-radius:10px;font-size:0.75rem;font-family:'Tajawal',sans-serif;font-weight:600">${lbl}</span></td>
+          </tr>`;
+        }).join('');
+
+    const html = `<!DOCTYPE html>
+<html lang="${lang}" dir="${dir}">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${isAr?'تقرير المحطة':'Station Report'} — ${stName}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#FFFFFF;--surface:#F3F4F6;--surface2:#E5E7EB;--border:#9CA3AF;--accent:#2563EB;--accent3:#16A34A;--text:#111827;--text-muted:#374151;--danger:#DC2626}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;padding:1.5rem;direction:${dir}}
+.page{max-width:960px;margin:0 auto}
+.report-header{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.report-header h1{font-size:1.8rem;font-weight:900;color:var(--accent);margin-bottom:0.3rem}
+.sub{color:var(--text-muted);font-size:0.85rem;font-family:'Tajawal',sans-serif}
+.print-btn{position:fixed;bottom:1.5rem;${isAr?'left':'right'}:1.5rem;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;border:none;border-radius:10px;padding:0.7rem 1.4rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;box-shadow:0 4px 20px rgba(37,99,235,0.3);z-index:100}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem}
+.section-title{font-size:0.95rem;font-weight:700;color:var(--accent);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:0.85rem}
+thead th{background:var(--surface2);padding:0.6rem 0.8rem;text-align:center;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:0.75rem;font-weight:700;border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border)}
+tbody tr:nth-child(even){background:var(--surface)}
+td{padding:0.6rem 0.8rem;text-align:center;vertical-align:middle;color:var(--text)}
+.footer{text-align:center;font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)}
+@media print{.print-btn{display:none}}
+</style></head>
+<body>
+<div class="page">
+  <div class="report-header">
+    <h1>🏭 ${stName}</h1>
+    <div class="sub">${isAr?'تقرير مختصر للمحطة':'Station Summary Report'} &nbsp;·&nbsp; ${dateStr}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚡ ${isAr?'ترتيب المحولات حسب التحميل (الأعلى أولاً)':'Transformers Ranked by Load (Highest First)'}</div>
+    <table>
+      <thead><tr>
+        <th>#</th>
+        <th>${isAr?'رقم المحول':'Tx ID'}</th>
+        <th>${isAr?'النوع':'Type'}</th>
+        <th>${isAr?'الطاقة (KVA)':'Capacity (KVA)'}</th>
+        <th>${isAr?'نسبة التحميل':'Load %'}</th>
+        <th>${isAr?'الحالة':'Status'}</th>
+      </tr></thead>
+      <tbody>${txTableRows}</tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔌 ${isAr?'ترتيب الفيدرات حسب تحميل الكيبل (الأعلى أولاً)':'Feeders Ranked by Cable Load (Highest First)'}</div>
+    <table>
+      <thead><tr>
+        <th>#</th>
+        <th>${isAr?'رقم المحول':'Tx ID'}</th>
+        <th>${isAr?'حجم الكيبل':'Cable Size'}</th>
+        <th>${isAr?'أعلى تيار':'Max Current'}</th>
+        <th>${isAr?'السعة':'Ampacity'}</th>
+        <th>${isAr?'تحميل الكيبل':'Cable Load %'}</th>
+        <th>${isAr?'الحالة':'Status'}</th>
+      </tr></thead>
+      <tbody>${fdTableRows}</tbody>
+    </table>
+  </div>
+
+  <div class="footer">${isAr?`تم إنشاء هذا التقرير في ${dateStr}`:`Report generated on ${dateStr}`}</div>
+</div>
+<button class="print-btn" onclick="window.print()">${isAr?'🖨️ طباعة':'🖨️ Print'}</button>
+</body></html>`;
+
+    const w = window.open('', '_blank');
+    if (w) { w.document.write(html); w.document.close(); }
   }
 
   var capacityOptionsByType = {
