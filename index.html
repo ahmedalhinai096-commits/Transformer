@@ -1489,8 +1489,8 @@
   <div id="summaryReportSection" style="display:none;margin-top:1.5rem">
     <div class="table-wrapper">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:0.8rem 1.2rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem">
-        <div class="table-title">📄 تقرير مختصر للمحطات</div>
-        <button class="btn btn-secondary" onclick="closeSummaryReport()" style="padding:0.4rem 0.8rem;font-size:0.8rem;border-color:rgba(255,71,87,0.4);color:var(--danger)">✕ إغلاق</button>
+        <div class="table-title" id="summaryReportTitle">📄 تقرير مختصر للمحطات</div>
+        <button id="summaryReportCloseBtn" class="btn btn-secondary" onclick="closeSummaryReport()" style="padding:0.4rem 0.8rem;font-size:0.8rem;border-color:rgba(255,71,87,0.4);color:var(--danger)">✕ إغلاق</button>
       </div>
       <div id="summaryReportCards" style="padding:1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem"></div>
     </div>
@@ -1947,10 +1947,15 @@
     if (!section || !container) return;
 
     const SQRT3    = Math.sqrt(3);
+    const isArHdr  = lang === 'ar';
+    const titleEl  = document.getElementById('summaryReportTitle');
+    const closeEl  = document.getElementById('summaryReportCloseBtn');
+    if (titleEl) titleEl.textContent = isArHdr ? '📄 تقرير مختصر للمحطات' : '📄 Station Summary Report';
+    if (closeEl) closeEl.textContent = isArHdr ? '✕ إغلاق' : '✕ Close';
     const stations = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
 
     if (stations.length === 0) {
-      container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:2rem;font-family:'Tajawal',sans-serif;grid-column:1/-1">لا توجد بيانات</div>`;
+      container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:2rem;font-family:'Tajawal',sans-serif;grid-column:1/-1">${lang === 'ar' ? 'لا توجد بيانات' : 'No data'}</div>`;
     } else {
       container.innerHTML = stations.map(stName => {
         const recs  = grouped[stName];
@@ -1989,8 +1994,9 @@
         const hlBg           = highLoadCount > 0 ? 'rgba(255,71,87,0.08)' : 'rgba(0,255,157,0.06)';
         const hlBorder       = highLoadCount > 0 ? 'rgba(255,71,87,0.25)' : 'rgba(0,255,157,0.2)';
 
+        const isAr    = lang === 'ar';
         const topRows = top3.length === 0
-          ? `<div style="font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;text-align:center;padding:0.4rem 0">لا توجد قراءات</div>`
+          ? `<div style="font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;text-align:center;padding:0.4rem 0">${isAr ? 'لا توجد قراءات' : 'No readings'}</div>`
           : top3.map((tx, i) => {
               const color = tx.pct >= 80 ? 'var(--danger)' : tx.pct >= 60 ? '#ffcc00' : 'var(--accent3)';
               const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉';
@@ -2004,24 +2010,24 @@
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.4rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border)">
             <div style="font-weight:700;font-size:0.95rem;color:var(--accent);font-family:'Cairo',sans-serif">🏭 ${stName}</div>
             <div style="display:flex;gap:0.35rem;flex-wrap:wrap">
-              <span style="background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.3);color:var(--accent3);font-size:0.7rem;padding:0.12rem 0.45rem;border-radius:6px;font-family:'Cairo',sans-serif">أرضي: ${ground}</span>
-              <span style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:#a78bfa;font-size:0.7rem;padding:0.12rem 0.45rem;border-radius:6px;font-family:'Cairo',sans-serif">معلق: ${pole}</span>
+              <span style="background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.3);color:#000;font-size:0.7rem;padding:0.12rem 0.45rem;border-radius:6px;font-family:'Cairo',sans-serif">${isAr ? 'أرضي' : 'Ground'}: ${ground}</span>
+              <span style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:#000;font-size:0.7rem;padding:0.12rem 0.45rem;border-radius:6px;font-family:'Cairo',sans-serif">${isAr ? 'معلق' : 'Pole'}: ${pole}</span>
             </div>
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
             <div style="background:${hlBg};border:1px solid ${hlBorder};border-radius:8px;padding:0.6rem;text-align:center">
-              <div style="font-size:0.65rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.2rem">محولات لود ≥ 80%</div>
-              <div style="font-size:1.4rem;font-weight:800;color:${hlColor};font-family:'Cairo',sans-serif">${highLoadCount}</div>
+              <div style="font-size:0.78rem;color:#000;font-family:'Tajawal',sans-serif;margin-bottom:0.2rem">${isAr ? 'محولات لود ≥ 80%' : 'Tx Loads ≥ 80%'}</div>
+              <div style="font-size:1.8rem;font-weight:800;color:${hlColor};font-family:'Cairo',sans-serif;opacity:0.75">${highLoadCount}</div>
             </div>
             <div style="background:${overBg};border:1px solid ${overBorder};border-radius:8px;padding:0.6rem;text-align:center">
-              <div style="font-size:0.65rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.2rem">فيدرات كيبل ≥ 80%</div>
-              <div style="font-size:1.4rem;font-weight:800;color:${overColor};font-family:'Cairo',sans-serif">${overloadedFeeders}</div>
+              <div style="font-size:0.78rem;color:#000;font-family:'Tajawal',sans-serif;margin-bottom:0.2rem">${isAr ? 'فيدرات كيبل ≥ 80%' : 'Feeder Loads ≥ 80%'}</div>
+              <div style="font-size:1.8rem;font-weight:800;color:${overColor};font-family:'Cairo',sans-serif;opacity:0.75">${overloadedFeeders}</div>
             </div>
           </div>
 
           <div>
-            <div style="font-size:0.68rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.04em">أعلى المحولات تحميلاً</div>
+            <div style="font-size:0.68rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.04em">${isAr ? 'أعلى المحولات تحميلاً' : 'Top Loaded Transformers'}</div>
             ${topRows}
           </div>
         </div>`;
