@@ -2128,20 +2128,22 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#FFFFFF;--surface:#F3F4F6;--surface2:#E5E7EB;--border:#9CA3AF;--accent:#2563EB;--accent3:#16A34A;--text:#111827;--text-muted:#374151;--danger:#DC2626}
-body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;padding:1.5rem;direction:${dir}}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;padding:1rem;direction:${dir}}
 .page{max-width:960px;margin:0 auto}
-.report-header{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
-.report-header h1{font-size:1.8rem;font-weight:900;color:var(--accent);margin-bottom:0.3rem}
-.sub{color:var(--text-muted);font-size:0.85rem;font-family:'Tajawal',sans-serif}
-.print-btn{position:fixed;bottom:1.5rem;${isAr?'left':'right'}:1.5rem;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;border:none;border-radius:10px;padding:0.7rem 1.4rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;box-shadow:0 4px 20px rgba(37,99,235,0.3);z-index:100}
-.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem}
-.section-title{font-size:0.95rem;font-weight:700;color:var(--accent);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
-table{width:100%;border-collapse:collapse;font-size:0.85rem}
-thead th{background:var(--surface2);padding:0.6rem 0.8rem;text-align:center;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:0.75rem;font-weight:700;border-bottom:1px solid var(--border)}
+.report-header{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.report-header h1{font-size:1.4rem;font-weight:900;color:var(--accent);margin-bottom:0.3rem}
+.sub{color:var(--text-muted);font-size:0.8rem;font-family:'Tajawal',sans-serif}
+.print-btn{position:fixed;bottom:1.2rem;${isAr?'left':'right'}:1.2rem;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;border:none;border-radius:10px;padding:0.6rem 1.2rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;box-shadow:0 4px 20px rgba(37,99,235,0.3);z-index:100}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.9rem;margin-bottom:1rem}
+.section-title{font-size:0.88rem;font-weight:700;color:var(--accent);margin-bottom:0.8rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:0.78rem;min-width:400px}
+thead th{background:var(--surface2);padding:0.45rem 0.6rem;text-align:center;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:0.68rem;font-weight:700;border-bottom:1px solid var(--border);white-space:nowrap}
 tbody tr{border-bottom:1px solid var(--border)}
 tbody tr:nth-child(even){background:var(--surface)}
-td{padding:0.6rem 0.8rem;text-align:center;vertical-align:middle;color:var(--text)}
-.footer{text-align:center;font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)}
+td{padding:0.45rem 0.6rem;text-align:center;vertical-align:middle;color:var(--text);white-space:nowrap}
+.footer{text-align:center;font-size:0.72rem;color:var(--text-muted);font-family:'Tajawal',sans-serif;margin-top:1rem;padding-top:0.8rem;border-top:1px solid var(--border)}
+@media(max-width:500px){body{padding:0.6rem}.report-header h1{font-size:1.1rem}.section{padding:0.7rem}.section-title{font-size:0.8rem}table{font-size:0.7rem}thead th{font-size:0.62rem;padding:0.35rem 0.4rem}td{padding:0.35rem 0.4rem}}
 @media print{
 @page{size:A4 portrait;margin:12mm 10mm}
 html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff!important;color:#000!important;padding:0!important;margin:0!important;font-size:13px!important}
@@ -2153,12 +2155,13 @@ html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#
 .section{background:#f8f8f8!important;border:1px solid #ccc!important;padding:0.8rem!important;margin-bottom:0!important;border-radius:0!important}
 .section+.section{break-before:page;page-break-before:always}
 .section-title{color:#0077aa!important;font-size:0.82rem!important;font-weight:700!important;break-after:avoid;page-break-after:avoid;margin-bottom:0.6rem!important}
-table{font-size:0.72rem!important;table-layout:auto!important;border-collapse:collapse!important;width:100%!important}
+table{font-size:0.7rem!important;table-layout:auto!important;border-collapse:collapse!important;width:100%!important}
 thead{display:table-header-group!important}
-thead th{background:#dce8f5!important;color:#222!important;font-size:0.68rem!important;padding:0.35rem 0.5rem!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;border:1px solid #bbb!important}
+thead th{background:#dce8f5!important;color:#222!important;font-size:0.64rem!important;padding:0.3rem 0.4rem!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;border:1px solid #bbb!important;white-space:nowrap!important}
 tbody tr{break-inside:avoid;page-break-inside:avoid}
 tbody tr:nth-child(even){background:#f0f0f0!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-td{padding:0.35rem 0.5rem!important;font-size:0.72rem!important;word-break:break-word!important;border:1px solid #ddd!important}
+td{padding:0.3rem 0.4rem!important;font-size:0.68rem!important;border:1px solid #ddd!important;white-space:nowrap!important}
+.tbl-wrap{overflow:visible!important}
 span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 .footer{font-size:0.65rem!important;margin-top:0.6rem!important;break-inside:avoid;page-break-inside:avoid}
 }
@@ -2172,33 +2175,37 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
 
   <div class="section">
     <div class="section-title">⚡ ${isAr?'ترتيب المحولات حسب التحميل (الأعلى أولاً)':'Transformers Ranked by Load (Highest First)'}</div>
+    <div class="tbl-wrap">
     <table>
       <thead><tr>
         <th>#</th>
         <th>${isAr?'رقم المحول':'Tx ID'}</th>
         <th>${isAr?'النوع':'Type'}</th>
-        <th>${isAr?'الطاقة (KVA)':'Capacity (KVA)'}</th>
-        <th>${isAr?'نسبة التحميل':'Load %'}</th>
+        <th>${isAr?'KVA':'KVA'}</th>
+        <th>${isAr?'تحميل %':'Load %'}</th>
         <th>${isAr?'الحالة':'Status'}</th>
       </tr></thead>
       <tbody>${txTableRows}</tbody>
     </table>
+    </div>
   </div>
 
   <div class="section">
     <div class="section-title">🔌 ${isAr?'ترتيب الفيدرات حسب تحميل الكيبل (الأعلى أولاً)':'Feeders Ranked by Cable Load (Highest First)'}</div>
+    <div class="tbl-wrap">
     <table>
       <thead><tr>
         <th>#</th>
-        <th>${isAr?'رقم المحول':'Tx ID'}</th>
-        <th>${isAr?'حجم الكيبل':'Cable Size'}</th>
-        <th>${isAr?'أعلى تيار':'Max Current'}</th>
-        <th>${isAr?'السعة':'Ampacity'}</th>
-        <th>${isAr?'تحميل الكيبل':'Cable Load %'}</th>
+        <th>${isAr?'المحول':'Tx'}</th>
+        <th>${isAr?'الكيبل':'Cable'}</th>
+        <th>${isAr?'تيار (A)':'I max'}</th>
+        <th>${isAr?'السعة':'Cap.'}</th>
+        <th>${isAr?'تحميل %':'Load %'}</th>
         <th>${isAr?'الحالة':'Status'}</th>
       </tr></thead>
       <tbody>${fdTableRows}</tbody>
     </table>
+    </div>
   </div>
 
   <div class="footer">${isAr?`تم إنشاء هذا التقرير في ${dateStr}`:`Report generated on ${dateStr}`}</div>
