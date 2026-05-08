@@ -67,11 +67,11 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
 .step-body.img-first{direction:ltr}
 
 /* ── Screenshot placeholder ── */
-.screenshot{background:linear-gradient(135deg,#1a2540,#0d1929);border-radius:12px;overflow:hidden;position:relative;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px dashed rgba(0,212,255,0.3)}
+.screenshot{background:linear-gradient(135deg,#1a2540,#0d1929);border-radius:12px;overflow:hidden;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid rgba(0,212,255,0.2)}
 .screenshot-hint{color:rgba(255,255,255,0.5);font-family:'Tajawal',sans-serif;font-size:0.82rem;text-align:center;padding:1.5rem;direction:rtl}
 .screenshot-hint strong{display:block;color:#00d4ff;font-size:1rem;margin-bottom:0.4rem}
 .screenshot-hint em{display:block;color:rgba(255,255,255,0.35);font-size:0.75rem;margin-top:0.5rem;font-style:normal}
-.screenshot img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.screenshot img{width:100%;height:auto;display:block;object-fit:contain;border-radius:10px}
 
 /* ── Steps list ── */
 .steps-list{list-style:none;display:flex;flex-direction:column;gap:0.8rem}
@@ -175,11 +175,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
           <div class="warn">⚠️ كل فريق يرى ويعدّل بياناته فقط. المشرف يملك صلاحية الاطلاع على جميع البيانات وإدارتها.</div>
         </div>
         <div class="screenshot">
-          <div class="screenshot-hint">
-            <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لنافذة تسجيل الدخول
-            <em>ضع الصورة هنا</em>
-          </div>
+          <img src="صورة تسجيل الدخول.png" alt="تسجيل الدخول">
         </div>
       </div>
     </div>
@@ -207,22 +203,17 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
       </div>
       <div class="step-body">
         <div class="screenshot">
-          <div class="screenshot-hint">
-            <strong>📸 صورة مطلوبة</strong>
-            التقط صورة للصفحة الرئيسية كاملة
-            <em>ضع الصورة هنا</em>
-          </div>
+          <img src="قائمة المحولات.png" alt="الصفحة الرئيسية">
         </div>
         <div>
           <ul class="steps-list">
             <li><div class="n green">A</div><span><strong>شريط البحث</strong> — ابحث برقم المحول</span></li>
             <li><div class="n green">B</div><span><strong>فلاتر</strong> — تصفية حسب المحطة والنوع والسعة</span></li>
             <li><div class="n green">C</div><span><strong>جدول المحولات</strong> — يعرض جميع المحولات مع بياناتها</span></li>
-            <li><div class="n green">D</div><span><strong>أزرار الإجراءات</strong> لكل محول: قراءة 📊، موقع 📍، تقرير 📄، تعديل ✏️، حذف 🗑️</span></li>
+            <li><div class="n green">D</div><span><strong>أزرار الإجراءات</strong> لكل محول: قراءة 📊، موقع 📍، تقرير 📄، تعديل ✏️</span></li>
             <li><div class="n green">E</div><span><strong>زر + إضافة محول</strong> في أعلى الصفحة</span></li>
             <li><div class="n green">F</div><span><strong>إحصائيات سريعة</strong> — إجمالي المحولات والطاقة الكلية</span></li>
           </ul>
-          <div class="info-box">✅ لون صف المحول في الجدول يشير إلى حالة التحميل: أخضر = أقل من 60%، أصفر = 60%–80%، أحمر = أكثر من 80%.</div>
         </div>
       </div>
     </div>
@@ -242,32 +233,26 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
 
     <div class="step-card">
       <div class="step-card-header">
-        <div class="step-icon yellow">➕</div>
+        <div class="step-icon yellow">📝</div>
         <div>
           <div class="step-card-title">نموذج إضافة المحول</div>
-          <div class="step-card-sub">يفتح نافذة منبثقة لإدخال بيانات المحول الأساسية</div>
+          <div class="step-card-sub">النموذج ظاهر مباشرة في الصفحة الرئيسية — لا يحتاج فتح نافذة منبثقة</div>
         </div>
       </div>
       <div class="step-body">
         <div>
           <ul class="steps-list">
-            <li><div class="n yellow">1</div><span>اضغط زر <strong>+ إضافة محول</strong> في أعلى الصفحة</span></li>
-            <li><div class="n yellow">2</div><span>أدخل <strong>رقم المحول</strong> (المعرّف الفريد)</span></li>
-            <li><div class="n yellow">3</div><span>أدخل <strong>اسم المحطة</strong> التي يتبعها المحول</span></li>
-            <li><div class="n yellow">4</div><span>أدخل <strong>رقم الفيدر الرئيسي</strong> (HV Feeder)</span></li>
-            <li><div class="n yellow">5</div><span>اختر <strong>نوع المحول</strong>: أرضي أو معلق</span></li>
-            <li><div class="n yellow">6</div><span>اختر <strong>سعة المحول</strong> — يُحدَّد <strong>عدد فيدرات الجهد المنخفض تلقائياً</strong> بناءً على النوع والسعة</span></li>
+            <li><div class="n yellow">1</div><span>أدخل <strong>اسم المحطة</strong> التي يتبعها المحول</span></li>
+            <li><div class="n yellow">2</div><span>أدخل <strong>رقم الفيدر العالي</strong> (HV Feeder)</span></li>
+            <li><div class="n yellow">3</div><span>اختر <strong>نوع المحول</strong>: أرضي أو معلق</span></li>
+            <li><div class="n yellow">4</div><span>أدخل <strong>رقم المحول</strong></span></li>
+            <li><div class="n yellow">5</div><span>اختر <strong>سعة المحول</strong> (KVA)</span></li>
+            <li><div class="n yellow">6</div><span>يُحدَّد <strong>عدد مخارج LV تلقائياً</strong> بناءً على النوع والسعة</span></li>
             <li><div class="n yellow">7</div><span>اضغط <strong>حفظ</strong> — <strong>تفتح نافذة القراءات تلقائياً</strong> لإدخال أول قراءة</span></li>
           </ul>
-          <div class="tip">💡 عدد الفيدرات يُحدَّد تلقائياً بمجرد اختيار النوع والسعة، ولا يحتاج إدخالاً يدوياً.</div>
-          <div class="info-box">✅ حجم الكيبل لكل فيدر يُختار داخل نافذة القراءات وليس في نموذج الإضافة.</div>
         </div>
         <div class="screenshot">
-          <div class="screenshot-hint">
-            <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لنافذة إضافة المحول
-            <em>ضع الصورة هنا</em>
-          </div>
+          <img src="اضافة محول جديد.png" alt="إضافة محول جديد">
         </div>
       </div>
     </div>
@@ -286,12 +271,12 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
             <tr><th>الحقل</th><th>الوصف</th><th>مثال</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>رقم المحول</strong></td><td>المعرف الفريد للمحول في الشبكة</td><td>4757</td></tr>
             <tr><td><strong>المحطة</strong></td><td>اسم المحطة التي يتبعها المحول</td><td>AL-SANAEYYAH</td></tr>
-            <tr><td><strong>الفيدر الرئيسي</strong></td><td>رقم خط الجهد المتوسط المغذي</td><td>K_LN17</td></tr>
+            <tr><td><strong>الفيدر العالي</strong></td><td>رقم خط الجهد المتوسط المغذي</td><td>K_LN17</td></tr>
             <tr><td><strong>النوع</strong></td><td>أرضي (Ground) أو معلق (Pole)</td><td>Ground</td></tr>
+            <tr><td><strong>رقم المحول</strong></td><td>المعرف الفريد للمحول في الشبكة</td><td>4757</td></tr>
             <tr><td><strong>السعة (KVA)</strong></td><td>الطاقة الكهربائية القصوى للمحول</td><td>1000 KVA</td></tr>
-            <tr><td><strong>عدد الفيدرات</strong></td><td>يُحدَّد تلقائياً بناءً على النوع والسعة</td><td>8 (تلقائي)</td></tr>
+            <tr><td><strong>مخارج LV</strong></td><td>يُحدَّد تلقائياً بناءً على النوع والسعة</td><td>8 (تلقائي)</td></tr>
           </tbody>
         </table>
       </div>
@@ -331,11 +316,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
           <div class="info-box">✅ لا تحتاج لإدخال جميع الفيدرات — يكفي إدخال الفيدرات النشطة فقط. يُحسَب التحميل تلقائياً بعد الحفظ.</div>
         </div>
         <div class="screenshot">
-          <div class="screenshot-hint">
-            <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لنافذة قراءات الأحمال
-            <em>ضع الصورة هنا</em>
-          </div>
+          <img src="قراءة الاحمال.png" alt="قراءات الأحمال">
         </div>
       </div>
     </div>
@@ -443,11 +424,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
           <div class="warn">⚠️ في حالة تعذّر GPS أو وجود خطأ في الإحداثيات التلقائية، استخدم التحديد اليدوي من الخريطة.</div>
         </div>
         <div class="screenshot">
-          <div class="screenshot-hint">
-            <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لنافذة الخريطة مع الدبوس
-            <em>ضع الصورة هنا</em>
-          </div>
+          <img src="تحديد المواقع.png" alt="تحديد الموقع">
         </div>
       </div>
     </div>
@@ -484,11 +461,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
           <div class="warn">⚠️ يجب إدخال قراءات الأحمال أولاً للحصول على نتائج دقيقة.</div>
         </div>
         <div class="screenshot">
-          <div class="screenshot-hint">
-            <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لصفحة التقرير
-            <em>ضع الصورة هنا</em>
-          </div>
+          <img src="تقرير التفصيلي للمحول.png" alt="التقرير التفصيلي">
         </div>
       </div>
     </div>
@@ -569,11 +542,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
           <div class="info-box">✅ البطاقة تتحول لأحمر تلقائياً عند وجود محولات أو فيدرات تتجاوز حد التحميل 80%.</div>
         </div>
         <div class="screenshot">
-          <div class="screenshot-hint">
-            <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لبطاقات التقرير المختصر
-            <em>ضع الصورة هنا</em>
-          </div>
+          <img src="تقرير المختصر.png" alt="التقرير المختصر للمحطات">
         </div>
       </div>
     </div>
