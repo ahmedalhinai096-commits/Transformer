@@ -134,12 +134,13 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
 <div class="toc container" style="margin-top:2rem">
   <div class="toc-title">📋 محتويات الدليل</div>
   <div class="toc-grid">
-    <a href="#login" class="toc-item"><div class="toc-num">1</div>تسجيل الدخول</a>
-    <a href="#main" class="toc-item"><div class="toc-num">2</div>الصفحة الرئيسية</a>
-    <a href="#add" class="toc-item"><div class="toc-num">3</div>إضافة محول جديد</a>
+    <a href="#login"    class="toc-item"><div class="toc-num">1</div>تسجيل الدخول</a>
+    <a href="#main"     class="toc-item"><div class="toc-num">2</div>الصفحة الرئيسية</a>
+    <a href="#add"      class="toc-item"><div class="toc-num">3</div>إضافة محول جديد</a>
     <a href="#readings" class="toc-item"><div class="toc-num">4</div>إدخال قراءات الأحمال</a>
     <a href="#location" class="toc-item"><div class="toc-num">5</div>تحديد الموقع</a>
-    <a href="#report" class="toc-item"><div class="toc-num">6</div>توليد التقرير</a>
+    <a href="#report"   class="toc-item"><div class="toc-num">6</div>التقرير التفصيلي</a>
+    <a href="#summary"  class="toc-item"><div class="toc-num">7</div>التقرير المختصر للمحطات</a>
   </div>
 </div>
 
@@ -166,18 +167,17 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
         <div>
           <ul class="steps-list">
             <li><div class="n">1</div><span>افتح التطبيق في المتصفح</span></li>
-            <li><div class="n">2</div><span>اختر <strong>اسم فريقك</strong> من القائمة المنسدلة (فريق 1 إلى فريق 6، أو مشرف)</span></li>
+            <li><div class="n">2</div><span>اختر <strong>اسم فريقك</strong> من القائمة</span></li>
             <li><div class="n">3</div><span>أدخل <strong>كلمة المرور</strong> الخاصة بفريقك</span></li>
             <li><div class="n">4</div><span>اضغط زر <strong>دخول</strong> للوصول إلى النظام</span></li>
           </ul>
-
           <div class="tip">💡 كلمة المرور خاصة بكل فريق، تواصل مع المسؤول للحصول عليها.</div>
-          <div class="warn">⚠️ صلاحيات كل فريق محدودة — كل فريق يرى ويعدّل بياناته فقط. المشرف يملك صلاحية الاطلاع على جميع البيانات وإدارتها.</div>
+          <div class="warn">⚠️ كل فريق يرى ويعدّل بياناته فقط. المشرف يملك صلاحية الاطلاع على جميع البيانات وإدارتها.</div>
         </div>
         <div class="screenshot">
           <div class="screenshot-hint">
             <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لنافذة تسجيل الدخول<br>تأكد من ظهور القائمة المنسدلة وحقل كلمة المرور
+            التقط صورة لنافذة تسجيل الدخول
             <em>ضع الصورة هنا</em>
           </div>
         </div>
@@ -209,20 +209,20 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
         <div class="screenshot">
           <div class="screenshot-hint">
             <strong>📸 صورة مطلوبة</strong>
-            التقط صورة للصفحة الرئيسية كاملة<br>مع ظهور الجدول وشريط الأدوات
+            التقط صورة للصفحة الرئيسية كاملة
             <em>ضع الصورة هنا</em>
           </div>
         </div>
         <div>
           <ul class="steps-list">
-            <li><div class="n green">A</div><span><strong>شريط البحث</strong> — ابحث باسم المحول أو رقمه أو الفيدر</span></li>
-            <li><div class="n green">B</div><span><strong>فلتر الفريق</strong> — عرض محولات فريق معين (للمشرف فقط)</span></li>
-            <li><div class="n green">C</div><span><strong>فلتر الحالة</strong> — تصفية حسب حالة القراءات (مكتملة / ناقصة / بدون)</span></li>
-            <li><div class="n green">D</div><span><strong>جدول المحولات</strong> — يعرض جميع المحولات مع بياناتها الأساسية</span></li>
-            <li><div class="n green">E</div><span><strong>أزرار الإجراءات</strong> لكل محول: قراءة، موقع، تقرير، تعديل، حذف</span></li>
-            <li><div class="n green">F</div><span><strong>زر إضافة محول</strong> في أعلى الصفحة لإدخال محول جديد</span></li>
+            <li><div class="n green">A</div><span><strong>شريط البحث</strong> — ابحث برقم المحول</span></li>
+            <li><div class="n green">B</div><span><strong>فلاتر</strong> — تصفية حسب المحطة والنوع والسعة</span></li>
+            <li><div class="n green">C</div><span><strong>جدول المحولات</strong> — يعرض جميع المحولات مع بياناتها</span></li>
+            <li><div class="n green">D</div><span><strong>أزرار الإجراءات</strong> لكل محول: قراءة 📊، موقع 📍، تقرير 📄، تعديل ✏️، حذف 🗑️</span></li>
+            <li><div class="n green">E</div><span><strong>زر + إضافة محول</strong> في أعلى الصفحة</span></li>
+            <li><div class="n green">F</div><span><strong>إحصائيات سريعة</strong> — إجمالي المحولات والطاقة الكلية</span></li>
           </ul>
-          <div class="info-box">✅ العمود الملوّن في الجدول يشير إلى حالة القراءات: أخضر = مكتملة، أصفر = جزئية، رمادي = لا توجد قراءات.</div>
+          <div class="info-box">✅ لون صف المحول في الجدول يشير إلى حالة التحميل: أخضر = أقل من 60%، أصفر = 60%–80%، أحمر = أكثر من 80%.</div>
         </div>
       </div>
     </div>
@@ -245,34 +245,33 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
         <div class="step-icon yellow">➕</div>
         <div>
           <div class="step-card-title">نموذج إضافة المحول</div>
-          <div class="step-card-sub">يفتح نافذة منبثقة لإدخال بيانات المحول</div>
+          <div class="step-card-sub">يفتح نافذة منبثقة لإدخال بيانات المحول الأساسية</div>
         </div>
       </div>
       <div class="step-body">
         <div>
           <ul class="steps-list">
             <li><div class="n yellow">1</div><span>اضغط زر <strong>+ إضافة محول</strong> في أعلى الصفحة</span></li>
-            <li><div class="n yellow">2</div><span>أدخل <strong>اسم المحول</strong> (مثال: SS-101)</span></li>
-            <li><div class="n yellow">3</div><span>أدخل <strong>رقم الفيدر الرئيسي</strong> (MV Feeder)</span></li>
-            <li><div class="n yellow">4</div><span>اختر <strong>سعة المحول</strong> من القائمة (100 — 2000 KVA)</span></li>
-            <li><div class="n yellow">5</div><span>اختر <strong>حجم الكيبل</strong> (120 / 185 / 240 / 300 mm²)</span></li>
-            <li><div class="n yellow">6</div><span>أدخل <strong>عدد فيدرات الجهد المنخفض</strong> المتوقعة</span></li>
-            <li><div class="n yellow">7</div><span>اضغط <strong>حفظ</strong> لإضافة المحول إلى القائمة</span></li>
+            <li><div class="n yellow">2</div><span>أدخل <strong>رقم المحول</strong> (المعرّف الفريد)</span></li>
+            <li><div class="n yellow">3</div><span>أدخل <strong>اسم المحطة</strong> التي يتبعها المحول</span></li>
+            <li><div class="n yellow">4</div><span>أدخل <strong>رقم الفيدر الرئيسي</strong> (HV Feeder)</span></li>
+            <li><div class="n yellow">5</div><span>اختر <strong>نوع المحول</strong>: أرضي أو معلق</span></li>
+            <li><div class="n yellow">6</div><span>اختر <strong>سعة المحول</strong> — يُحدَّد <strong>عدد فيدرات الجهد المنخفض تلقائياً</strong> بناءً على النوع والسعة</span></li>
+            <li><div class="n yellow">7</div><span>اضغط <strong>حفظ</strong> — <strong>تفتح نافذة القراءات تلقائياً</strong> لإدخال أول قراءة</span></li>
           </ul>
-          <div class="tip">💡 حجم الكيبل مهم جداً — يُستخدم لحساب نسبة تحميل الكيبل في التقرير.</div>
-          <div class="warn">⚠️ يمكن لكل فريق تعديل بيانات محولاته فقط. المشرف يستطيع تعديل جميع المحولات.</div>
+          <div class="tip">💡 عدد الفيدرات يُحدَّد تلقائياً بمجرد اختيار النوع والسعة، ولا يحتاج إدخالاً يدوياً.</div>
+          <div class="info-box">✅ حجم الكيبل لكل فيدر يُختار داخل نافذة القراءات وليس في نموذج الإضافة.</div>
         </div>
         <div class="screenshot">
           <div class="screenshot-hint">
             <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لنافذة إضافة المحول<br>مع ظهور جميع الحقول
+            التقط صورة لنافذة إضافة المحول
             <em>ضع الصورة هنا</em>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Fields reference -->
     <div class="step-card">
       <div class="step-card-header">
         <div class="step-icon blue">📋</div>
@@ -287,11 +286,12 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
             <tr><th>الحقل</th><th>الوصف</th><th>مثال</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>اسم المحول</strong></td><td>المعرف الفريد للمحول في الشبكة</td><td>SS-101-A</td></tr>
-            <tr><td><strong>الفيدر الرئيسي</strong></td><td>رقم خط الجهد المتوسط المغذي</td><td>F-05</td></tr>
-            <tr><td><strong>السعة (KVA)</strong></td><td>الطاقة الكهربائية القصوى للمحول</td><td>500 KVA</td></tr>
-            <tr><td><strong>حجم الكيبل</strong></td><td>مقطع كيبل خروج الجهد المنخفض بالـ mm²</td><td>240 mm²</td></tr>
-            <tr><td><strong>عدد الفيدرات</strong></td><td>عدد فيدرات الجهد المنخفض الإجمالية</td><td>8</td></tr>
+            <tr><td><strong>رقم المحول</strong></td><td>المعرف الفريد للمحول في الشبكة</td><td>4757</td></tr>
+            <tr><td><strong>المحطة</strong></td><td>اسم المحطة التي يتبعها المحول</td><td>AL-SANAEYYAH</td></tr>
+            <tr><td><strong>الفيدر الرئيسي</strong></td><td>رقم خط الجهد المتوسط المغذي</td><td>K_LN17</td></tr>
+            <tr><td><strong>النوع</strong></td><td>أرضي (Ground) أو معلق (Pole)</td><td>Ground</td></tr>
+            <tr><td><strong>السعة (KVA)</strong></td><td>الطاقة الكهربائية القصوى للمحول</td><td>1000 KVA</td></tr>
+            <tr><td><strong>عدد الفيدرات</strong></td><td>يُحدَّد تلقائياً بناءً على النوع والسعة</td><td>8 (تلقائي)</td></tr>
           </tbody>
         </table>
       </div>
@@ -307,7 +307,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
     <div class="section-header">
       <div class="step-label"><span>4</span> الخطوة الرابعة</div>
       <div class="section-title">إدخال قراءات الأحمال</div>
-      <div class="section-sub">تسجيل قيم التيار والجهد لكل فيدر من فيدرات المحول</div>
+      <div class="section-sub">تسجيل قيم الجهد والتيار لكل فيدر من فيدرات المحول</div>
     </div>
 
     <div class="step-card">
@@ -315,26 +315,25 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
         <div class="step-icon purple">⚡</div>
         <div>
           <div class="step-card-title">فتح نافذة القراءات</div>
-          <div class="step-card-sub">اضغط زر القراءة بجانب المحول المطلوب</div>
+          <div class="step-card-sub">تفتح تلقائياً عند إضافة محول جديد، أو يدوياً بالضغط على زر القراءة</div>
         </div>
       </div>
       <div class="step-body">
         <div>
           <ul class="steps-list">
-            <li><div class="n purple">1</div><span>في صف المحول، اضغط زر <strong>⚡ قراءة</strong></span></li>
-            <li><div class="n purple">2</div><span>ستفتح نافذة تحتوي على <strong>بطاقة لكل فيدر</strong></span></li>
-            <li><div class="n purple">3</div><span>أدخل <strong>قيم التيار</strong> لكل فيز (I_R, I_Y, I_B) بالأمبير</span></li>
-            <li><div class="n purple">4</div><span>أدخل <strong>قيم الجهد</strong> (V_L1N, V_L2N, V_L3N) اختياري</span></li>
-            <li><div class="n purple">5</div><span>أدخل <strong>تيار النيوترال</strong> (I_N) اختياري</span></li>
+            <li><div class="n purple">1</div><span><strong>عند إضافة محول جديد</strong> تفتح نافذة القراءات تلقائياً — أو اضغط زر <strong>📊 قراءة</strong> بجانب أي محول</span></li>
+            <li><div class="n purple">2</div><span>أدخل أولاً <strong>قراءات الجهد</strong> (V_L1N, V_L2N, V_L3N وكذلك الجهد بين الأوجه)</span></li>
+            <li><div class="n purple">3</div><span>اختر <strong>رقم الفيدر</strong> وحدد <strong>حجم الكيبل</strong> (120 / 185 / 240 / 300 mm²)</span></li>
+            <li><div class="n purple">4</div><span>أدخل <strong>قيم التيار</strong> للأوجه الثلاثة (I_R, I_Y, I_B) <strong>وتيار النيوترال (I_N)</strong> في نفس البطاقة</span></li>
+            <li><div class="n purple">5</div><span>كرّر الخطوتين 3 و4 لكل فيدر نشط</span></li>
             <li><div class="n purple">6</div><span>اضغط <strong>حفظ القراءات</strong> لتخزين البيانات</span></li>
           </ul>
-          <div class="tip">💡 لا تحتاج لإدخال قراءات جميع الفيدرات — يكفي إدخال الفيدرات النشطة فقط.</div>
-          <div class="info-box">✅ يتم حساب نسبة التحميل تلقائياً بعد الحفظ وتظهر ألواناً في الجدول الرئيسي.</div>
+          <div class="info-box">✅ لا تحتاج لإدخال جميع الفيدرات — يكفي إدخال الفيدرات النشطة فقط. يُحسَب التحميل تلقائياً بعد الحفظ.</div>
         </div>
         <div class="screenshot">
           <div class="screenshot-hint">
             <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لنافذة قراءات الأحمال<br>مع ظهور بطاقات الفيدرات وحقول الإدخال
+            التقط صورة لنافذة قراءات الأحمال
             <em>ضع الصورة هنا</em>
           </div>
         </div>
@@ -345,30 +344,49 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
       <div class="step-card-header">
         <div class="step-icon blue">📊</div>
         <div>
-          <div class="step-card-title">مؤشرات القراءات</div>
-          <div class="step-card-sub">ما يظهر بعد إدخال القيم</div>
+          <div class="step-card-title">مؤشرات التحميل وألوان البطاقات</div>
+          <div class="step-card-sub">ما يظهر بعد إدخال القيم وحفظها</div>
         </div>
       </div>
       <div class="step-body full">
         <ul class="steps-list">
-          <li><div class="n">A</div><span><strong>نسبة تحميل المحول</strong> — تُحسب من مجموع أعلى تيار من الفيزات الثلاث مقارنة بالتيار المقنن</span></li>
-          <li><div class="n">B</div><span><strong>نسبة تحميل الكيبل</strong> — تُحسب من أعلى تيار مقارنة بأمبيرية الكيبل (تعتمد على حجمه)</span></li>
-          <li><div class="n">C</div><span><strong>لون البطاقة</strong> — أخضر (أقل من 70%) ← أصفر (70%-90%) ← أحمر (أكثر من 90%)</span></li>
+          <li><div class="n">A</div><span><strong>نسبة تحميل المحول</strong> — تُحسب من مجموع أعلى تيار من الأوجه الثلاثة مقارنة بالتيار المقنن للمحول</span></li>
+          <li><div class="n">B</div><span><strong>نسبة تحميل الكيبل</strong> — تُحسب من أعلى تيار بالفيدر مقارنة بأمبيرية الكيبل المختار (حسب حجمه)</span></li>
+          <li><div class="n">C</div><span><strong>لون صف المحول</strong> في الجدول الرئيسي يعكس نسبة التحميل الكلية</span></li>
         </ul>
         <div style="margin-top:1.2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
           <div style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.25);border-radius:10px;padding:1rem;text-align:center;font-family:'Tajawal',sans-serif">
-            <div style="font-size:1.4rem;font-weight:900;color:#16a34a">أقل من 70%</div>
+            <div style="font-size:1.4rem;font-weight:900;color:#16a34a">أقل من 60%</div>
             <div style="font-size:0.82rem;color:#15803d;margin-top:0.3rem">تحميل طبيعي ✅</div>
           </div>
           <div style="background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.25);border-radius:10px;padding:1rem;text-align:center;font-family:'Tajawal',sans-serif">
-            <div style="font-size:1.4rem;font-weight:900;color:#d97706">70% — 90%</div>
+            <div style="font-size:1.4rem;font-weight:900;color:#d97706">60% — 80%</div>
             <div style="font-size:0.82rem;color:#92400e;margin-top:0.3rem">تحميل مرتفع ⚠️</div>
           </div>
           <div style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.25);border-radius:10px;padding:1rem;text-align:center;font-family:'Tajawal',sans-serif">
-            <div style="font-size:1.4rem;font-weight:900;color:#dc2626">أكثر من 90%</div>
+            <div style="font-size:1.4rem;font-weight:900;color:#dc2626">80% فأكثر</div>
             <div style="font-size:0.82rem;color:#b91c1c;margin-top:0.3rem">تحميل زائد 🔴</div>
           </div>
         </div>
+        <div style="margin-top:1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;font-family:'Tajawal',sans-serif;font-size:0.82rem">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.7rem;text-align:center">
+            <div style="font-weight:700;margin-bottom:0.2rem">120 mm²</div>
+            <div style="color:var(--text-muted)">312 A</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.7rem;text-align:center">
+            <div style="font-weight:700;margin-bottom:0.2rem">185 mm²</div>
+            <div style="color:var(--text-muted)">394 A</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.7rem;text-align:center">
+            <div style="font-weight:700;margin-bottom:0.2rem">240 mm²</div>
+            <div style="color:var(--text-muted)">455 A</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.7rem;text-align:center">
+            <div style="font-weight:700;margin-bottom:0.2rem">300 mm²</div>
+            <div style="color:var(--text-muted)">509 A</div>
+          </div>
+        </div>
+        <div class="tip" style="margin-top:0.8rem">💡 جدول أمبيريات الكيبلات أعلاه — نسبة تحميل الكيبل = (أعلى تيار ÷ الأمبيرية) × 100</div>
       </div>
     </div>
   </div>
@@ -382,34 +400,52 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
     <div class="section-header">
       <div class="step-label"><span>5</span> الخطوة الخامسة</div>
       <div class="section-title">تحديد موقع المحول</div>
-      <div class="section-sub">تسجيل الإحداثيات الجغرافية للمحول على الخريطة</div>
+      <div class="section-sub">تسجيل الإحداثيات الجغرافية — تلقائياً أو يدوياً</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon green">📡</div>
+        <div>
+          <div class="step-card-title">الأخذ التلقائي للموقع</div>
+          <div class="step-card-sub">يُسجَّل الموقع تلقائياً عند فتح نافذة القراءات</div>
+        </div>
+      </div>
+      <div class="step-body full">
+        <ul class="steps-list">
+          <li><div class="n green">1</div><span>عند فتح <strong>نافذة القراءات</strong> يطلب النظام إذن الموقع من المتصفح</span></li>
+          <li><div class="n green">2</div><span>اضغط <strong>السماح</strong> عند ظهور طلب الإذن لضمان دقة الإحداثيات</span></li>
+          <li><div class="n green">3</div><span>يُسجَّل الموقع تلقائياً ويظهر شارة الموقع باللون <strong>الأصفر 🟡</strong> عند الحفظ</span></li>
+        </ul>
+        <div class="info-box">✅ الموقع التلقائي يُؤخذ من GPS الجهاز — تأكد من تفعيل الموقع الجغرافي في إعدادات الهاتف.</div>
+      </div>
     </div>
 
     <div class="step-card">
       <div class="step-card-header">
         <div class="step-icon yellow">📍</div>
         <div>
-          <div class="step-card-title">تحديد الموقع عبر الخريطة</div>
-          <div class="step-card-sub">خريطة تفاعلية لتحديد الإحداثيات بدقة</div>
+          <div class="step-card-title">التحديد اليدوي عبر الخريطة</div>
+          <div class="step-card-sub">في حالة تعذّر الأخذ التلقائي أو الحاجة لتعديل الموقع</div>
         </div>
       </div>
       <div class="step-body">
         <div>
           <ul class="steps-list">
-            <li><div class="n yellow">1</div><span>اضغط زر <strong>📍 الموقع</strong> بجانب المحول في الجدول</span></li>
+            <li><div class="n yellow">1</div><span>اضغط زر <strong>📍</strong> بجانب المحول في الجدول</span></li>
             <li><div class="n yellow">2</div><span>ستفتح <strong>نافذة الخريطة التفاعلية</strong></span></li>
             <li><div class="n yellow">3</div><span>اضغط على <strong>موقع المحول الفعلي</strong> في الخريطة لوضع الدبوس</span></li>
-            <li><div class="n yellow">4</div><span>يمكن <strong>تحريك الدبوس</strong> بالسحب لضبط الموقع بدقة</span></li>
-            <li><div class="n yellow">5</div><span>اضغط <strong>↗ Google Maps</strong> للتحقق من الموقع في خرائط جوجل</span></li>
+            <li><div class="n yellow">4</div><span>يمكن <strong>سحب الدبوس</strong> لضبط الموقع بدقة أكبر</span></li>
+            <li><div class="n yellow">5</div><span>اضغط <strong>↗ Google Maps</strong> للتحقق من الموقع</span></li>
             <li><div class="n yellow">6</div><span>اضغط <strong>💾 حفظ الموقع</strong> لتخزين الإحداثيات</span></li>
           </ul>
-          <div class="tip">💡 زر الموقع يتحول إلى اللون الأصفر 🟡 عند وجود إحداثيات محفوظة، ورمادي عند غيابها.</div>
-          <div class="info-box">✅ يتم تسجيل اسم الفريق والوقت الذي تم فيه تحديد الموقع تلقائياً.</div>
+          <div class="tip">💡 زر الموقع يتحول أصفر 🟡 عند وجود إحداثيات، ورمادي عند غيابها.</div>
+          <div class="warn">⚠️ في حالة تعذّر GPS أو وجود خطأ في الإحداثيات التلقائية، استخدم التحديد اليدوي من الخريطة.</div>
         </div>
         <div class="screenshot">
           <div class="screenshot-hint">
             <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لنافذة الخريطة<br>مع ظهور الدبوس على موقع المحول
+            التقط صورة لنافذة الخريطة مع الدبوس
             <em>ضع الصورة هنا</em>
           </div>
         </div>
@@ -425,8 +461,8 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
   <div class="container">
     <div class="section-header">
       <div class="step-label"><span>6</span> الخطوة السادسة</div>
-      <div class="section-title">توليد التقرير</div>
-      <div class="section-sub">إنشاء تقرير تفصيلي بالحسابات الكهربائية والتنبيهات</div>
+      <div class="section-title">التقرير التفصيلي للمحول</div>
+      <div class="section-sub">إنشاء تقرير بالحسابات الكهربائية والتنبيهات لمحول واحد</div>
     </div>
 
     <div class="step-card">
@@ -434,23 +470,23 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
         <div class="step-icon red">📄</div>
         <div>
           <div class="step-card-title">فتح التقرير</div>
-          <div class="step-card-sub">يفتح في نافذة جديدة جاهز للطباعة</div>
+          <div class="step-card-sub">يفتح في نافذة جديدة جاهز للطباعة أو التحويل لـ PDF</div>
         </div>
       </div>
       <div class="step-body">
         <div>
           <ul class="steps-list">
-            <li><div class="n red">1</div><span>اضغط زر <strong>📄 تقرير</strong> بجانب المحول في الجدول</span></li>
+            <li><div class="n red">1</div><span>اضغط زر <strong>📄</strong> بجانب المحول في الجدول</span></li>
             <li><div class="n red">2</div><span>يفتح التقرير في <strong>نافذة متصفح جديدة</strong></span></li>
             <li><div class="n red">3</div><span>راجع <strong>ملخص التحميل الكلي</strong> والتنبيهات</span></li>
-            <li><div class="n red">4</div><span>للطباعة: اضغط <strong>Ctrl+P</strong> أو زر الطباعة في المتصفح</span></li>
+            <li><div class="n red">4</div><span>للطباعة أو PDF: اضغط زر <strong>🖨️ طباعة</strong> في الصفحة</span></li>
           </ul>
-          <div class="warn">⚠️ يجب إدخال قراءات الأحمال أولاً قبل توليد التقرير للحصول على نتائج دقيقة.</div>
+          <div class="warn">⚠️ يجب إدخال قراءات الأحمال أولاً للحصول على نتائج دقيقة.</div>
         </div>
         <div class="screenshot">
           <div class="screenshot-hint">
             <strong>📸 صورة مطلوبة</strong>
-            التقط صورة لصفحة التقرير الكاملة<br>مع ظهور الجداول والتنبيهات
+            التقط صورة لصفحة التقرير
             <em>ضع الصورة هنا</em>
           </div>
         </div>
@@ -462,7 +498,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
         <div class="step-icon blue">📑</div>
         <div>
           <div class="step-card-title">محتويات التقرير</div>
-          <div class="step-card-sub">ما يحتويه التقرير من أقسام ومعلومات</div>
+          <div class="step-card-sub">أقسام التقرير التفصيلي</div>
         </div>
       </div>
       <div class="step-body full">
@@ -470,12 +506,12 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
           <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
             <div style="font-size:1.3rem;margin-bottom:0.4rem">🏷️</div>
             <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">بيانات المحول</div>
-            <div style="font-size:0.82rem;color:var(--text-muted)">الاسم، السعة، حجم الكيبل، عدد الفيدرات المستخدمة</div>
+            <div style="font-size:0.82rem;color:var(--text-muted)">الرقم، المحطة، السعة، النوع، عدد الفيدرات</div>
           </div>
           <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
             <div style="font-size:1.3rem;margin-bottom:0.4rem">⚡</div>
             <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">تحميل المحول</div>
-            <div style="font-size:0.82rem;color:var(--text-muted)">نسبة التحميل الكلية مع شريط تصويري وقيم KVA و KW</div>
+            <div style="font-size:0.82rem;color:var(--text-muted)">نسبة التحميل الكلية مع شريط تصويري وقيم KVA وKW</div>
           </div>
           <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
             <div style="font-size:1.3rem;margin-bottom:0.4rem">🔌</div>
@@ -488,14 +524,14 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
             <div style="font-size:0.82rem;color:var(--text-muted)">تنبيهات تحميل الكيبل، عدم التوازن، النيوترال المرتفع</div>
           </div>
           <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
-            <div style="font-size:1.3rem;margin-bottom:0.4rem">📐</div>
-            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">طرق الحساب</div>
-            <div style="font-size:0.82rem;color:var(--text-muted)">جدول المعادلات الكهربائية المستخدمة مع أمثلة توضيحية</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
             <div style="font-size:1.3rem;margin-bottom:0.4rem">📊</div>
             <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">ملخص القراءات</div>
             <div style="font-size:0.82rem;color:var(--text-muted)">جدول شامل بجميع قيم التيار لكل فيدر مع الإجماليات</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'Tajawal',sans-serif">
+            <div style="font-size:1.3rem;margin-bottom:0.4rem">🖨️</div>
+            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem">الطباعة / PDF</div>
+            <div style="font-size:0.82rem;color:var(--text-muted)">تنسيق A4 جاهز للطباعة من جميع المتصفحات بما فيها الهاتف</div>
           </div>
         </div>
       </div>
@@ -504,9 +540,68 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
 </div>
 
 <!-- ══════════════════════════════════════
+     STEP 7 — SUMMARY REPORT
+══════════════════════════════════════ -->
+<div class="section" id="summary">
+  <div class="container">
+    <div class="section-header">
+      <div class="step-label"><span>7</span> الخطوة السابعة</div>
+      <div class="section-title">التقرير المختصر للمحطات</div>
+      <div class="section-sub">عرض ملخص شامل لجميع المحطات مع أبرز المؤشرات دفعةً واحدة</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon purple">📋</div>
+        <div>
+          <div class="step-card-title">فتح التقرير المختصر</div>
+          <div class="step-card-sub">يعرض بطاقة لكل محطة بمؤشراتها الرئيسية</div>
+        </div>
+      </div>
+      <div class="step-body">
+        <div>
+          <ul class="steps-list">
+            <li><div class="n purple">1</div><span>اضغط زر <strong>📄 تقرير مختصر</strong> في شريط الأدوات أعلى الجدول</span></li>
+            <li><div class="n purple">2</div><span>يظهر قسم أسفل الجدول يحتوي <strong>بطاقة لكل محطة</strong></span></li>
+            <li><div class="n purple">3</div><span>كل بطاقة تعرض: عدد المحولات ذات لود ≥ 80%، وعدد فيدرات الكيبل المتجاوزة 80%، وأعلى 3 محولات تحميلاً</span></li>
+            <li><div class="n purple">4</div><span>اضغط <strong>📋 تقرير تفصيلي</strong> في أي بطاقة لفتح صفحة مستقلة للمحطة</span></li>
+          </ul>
+          <div class="info-box">✅ البطاقة تتحول لأحمر تلقائياً عند وجود محولات أو فيدرات تتجاوز حد التحميل 80%.</div>
+        </div>
+        <div class="screenshot">
+          <div class="screenshot-hint">
+            <strong>📸 صورة مطلوبة</strong>
+            التقط صورة لبطاقات التقرير المختصر
+            <em>ضع الصورة هنا</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <div class="step-icon red">📊</div>
+        <div>
+          <div class="step-card-title">التقرير التفصيلي للمحطة</div>
+          <div class="step-card-sub">صفحة مستقلة بترتيب كامل للمحولات والفيدرات</div>
+        </div>
+      </div>
+      <div class="step-body full">
+        <ul class="steps-list">
+          <li><div class="n red">A</div><span><strong>ترتيب المحولات</strong> — من الأعلى تحميلاً إلى الأدنى، مع النوع والطاقة والحالة</span></li>
+          <li><div class="n red">B</div><span><strong>ترتيب الفيدرات</strong> — من الأعلى تحميل كيبل إلى الأدنى، مع حجم الكيبل والتيار والأمبيرية</span></li>
+          <li><div class="n red">C</div><span>الصفحة تدعم <strong>الطباعة والتحويل لـ PDF</strong> بتنسيق A4 من الجوال أو الكمبيوتر</span></li>
+        </ul>
+        <div class="tip" style="margin-top:1rem">💡 استخدم هذا التقرير للاطلاع السريع على المحطات الأكثر ضغطاً وتحديد أولويات الصيانة.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
      PERMISSIONS TABLE
 ══════════════════════════════════════ -->
-<div class="section">
+<div class="section" style="background:var(--white)">
   <div class="container">
     <div class="section-header">
       <div class="step-label" style="background:#7C3AED">👥 الصلاحيات</div>
@@ -525,41 +620,14 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>عرض المحولات</td>
-              <td style="text-align:center"><span class="badge partial">فريقه فقط</span></td>
-              <td style="text-align:center"><span class="badge yes">الكل</span></td>
-            </tr>
-            <tr>
-              <td>إضافة محول جديد</td>
-              <td style="text-align:center"><span class="badge yes">نعم</span></td>
-              <td style="text-align:center"><span class="badge yes">نعم</span></td>
-            </tr>
-            <tr>
-              <td>تعديل بيانات المحول</td>
-              <td style="text-align:center"><span class="badge partial">فريقه فقط</span></td>
-              <td style="text-align:center"><span class="badge yes">الكل</span></td>
-            </tr>
-            <tr>
-              <td>إدخال قراءات الأحمال</td>
-              <td style="text-align:center"><span class="badge partial">فريقه فقط</span></td>
-              <td style="text-align:center"><span class="badge yes">الكل</span></td>
-            </tr>
-            <tr>
-              <td>تحديد الموقع الجغرافي</td>
-              <td style="text-align:center"><span class="badge partial">فريقه فقط</span></td>
-              <td style="text-align:center"><span class="badge yes">الكل</span></td>
-            </tr>
-            <tr>
-              <td>توليد التقرير</td>
-              <td style="text-align:center"><span class="badge partial">فريقه فقط</span></td>
-              <td style="text-align:center"><span class="badge yes">الكل</span></td>
-            </tr>
-            <tr>
-              <td>حذف محول</td>
-              <td style="text-align:center"><span class="badge no">لا</span></td>
-              <td style="text-align:center"><span class="badge yes">نعم</span></td>
-            </tr>
+            <tr><td>عرض المحولات</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">الكل</span></td></tr>
+            <tr><td>إضافة محول جديد</td><td style="text-align:center"><span class="badge yes">نعم</span></td><td style="text-align:center"><span class="badge yes">نعم</span></td></tr>
+            <tr><td>تعديل بيانات المحول</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">الكل</span></td></tr>
+            <tr><td>إدخال قراءات الأحمال</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">الكل</span></td></tr>
+            <tr><td>تحديد الموقع الجغرافي</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">الكل</span></td></tr>
+            <tr><td>التقرير التفصيلي</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">الكل</span></td></tr>
+            <tr><td>التقرير المختصر للمحطات</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">الكل</span></td></tr>
+            <tr><td>حذف محول</td><td style="text-align:center"><span class="badge no">لا</span></td><td style="text-align:center"><span class="badge yes">نعم</span></td></tr>
           </tbody>
         </table>
       </div>
