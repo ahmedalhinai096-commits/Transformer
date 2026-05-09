@@ -305,7 +305,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
       <div class="step-body">
         <div>
           <ul class="steps-list">
-            <li><div class="n purple">1</div><span><strong>عند إضافة محول جديد</strong> تفتح نافذة القراءات تلقائياً — أو اضغط زر <strong>📊 قراءة</strong> بجانب أي محول</span></li>
+            <li><div class="n purple">1</div><span><strong>عند إضافة محول جديد</strong> تفتح نافذة القراءات تلقائياً — أو اضغط زر <strong>📊 قراءة</strong> بجانب أي محول. يمكنك أخذ <strong>عدة قراءات لنفس المحول</strong> بالضغط على <strong>+ قراءة جديدة</strong> في أعلى النافذة</span></li>
             <li><div class="n purple">2</div><span>أدخل أولاً <strong>قراءات الجهد</strong> (V_L1N, V_L2N, V_L3N وكذلك الجهد بين الأوجه)</span></li>
             <li><div class="n purple">3</div><span>اختر <strong>رقم الفيدر</strong> وحدد <strong>حجم الكيبل</strong> (120 / 185 / 240 / 300 mm²)</span></li>
             <li><div class="n purple">4</div><span>أدخل <strong>قيم التيار</strong> للأوجه الثلاثة (I_R, I_Y, I_B) <strong>وتيار النيوترال (I_N)</strong> في نفس البطاقة</span></li>
@@ -366,7 +366,6 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
             <div style="color:var(--text-muted)">509 A</div>
           </div>
         </div>
-        <div class="tip" style="margin-top:0.8rem">💡 جدول أمبيريات الكيبلات أعلاه — نسبة تحميل الكيبل = (أعلى تيار ÷ الأمبيرية) × 100</div>
       </div>
     </div>
   </div>
@@ -535,7 +534,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
           <ul class="steps-list">
             <li><div class="n purple">1</div><span>اضغط زر <strong>📄 تقرير مختصر</strong> في شريط الأدوات أعلى الجدول</span></li>
             <li><div class="n purple">2</div><span>يظهر قسم أسفل الجدول يحتوي <strong>بطاقة لكل محطة</strong></span></li>
-            <li><div class="n purple">3</div><span>كل بطاقة تعرض: عدد المحولات ذات لود ≥ 80%، وعدد فيدرات الكيبل المتجاوزة 80%، وأعلى 3 محولات تحميلاً</span></li>
+            <li><div class="n purple">3</div><span>كل بطاقة تعرض: عدد المحولات ذات تحميل ≥ 80%، وعدد فيدرات الكيبل المتجاوزة 80%، وأعلى 3 محولات تحميلاً</span></li>
             <li><div class="n purple">4</div><span>اضغط <strong>📋 تقرير تفصيلي</strong> في أي بطاقة لفتح صفحة مستقلة للمحطة</span></li>
           </ul>
           <div class="info-box">✅ البطاقة تتحول لأحمر تلقائياً عند وجود محولات أو فيدرات تتجاوز حد التحميل 80%.</div>
@@ -557,10 +556,10 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
       <div class="step-body full">
         <ul class="steps-list">
           <li><div class="n red">A</div><span><strong>ترتيب المحولات</strong> — من الأعلى تحميلاً إلى الأدنى، مع النوع والطاقة والحالة</span></li>
-          <li><div class="n red">B</div><span><strong>ترتيب الفيدرات</strong> — من الأعلى تحميل كيبل إلى الأدنى، مع حجم الكيبل والتيار والأمبيرية</span></li>
+          <li><div class="n red">B</div><span><strong>ترتيب الفيدرات</strong> — من الأعلى تحميلاً إلى الأدنى، مع حجم الكيبل والتيار والأمبيرية</span></li>
           <li><div class="n red">C</div><span>الصفحة تدعم <strong>الطباعة والتحويل لـ PDF</strong> بتنسيق A4 من الجوال أو الكمبيوتر</span></li>
         </ul>
-        <div class="tip" style="margin-top:1rem">💡 استخدم هذا التقرير للاطلاع السريع على المحطات الأكثر ضغطاً وتحديد أولويات الصيانة.</div>
+        <div class="tip" style="margin-top:1rem">💡 استخدم هذا التقرير للاطلاع السريع على المحطات الأكثر ضغطاً وتحديد أولويات التدعيمات والتحسينات للشبكة.</div>
       </div>
     </div>
   </div>
@@ -589,7 +588,7 @@ body{font-family:'Cairo',sans-serif;background:#F3F4F6;color:var(--text);line-he
           </thead>
           <tbody>
             <tr><td>عرض المحولات</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">الكل</span></td></tr>
-            <tr><td>إضافة محول جديد</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">نعم</span></td></tr>
+            <tr><td>إضافة محول جديد</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge no">لا</span></td></tr>
             <tr><td>تعديل بيانات المحول</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">الكل</span></td></tr>
             <tr><td>إدخال قراءات الأحمال</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">الكل</span></td></tr>
             <tr><td>تحديد الموقع الجغرافي</td><td style="text-align:center"><span class="badge partial">فريقه فقط</span></td><td style="text-align:center"><span class="badge yes">الكل</span></td></tr>
