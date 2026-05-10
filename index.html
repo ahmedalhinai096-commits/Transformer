@@ -4806,8 +4806,12 @@ ${(()=>{
     if (!ld) return null;
     const fds = (ld.feeders||[]).filter(f=>parseFloat(f.iL1)||parseFloat(f.iL2)||parseFloat(f.iL3));
     if (!fds.length) return null;
-    const rated = r.capacity * 1000 / (Math.sqrt(3) * 415);
-    const maxI = Math.max(...fds.map(f=>Math.max(parseFloat(f.iL1)||0,parseFloat(f.iL2)||0,parseFloat(f.iL3)||0)));
+    const vLL = Number(ld.volt?.vL1L2 || ld.volt?.vL1L3 || ld.volt?.vL2L3 || 415);
+    const rated = r.capacity * 1000 / (Math.sqrt(3) * vLL);
+    const totalR = fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0), 0);
+    const totalY = fds.reduce((s,f)=>s+(parseFloat(f.iL2)||0), 0);
+    const totalB = fds.reduce((s,f)=>s+(parseFloat(f.iL3)||0), 0);
+    const maxI = Math.max(totalR, totalY, totalB);
     return maxI / rated * 100;
   }
 
