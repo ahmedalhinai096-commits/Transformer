@@ -1457,6 +1457,7 @@
         </div>
         <button id="summaryReportBtn" class="btn btn-secondary" onclick="generateSummaryReport()" style="border-color:rgba(167,139,250,0.4);color:#a78bfa">📄 تقرير مختصر</button>
         <button id="exportExcelBtn" class="btn btn-secondary" onclick="exportExcel()" title="ينزل CSV — افتحه بـ Excel" style="border-color:rgba(0,255,157,0.4);color:var(--accent3)">📊 تصدير Excel</button>
+        <button id="mapViewBtn" class="btn btn-secondary" onclick="openMapView()" style="border-color:rgba(251,191,36,0.4);color:#fbbf24">🗺️ <span id="mapViewBtnLabel">مواقع المحولات</span></button>
       </div>
     </div>
     <div style="overflow-x:auto;direction:ltr">
@@ -1632,6 +1633,36 @@
   </div>
 </div>
 
+<!-- ══ Map View Modal ══ -->
+<div id="mapViewModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.2rem;border-bottom:1px solid var(--border);flex-shrink:0">
+      <div style="font-family:'Cairo',sans-serif;font-weight:700;color:var(--accent);font-size:1rem" id="mapViewTitle">🗺️ مواقع المحولات</div>
+      <div style="display:flex;align-items:center;gap:0.6rem">
+        <span id="mapViewCount" style="font-size:0.78rem;color:var(--text-muted);font-family:'Tajawal',sans-serif"></span>
+<button onclick="closeMapView()" style="background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer;line-height:1;padding:0.2rem 0.4rem;border-radius:6px">✕</button>
+      </div>
+    </div>
+    <!-- Toolbar: Search + Filter -->
+    <div style="display:flex;gap:0.5rem;padding:0.6rem 1rem;border-bottom:1px solid var(--border);flex-wrap:wrap;flex-shrink:0;align-items:center">
+      <div style="position:relative;flex:1;min-width:140px">
+        <span style="position:absolute;right:0.6rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.85rem;pointer-events:none">🔍</span>
+        <input id="mapSearchInput" type="text" placeholder="ابحث برقم المحول..." oninput="mapFilterRender()" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.4rem 2rem 0.4rem 0.7rem;color:var(--text);font-family:'Tajawal',sans-serif;font-size:0.85rem;outline:none;direction:rtl"/>
+      </div>
+      <select id="mapStationFilter" onchange="mapFilterRender()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.4rem 0.7rem;color:var(--text);font-family:'Tajawal',sans-serif;font-size:0.85rem;outline:none;min-width:130px"></select>
+      <div style="display:flex;gap:0.35rem;flex-wrap:wrap">
+        <button onclick="mapSetFilter('all')"    id="mf-all"     style="font-size:0.75rem;padding:0.3rem 0.7rem;border-radius:20px;border:1px solid var(--border);background:var(--accent);color:#fff;cursor:pointer;font-family:'Tajawal',sans-serif">الكل</button>
+        <button onclick="mapSetFilter('ok')"     id="mf-ok"      style="font-size:0.75rem;padding:0.3rem 0.7rem;border-radius:20px;border:1px solid rgba(34,197,94,0.4);background:transparent;color:#22c55e;cursor:pointer;font-family:'Tajawal',sans-serif">🟢 طبيعي</button>
+        <button onclick="mapSetFilter('warning')" id="mf-warning" style="font-size:0.75rem;padding:0.3rem 0.7rem;border-radius:20px;border:1px solid rgba(245,158,11,0.4);background:transparent;color:#f59e0b;cursor:pointer;font-family:'Tajawal',sans-serif">🟡 تحذير</button>
+        <button onclick="mapSetFilter('danger')" id="mf-danger"  style="font-size:0.75rem;padding:0.3rem 0.7rem;border-radius:20px;border:1px solid rgba(239,68,68,0.4);background:transparent;color:#ef4444;cursor:pointer;font-family:'Tajawal',sans-serif">🔴 زائد</button>
+        <button onclick="mapSetFilter('nodata')" id="mf-nodata"  style="font-size:0.75rem;padding:0.3rem 0.7rem;border-radius:20px;border:1px solid rgba(148,163,184,0.4);background:transparent;color:#94a3b8;cursor:pointer;font-family:'Tajawal',sans-serif">⚫ بدون قراءات</button>
+      </div>
+    </div>
+    <div id="mapViewContainer" style="width:100%;height:55vh"></div>
+  </div>
+</div>
+
 <script>
   let records = JSON.parse(localStorage.getItem('transformers') || '[]');
   let editId = null;
@@ -1697,6 +1728,9 @@
     }
 
     // Station management panel
+    const mapViewBtnLabel = document.getElementById('mapViewBtnLabel');
+    if (mapViewBtnLabel) mapViewBtnLabel.textContent = isAr ? 'مواقع المحولات' : 'Map View';
+
     const smTitle = document.getElementById('smTitle');
     if (smTitle) smTitle.textContent = isAr ? '🏭 إدارة المحطات' : '🏭 Station Management';
     const smRefreshBtn = document.getElementById('smRefreshBtn');
@@ -4761,6 +4795,141 @@ ${(()=>{
   }
 
   updateThemeBtn();
+
+  // ── Map View ──────────────────────────────────────────
+  let _mapViewInstance = null;
+  let _mapMarkers = [];
+  let _mapFilter = 'all';
+
+  function getLoadPct(r) {
+    const ld = loadings[r.uid];
+    if (!ld) return null;
+    const fds = (ld.feeders||[]).filter(f=>parseFloat(f.iL1)||parseFloat(f.iL2)||parseFloat(f.iL3));
+    if (!fds.length) return null;
+    const rated = r.capacity * 1000 / (Math.sqrt(3) * 415);
+    const maxI = Math.max(...fds.map(f=>Math.max(parseFloat(f.iL1)||0,parseFloat(f.iL2)||0,parseFloat(f.iL3)||0)));
+    return maxI / rated * 100;
+  }
+
+  function getLoadLevel(pct) {
+    if (pct === null) return 'nodata';
+    if (pct > 80) return 'danger';
+    if (pct > 60) return 'warning';
+    return 'ok';
+  }
+
+  function openMapView() {
+    _mapFilter = 'all';
+    document.getElementById('mapSearchInput').value = '';
+    const modal = document.getElementById('mapViewModal');
+    modal.style.display = 'flex';
+    const isAr = lang === 'ar';
+    document.getElementById('mapViewTitle').textContent = isAr ? '🗺️ مواقع المحولات' : '🗺️ Transformer Locations';
+    document.getElementById('mapSearchInput').placeholder = isAr ? 'ابحث برقم المحول...' : 'Search by transformer no...';
+
+    // Fill station dropdown
+    const staSel = document.getElementById('mapStationFilter');
+    const stations = [...new Set(records.filter(r=>r.lat&&r.lng).map(r=>r.station).filter(Boolean))].sort();
+    staSel.innerHTML = `<option value="">${isAr?'🏭 كل المحطات':'🏭 All Stations'}</option>` +
+      stations.map(s=>`<option value="${s}">${s}</option>`).join('');
+
+    if (_mapViewInstance) { _mapViewInstance.remove(); _mapViewInstance = null; }
+    _mapMarkers = [];
+
+    const container = document.getElementById('mapViewContainer');
+    container.innerHTML = '';
+    const withCoords = records.filter(r => r.lat && r.lng);
+
+    if (!withCoords.length) {
+      container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:0.95rem">${isAr?'⚠️ لا توجد محولات بإحداثيات مسجّلة':'⚠️ No transformers with saved coordinates'}</div>`;
+      document.getElementById('mapViewCount').textContent = '';
+      return;
+    }
+
+    const mapEl = document.createElement('div');
+    mapEl.style.cssText = 'width:100%;height:100%';
+    container.appendChild(mapEl);
+    _mapViewInstance = L.map(mapEl);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:19 }).addTo(_mapViewInstance);
+
+    withCoords.forEach(r => {
+      const pct   = getLoadPct(r);
+      const level = getLoadLevel(pct);
+      const color = { ok:'#22c55e', warning:'#f59e0b', danger:'#ef4444', nodata:'#94a3b8' }[level];
+      const icon  = L.divIcon({
+        className:'',
+        html:`<div style="background:${color};color:#fff;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;padding:3px 7px;border-radius:20px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.4);border:2px solid rgba(255,255,255,0.8)">${r.id}</div>`,
+        iconAnchor:[0,10]
+      });
+      const marker = L.marker([r.lat, r.lng], { icon }).addTo(_mapViewInstance);
+      marker.bindPopup(`
+        <div style="font-family:'Cairo',sans-serif;min-width:170px;direction:rtl">
+          <div style="font-weight:700;font-size:0.95rem;margin-bottom:4px">🔌 ${r.id}</div>
+          <div style="font-size:0.82rem;color:#555;margin-bottom:2px">${r.station||'—'}</div>
+          <div style="font-size:0.82rem;color:#555;margin-bottom:6px">${r.capacity} KVA · ${r.type}</div>
+          ${pct!==null?`<div style="font-size:0.82rem;font-weight:700;color:${color};margin-bottom:8px">${isAr?'التحميل':'Load'}: ${pct.toFixed(0)}%</div>`:''}
+          <button onclick="closeMapView();setTimeout(()=>openReport('${r.uid}'),100)" style="width:100%;background:${color};color:#fff;border:none;border-radius:8px;padding:5px 10px;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;margin-bottom:5px">📄 ${isAr?'فتح التقرير':'Open Report'}</button>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=${r.lat},${r.lng}" target="_blank" style="display:block;width:100%;background:#1a73e8;color:#fff;border:none;border-radius:8px;padding:5px 10px;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;box-sizing:border-box">🧭 ${isAr?'التوجه — Google Maps':'Navigate — Google Maps'}</a>
+        </div>
+      `);
+      _mapMarkers.push({ marker, r, pct, level });
+    });
+
+    mapSetFilter('all');
+    setTimeout(() => {
+      _mapViewInstance.invalidateSize();
+      const bounds = withCoords.map(r=>[r.lat,r.lng]);
+      if (bounds.length) _mapViewInstance.fitBounds(bounds, { padding:[40,40] });
+    }, 300);
+  }
+
+  function mapSetFilter(f) {
+    _mapFilter = f;
+    ['all','ok','warning','danger','nodata'].forEach(k => {
+      const btn = document.getElementById('mf-'+k);
+      if (!btn) return;
+      btn.style.background = k===f ? (k==='all'?'var(--accent)':k==='ok'?'#22c55e':k==='warning'?'#f59e0b':k==='danger'?'#ef4444':'#94a3b8') : 'transparent';
+      btn.style.color = k===f ? '#fff' : (k==='all'?'var(--text)':k==='ok'?'#22c55e':k==='warning'?'#f59e0b':k==='danger'?'#ef4444':'#94a3b8');
+    });
+    mapFilterRender();
+  }
+
+  function mapFilterRender() {
+    if (!_mapViewInstance) return;
+    const q = (document.getElementById('mapSearchInput').value||'').trim().toLowerCase();
+    const sta = (document.getElementById('mapStationFilter').value||'');
+    let shown = 0;
+    _mapMarkers.forEach(({marker, r, level}) => {
+      const matchFilter = _mapFilter==='all' || level===_mapFilter;
+      const matchSearch = !q || r.id.toLowerCase().includes(q);
+      const matchStation = !sta || r.station === sta;
+      if (matchFilter && matchSearch && matchStation) { marker.addTo(_mapViewInstance); shown++; }
+      else { marker.remove(); }
+    });
+    const isAr = lang==='ar';
+    document.getElementById('mapViewCount').textContent = shown + (isAr?' محول':'  transformers');
+
+    // If search matches exactly one, fly to it and open popup
+    if (q && shown === 1) {
+      const match = _mapMarkers.find(({r,level}) => {
+        const mf = _mapFilter==='all'||level===_mapFilter;
+        const ms = !sta || r.station===sta;
+        return mf && ms && r.id.toLowerCase().includes(q);
+      });
+      if (match) { _mapViewInstance.flyTo([match.r.lat, match.r.lng], 16); match.marker.openPopup(); }
+    }
+  }
+
+  function closeMapView() {
+    document.getElementById('mapViewModal').style.display = 'none';
+    if (_mapViewInstance) { _mapViewInstance.remove(); _mapViewInstance = null; }
+    _mapMarkers = [];
+  }
+
+  document.getElementById('mapViewModal').addEventListener('click', function(e) {
+    if (e.target === this) closeMapView();
+  });
+
 
 </script>
 </body>
