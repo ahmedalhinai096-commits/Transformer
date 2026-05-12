@@ -145,7 +145,9 @@
   html.sun-mode .stat-card { border-width: 1.5px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
   html.sun-mode thead th { color: #111827 !important; font-weight: 700; }
   html.sun-mode tbody tr { border-bottom-color: #D1D5DB; }
-  html.sun-mode tbody tr:hover { background: rgba(37,99,235,0.06); }
+  html.sun-mode tbody tr:nth-child(odd)  { background: #ffffff; }
+  html.sun-mode tbody tr:nth-child(even) { background: #F3F4F6; }
+  html.sun-mode tbody tr:hover { background: rgba(37,99,235,0.08); }
   html.sun-mode .badge-power { background: rgba(37,99,235,0.12); color: #1D4ED8; border-color: rgba(37,99,235,0.4); }
   html.sun-mode .badge-dist  { background: rgba(22,163,74,0.12);  color: #15803D; border-color: rgba(22,163,74,0.4); }
   html.sun-mode .badge-auto  { background: rgba(109,40,217,0.12); color: #6D28D9; border-color: rgba(109,40,217,0.4); }
@@ -483,7 +485,9 @@
     transition: background 0.15s;
   }
 
-  tbody tr:hover { background: rgba(0,212,255,0.04); }
+  tbody tr:nth-child(odd)  { background: transparent; }
+  tbody tr:nth-child(even) { background: rgba(255,255,255,0.035); }
+  tbody tr:hover { background: rgba(0,212,255,0.07); }
   tbody tr:last-child { border-bottom: none; }
 
   td {
