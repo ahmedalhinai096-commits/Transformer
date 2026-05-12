@@ -1472,7 +1472,7 @@
             <th data-i18n="colId">رقم المحول</th>
             <th data-i18n="colCapacity">السعة (KVA)</th>
             <th data-i18n="colOutputs" class="col-outputs">عدد مخارج LV</th>
-            <th data-i18n="colActions" style="min-width:200px;position:sticky;right:0;z-index:2;background:var(--surface2)">الإجراءات</th>
+            <th data-i18n="colActions" style="min-width:200px">الإجراءات</th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -1931,7 +1931,7 @@
             <td style="font-family:monospace;color:var(--accent);text-align:center">${r.id}</td>
             <td style="font-weight:600;text-align:center">${String(r.capacity || '').replace(/,/g, '')}</td>
             <td class="col-outputs" style="font-weight:600;color:var(--accent3);text-align:center">${r.outputs} <span style="color:var(--text-muted);font-size:0.78rem;font-weight:400">(${usedFeeders(r.uid)})</span></td>
-            <td style="text-align:center;white-space:nowrap;min-width:200px;position:sticky;right:0;z-index:1;background:var(--surface)">
+            <td style="text-align:center;white-space:nowrap;min-width:200px">
               <div class="actions" style="justify-content:center;flex-wrap:nowrap">
                 <button class="btn-icon edit" title="${t('editTitle')}" onclick="editRecord('${r.uid}')">✏️</button>
                 <button class="btn-icon" title="${t('loadTitle')}" onclick="openLoadModal('${r.uid}')" style="border-color:rgba(0,255,157,0.3);color:var(--accent3)">📊</button>
