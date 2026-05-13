@@ -2734,9 +2734,27 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
     const sortedRounds = Object.keys(allRounds).map(Number).sort((a,b)=>a-b);
     if (sortedRounds.length <= 1) { container.innerHTML = ''; return; }
     const active = loadings[uid]._round || 1;
+    const rec = records.find(r => r.uid === uid);
+    const capKVA = rec ? Number(rec.capacity) : 0;
+    const SQRT3 = Math.sqrt(3);
+    let bestRnd = null, bestPct = -1;
+    sortedRounds.forEach(r => {
+      const rd = allRounds[r];
+      const fds = (rd.feeders || []).filter(hasData);
+      if (!fds.length) return;
+      const vLL = Number((rd.volt||{}).vL1L2 || (rd.volt||{}).vL1L3 || (rd.volt||{}).vL2L3 || 415);
+      const rated = capKVA > 0 ? (capKVA * 1000) / (SQRT3 * vLL) : 0;
+      if (!rated) return;
+      const totR = fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0),0);
+      const totY = fds.reduce((s,f)=>s+(parseFloat(f.iL2)||0),0);
+      const totB = fds.reduce((s,f)=>s+(parseFloat(f.iL3)||0),0);
+      const pct = Math.max(totR, totY, totB) / rated * 100;
+      if (pct > bestPct) { bestPct = pct; bestRnd = r; }
+    });
     container.innerHTML = sortedRounds.map(r => {
       const isActive = r === active;
-      return `<button onclick="switchRound('${uid}',${r})" style="padding:0.3rem 1rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;border:1px solid ${isActive?'var(--accent)':'rgba(107,127,163,0.4)'};background:${isActive?'rgba(0,212,255,0.15)':'transparent'};color:${isActive?'var(--accent)':'var(--text-muted)'}">${lang==='ar'?'القراءة ':'Reading '}${r}</button>`;
+      const isBest = sortedRounds.length > 1 && r === bestRnd;
+      return `<button onclick="switchRound('${uid}',${r})" style="padding:0.3rem 1rem;border-radius:8px;font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;border:1px solid ${isActive?'var(--accent)':'rgba(107,127,163,0.4)'};background:${isActive?'rgba(0,212,255,0.15)':'transparent'};color:${isActive?'var(--accent)':'var(--text-muted)'}">${lang==='ar'?'القراءة ':'Reading '}${r}${isBest?' 🔥':''}</button>`;
     }).join('');
   }
 
@@ -2857,14 +2875,21 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
     const rec = records.find(r => r.uid === uid);
     const cnt = rec ? Number(rec.outputs) : loadings[uid].feeders.length;
     const feeders = loadings[uid].feeders.slice(0, cnt);
+    let bestFeederIdx = -1, bestFeederI = -1;
+    feeders.forEach((f, i) => {
+      if (!hasData(f)) return;
+      const maxI = Math.max(parseFloat(f.iL1)||0, parseFloat(f.iL2)||0, parseFloat(f.iL3)||0);
+      if (maxI > bestFeederI) { bestFeederI = maxI; bestFeederIdx = i; }
+    });
     document.getElementById('feederTabs').innerHTML = feeders.map((f, i) => {
       const filled = hasData(f);
       const cs = cableStatus(f);
       const dotColor = cs && cs.level !== 'nodata'
         ? (cs.level === 'danger' ? '#f87171' : cs.level === 'warning' ? '#fbbf24' : '#4ade80')
         : '#4ade80';
+      const isBest = feeders.filter(hasData).length > 1 && i === bestFeederIdx;
       return `<button class="feeder-tab ${i===activeFeederIdx?'active':''}" onclick="switchFeeder(${i})">
-        ${filled ? `<span class="tab-dot" style="background:${dotColor}"></span>` : ''}${t('lmFeeder')} ${f.num||i+1}
+        ${filled ? `<span class="tab-dot" style="background:${dotColor}"></span>` : ''}${t('lmFeeder')} ${f.num||i+1}${isBest?' 🔥':''}
       </button>`;
     }).join('');
   }
