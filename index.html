@@ -2031,18 +2031,19 @@
 
         let overloadedFeeders = 0;
         recs.forEach(rec => {
-          (loadings[rec.uid]?.feeders || []).filter(hasData).forEach(f => {
+          (getBestRoundData(rec.uid)?.feeders || []).filter(hasData).forEach(f => {
             const cs = cableStatus(f);
             if (cs && (cs.level === 'warning' || cs.level === 'danger')) overloadedFeeders++;
           });
         });
 
         const txLoads = recs.map(rec => {
-          const feeders = (loadings[rec.uid]?.feeders || []).filter(hasData);
+          const _bestRd = getBestRoundData(rec.uid);
+          const feeders = (_bestRd?.feeders || []).filter(hasData);
           if (!feeders.length) return { id: rec.id || rec.uid, pct: null };
           const capKVA = Number(rec.capacity);
           if (!capKVA) return { id: rec.id || rec.uid, pct: null };
-          const v      = loadings[rec.uid]?.volt || {};
+          const v      = _bestRd?.volt || {};
           const vLL    = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
           const rated  = (capKVA * 1000) / (SQRT3 * vLL);
           if (!rated) return { id: rec.id || rec.uid, pct: null };
@@ -2124,10 +2125,11 @@
 
     // ── حساب لود كل محول
     const txRows = stRecs.map(rec => {
-      const fds = (loadings[rec.uid]?.feeders || []).filter(hasData);
+      const _bestRd = getBestRoundData(rec.uid);
+      const fds = (_bestRd?.feeders || []).filter(hasData);
       if (!fds.length) return { id: rec.id || rec.uid, type: rec.type, cap: Number(rec.capacity), pct: null };
       const capKVA = Number(rec.capacity);
-      const v      = loadings[rec.uid]?.volt || {};
+      const v      = _bestRd?.volt || {};
       const vLL    = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
       const rated  = (capKVA * 1000) / (SQRT3 * vLL);
       const totR   = fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0),0);
@@ -2140,7 +2142,7 @@
     // ── حساب لود كل فيدر
     const feederRows = [];
     stRecs.forEach(rec => {
-      (loadings[rec.uid]?.feeders || []).filter(hasData).forEach(f => {
+      (getBestRoundData(rec.uid)?.feeders || []).filter(hasData).forEach(f => {
         const cs = cableStatus(f);
         if (!cs) return;
         feederRows.push({ txId: rec.id || rec.uid, feederNum: f.num, name: f.name, maxI: cs.maxI, ampacity: cs.ampacity, pct: cs.pct, level: cs.level });
@@ -2475,6 +2477,33 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
   let activeFeederIdx = 0;
   const CABLE_AMPACITY = {70: 229, 120: 312, 185: 394, 240: 455, 300: 509};
 
+  function getBestRoundData(uid) {
+    const ld = loadings[uid];
+    if (!ld) return { feeders: [], volt: {}, pf: '0.9', voltSavedAt: null };
+    const SQRT3 = Math.sqrt(3);
+    const rec = records.find(r => r.uid === uid);
+    const capKVA = rec ? Number(rec.capacity) : 0;
+    const allRounds = (ld._allRounds && Object.keys(ld._allRounds).length > 0)
+      ? ld._allRounds
+      : { [ld._round || 1]: { volt: ld.volt || {}, pf: ld.pf, feeders: ld.feeders || [], voltSavedAt: ld.voltSavedAt } };
+    let bestRound = null, bestPct = -1;
+    Object.entries(allRounds).forEach(([rNum, rd]) => {
+      const fds = (rd.feeders || []).filter(hasData);
+      if (!fds.length) return;
+      const v = rd.volt || {};
+      const vLL = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
+      const rated = capKVA > 0 ? (capKVA * 1000) / (SQRT3 * vLL) : 0;
+      if (!rated) return;
+      const totR = fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0),0);
+      const totY = fds.reduce((s,f)=>s+(parseFloat(f.iL2)||0),0);
+      const totB = fds.reduce((s,f)=>s+(parseFloat(f.iL3)||0),0);
+      const pct = Math.max(totR, totY, totB) / rated * 100;
+      if (pct > bestPct) { bestPct = pct; bestRound = Number(rNum); }
+    });
+    if (bestRound === null) return ld;
+    return allRounds[bestRound] || ld;
+  }
+
   function cableStatus(f) {
     const size = parseInt(f.name);
     const ampacity = CABLE_AMPACITY[size];
@@ -2486,7 +2515,7 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
     return { ampacity, maxI, pct, level };
   }
 
-  function openLoadModal(uid) {
+  function openLoadModal(uid, autoSelectBest = true) {
     currentLoadUid = uid;
     activeFeederIdx = 0;
     const r = records.find(r => r.uid === uid);
@@ -2499,6 +2528,36 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
     if (!loadings[uid]._round) loadings[uid]._round = 1;
     if (!loadings[uid]._allRounds) loadings[uid]._allRounds = {};
     loadings[uid]._allRounds[loadings[uid]._round] = {volt:loadings[uid].volt,pf:loadings[uid].pf,voltSavedAt:loadings[uid].voltSavedAt,feeders:loadings[uid].feeders};
+
+    if (autoSelectBest) {
+      const SQRT3 = Math.sqrt(3);
+      const capKVA = Number(r.capacity);
+      const allRnds = loadings[uid]._allRounds;
+      let bestRnd = null, bestPct = -1;
+      Object.entries(allRnds).forEach(([rNum, rd]) => {
+        const fds = (rd.feeders || []).filter(hasData);
+        if (!fds.length) return;
+        const v = rd.volt || {};
+        const vLL = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
+        const rated = (capKVA * 1000) / (SQRT3 * vLL);
+        if (!rated) return;
+        const totR = fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0),0);
+        const totY = fds.reduce((s,f)=>s+(parseFloat(f.iL2)||0),0);
+        const totB = fds.reduce((s,f)=>s+(parseFloat(f.iL3)||0),0);
+        const pct = Math.max(totR, totY, totB) / rated * 100;
+        if (pct > bestPct) { bestPct = pct; bestRnd = Number(rNum); }
+      });
+      if (bestRnd && bestRnd !== loadings[uid]._round) {
+        const rd = allRnds[bestRnd] || {};
+        loadings[uid].volt = rd.volt || {};
+        loadings[uid].pf = rd.pf || '0.9';
+        loadings[uid].voltSavedAt = rd.voltSavedAt || null;
+        loadings[uid].feeders = rd.feeders || [];
+        loadings[uid].tapNo = rd.tapNo || '';
+        loadings[uid]._round = bestRnd;
+      }
+    }
+
     const roundEl = document.getElementById('roundBadge');
     if (roundEl) roundEl.textContent = (lang==='ar'?'القراءة ':'Reading ') + loadings[uid]._round;
     const newRoundBtn = document.getElementById('newRoundBtn');
@@ -2703,7 +2762,7 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
     loadings[uid].feeders = rd.feeders || [];
     loadings[uid].tapNo = rd.tapNo || '';
     loadings[uid]._round = roundNum;
-    openLoadModal(uid);
+    openLoadModal(uid, false);
   }
 
   function startNewRound() {
@@ -3264,7 +3323,8 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
   function openReport(uid) {
     const rec = records.find(r => r.uid === uid);
     if (!rec) return;
-    const feeders = [...(loadings[uid]?.feeders || [])].sort((a,b)=>(a.num||0)-(b.num||0));
+    const _bestRd = getBestRoundData(uid);
+    const feeders = [...(_bestRd?.feeders || [])].sort((a,b)=>(a.num||0)-(b.num||0));
     const isAr = lang === 'ar';
     const dir  = isAr ? 'rtl' : 'ltr';
     const HIGH = 80;
@@ -3273,11 +3333,11 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
     const dateStr = now.toLocaleDateString('en-GB') + ' — ' + now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
     const PH = isAr?['أحمر','أصفر','أزرق','نيوترال']:['Red','Yellow','Blue','Neutral'];
     const PC = ['#ff4444','#ffcc00','#4488ff','#aaaaaa'];
-    const v  = loadings[uid]?.volt || {};
-    const pfR     = Math.min(1, Math.max(0.1, parseFloat(loadings[uid]?.pf) || 0.9));
-    const voltSavedAt = loadings[uid]?.voltSavedAt || null;
+    const v  = _bestRd?.volt || {};
+    const pfR     = Math.min(1, Math.max(0.1, parseFloat(_bestRd?.pf) || 0.9));
+    const voltSavedAt = _bestRd?.voltSavedAt || null;
     const SQRT3 = Math.sqrt(3);
-    const powerFactor = Math.min(1, Math.max(0.1, parseFloat(loadings[uid]?.pf) || 0.9));
+    const powerFactor = Math.min(1, Math.max(0.1, parseFloat(_bestRd?.pf) || 0.9));
 
     // ── جهد الخط: الأولوية للقيم المُدخلة، ثم 415V افتراضي
     const vLL = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
