@@ -2473,7 +2473,7 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
   let loadings = JSON.parse(localStorage.getItem('loadings') || '{}');
   let currentLoadUid = null;
   let activeFeederIdx = 0;
-  const CABLE_AMPACITY = {120: 312, 185: 394, 240: 455, 300: 509};
+  const CABLE_AMPACITY = {70: 229, 120: 312, 185: 394, 240: 455, 300: 509};
 
   function cableStatus(f) {
     const size = parseInt(f.name);
@@ -2861,7 +2861,7 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
             <select onchange="updateFeederName(${i},this.value)"
               style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cairo',sans-serif;font-size:0.88rem;padding:0.5rem 0.8rem;outline:none;cursor:pointer;width:auto;height:2.5rem;box-sizing:border-box;${lang==='en'?'direction:ltr;text-align:left;':''}">
               <option value="">${lang==='ar'?'-- اختر --':'-- Select --'}</option>
-              ${[120,185,240,300].map(s=>`<option value="${s}" ${f.name==s?'selected':''}>${s} mm² (${CABLE_AMPACITY[s]}A)</option>`).join('')}
+              ${[70,120,185,240,300].map(s=>`<option value="${s}" ${f.name==s?'selected':''}>${s} mm² (${CABLE_AMPACITY[s]}A)</option>`).join('')}
             </select>
           </div>
           ${(()=>{
