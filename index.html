@@ -2043,9 +2043,7 @@
           if (!feeders.length) return { id: rec.id || rec.uid, pct: null };
           const capKVA = Number(rec.capacity);
           if (!capKVA) return { id: rec.id || rec.uid, pct: null };
-          const v      = _bestRd?.volt || {};
-          const vLL    = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
-          const rated  = (capKVA * 1000) / (SQRT3 * vLL);
+          const rated  = (capKVA * 1000) / (SQRT3 * 415);
           if (!rated) return { id: rec.id || rec.uid, pct: null };
           const totalR = feeders.reduce((s, f) => s + (parseFloat(f.iL1) || 0), 0);
           const totalY = feeders.reduce((s, f) => s + (parseFloat(f.iL2) || 0), 0);
@@ -2129,9 +2127,7 @@
       const fds = (_bestRd?.feeders || []).filter(hasData);
       if (!fds.length) return { id: rec.id || rec.uid, type: rec.type, cap: Number(rec.capacity), pct: null };
       const capKVA = Number(rec.capacity);
-      const v      = _bestRd?.volt || {};
-      const vLL    = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
-      const rated  = (capKVA * 1000) / (SQRT3 * vLL);
+      const rated  = (capKVA * 1000) / (SQRT3 * 415);
       const totR   = fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0),0);
       const totY   = fds.reduce((s,f)=>s+(parseFloat(f.iL2)||0),0);
       const totB   = fds.reduce((s,f)=>s+(parseFloat(f.iL3)||0),0);
@@ -2490,9 +2486,7 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
     Object.entries(allRounds).forEach(([rNum, rd]) => {
       const fds = (rd.feeders || []).filter(hasData);
       if (!fds.length) return;
-      const v = rd.volt || {};
-      const vLL = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
-      const rated = capKVA > 0 ? (capKVA * 1000) / (SQRT3 * vLL) : 0;
+      const rated = capKVA > 0 ? (capKVA * 1000) / (SQRT3 * 415) : 0;
       if (!rated) return;
       const totR = fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0),0);
       const totY = fds.reduce((s,f)=>s+(parseFloat(f.iL2)||0),0);
@@ -2537,9 +2531,7 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
       Object.entries(allRnds).forEach(([rNum, rd]) => {
         const fds = (rd.feeders || []).filter(hasData);
         if (!fds.length) return;
-        const v = rd.volt || {};
-        const vLL = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
-        const rated = (capKVA * 1000) / (SQRT3 * vLL);
+        const rated = (capKVA * 1000) / (SQRT3 * 415);
         if (!rated) return;
         const totR = fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0),0);
         const totY = fds.reduce((s,f)=>s+(parseFloat(f.iL2)||0),0);
@@ -3132,8 +3124,8 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
     // ── جهد الخط: الأولوية للقيم المُدخلة، ثم 415V افتراضي
     const vLL = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
 
-    // ── التيار المقنن: I_rated = KVA×1000 / (√3 × V_LL)
-    const ratedCurrent = (capKVA * 1000) / (SQRT3 * vLL);
+    // ── التيار المقنن: I_rated = KVA×1000 / (√3 × 415) — جهد اسمي ثابت
+    const ratedCurrent = (capKVA * 1000) / (SQRT3 * 415);
     const maxAmp = ratedCurrent;
 
     // ── إجمالي تيار كل طور (مجموع جميع الفيدرات)
@@ -3342,8 +3334,8 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
     // ── جهد الخط: الأولوية للقيم المُدخلة، ثم 415V افتراضي
     const vLL = Number(v.vL1L2 || v.vL1L3 || v.vL2L3 || 415);
 
-    // ── التيار المقنن: I_rated = KVA×1000 / (√3 × V_LL)
-    const ratedCurrent = (capKVA * 1000) / (SQRT3 * vLL);
+    // ── التيار المقنن: I_rated = KVA×1000 / (√3 × 415) — جهد اسمي ثابت
+    const ratedCurrent = (capKVA * 1000) / (SQRT3 * 415);
 
     // ── إجمالي تيار كل طور
     const _fds = feeders.filter(hasData);
@@ -3838,9 +3830,9 @@ ${(()=>{
     </thead>
     <tbody>
       ${row(
-        'I<sub>rated</sub> = KVA×1000 ÷ (√3 × V<sub>LL</sub>)',
+        'I<sub>rated</sub> = KVA×1000 ÷ (√3 × 415)',
         isAr2?'التيار المقنن للمحول':'Transformer rated current',
-        `${capKVA}×1000 ÷ (1.732×${vLL}) = <b>${iRated.toFixed(1)} A</b>`
+        `${capKVA}×1000 ÷ (1.732×415) = <b>${iRated.toFixed(1)} A</b>`
       )}
       ${row(
         'Load% = I<sub>max</sub> ÷ I<sub>rated</sub> × 100',
@@ -4884,8 +4876,7 @@ ${(()=>{
     if (!ld) return null;
     const fds = (ld.feeders||[]).filter(f=>parseFloat(f.iL1)||parseFloat(f.iL2)||parseFloat(f.iL3));
     if (!fds.length) return null;
-    const vLL = Number(ld.volt?.vL1L2 || ld.volt?.vL1L3 || ld.volt?.vL2L3 || 415);
-    const rated = r.capacity * 1000 / (Math.sqrt(3) * vLL);
+    const rated = r.capacity * 1000 / (Math.sqrt(3) * 415);
     const totalR = fds.reduce((s,f)=>s+(parseFloat(f.iL1)||0), 0);
     const totalY = fds.reduce((s,f)=>s+(parseFloat(f.iL2)||0), 0);
     const totalB = fds.reduce((s,f)=>s+(parseFloat(f.iL3)||0), 0);
