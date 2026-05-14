@@ -2033,7 +2033,7 @@
         recs.forEach(rec => {
           (getBestRoundData(rec.uid)?.feeders || []).filter(hasData).forEach(f => {
             const cs = cableStatus(f);
-            if (cs && (cs.level === 'warning' || cs.level === 'danger')) overloadedFeeders++;
+            if (cs && cs.level === 'danger') overloadedFeeders++;
           });
         });
 
@@ -2505,7 +2505,7 @@ span[style]{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!
     const maxI = Math.max(parseFloat(f.iL1)||0, parseFloat(f.iL2)||0, parseFloat(f.iL3)||0);
     if (maxI === 0) return { ampacity, maxI: 0, pct: 0, level: 'nodata' };
     const pct = (maxI / ampacity) * 100;
-    const level = pct > 80 ? 'danger' : pct > 60 ? 'warning' : 'ok';
+    const level = pct >= 80 ? 'danger' : pct > 60 ? 'warning' : 'ok';
     return { ampacity, maxI, pct, level };
   }
 
